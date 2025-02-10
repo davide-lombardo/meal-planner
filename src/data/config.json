@@ -1,0 +1,7 @@
+{
+  "useHistory": true,
+  "menuOptions": {
+    "maxRepetitionWeeks": 3,
+    "mealTypeQuotas": { "pasta": 3, "meat": 2, "vegetarian": 2 }
+  }
+}

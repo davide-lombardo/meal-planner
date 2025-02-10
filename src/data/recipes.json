@@ -1,0 +1,242 @@
+[
+  {
+    "id": "r001",
+    "nome": "Spaghetti al pomodoro",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "tempoPreparazione": 20,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["spaghetti", "pomodoro", "basilico", "olio d'oliva", "parmigiano"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r002",
+    "nome": "Pasta alla carbonara",
+    "tipo": "pranzo",
+    "categoria": "uova",
+    "tempoPreparazione": 20,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["pasta", "guanciale", "uova", "pecorino", "pepe nero"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r003",
+    "nome": "Riso alla cantonese",
+    "tipo": "pranzo",
+    "categoria": "carne",
+    "tempoPreparazione": 25,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["riso", "piselli", "prosciutto cotto", "uova", "salsa di soia"],
+    "cucina": "cinese"
+  },
+  {
+    "id": "r004",
+    "nome": "Couscous con verdure",
+    "tipo": "pranzo",
+    "categoria": "legumi",
+    "tempoPreparazione": 15,
+    "strumentiRichiesti": ["ciotola"],
+    "ingredienti": ["couscous", "zucchine", "carote", "peperoni", "olio d'oliva"],
+    "cucina": "mediorientale"
+  },
+  {
+    "id": "r005",
+    "nome": "Frittata di cipolle",
+    "tipo": "pranzo",
+    "categoria": "uova",
+    "tempoPreparazione": 15,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["uova", "cipolle", "olio d'oliva", "sale"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r006",
+    "nome": "Insalata di pollo",
+    "tipo": "pranzo",
+    "categoria": "carne",
+    "tempoPreparazione": 20,
+    "strumentiRichiesti": ["ciotola"],
+    "ingredienti": ["pollo", "lattuga", "pomodori", "mais", "olio d'oliva"],
+    "cucina": "internazionale"
+  },
+  {
+    "id": "r007",
+    "nome": "Pollo al curry con riso",
+    "tipo": "pranzo",
+    "categoria": "carne",
+    "tempoPreparazione": 25,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["pollo", "curry", "latte di cocco", "riso basmati"],
+    "cucina": "indiana"
+  },
+  {
+    "id": "r008",
+    "nome": "Gnocchi al burro e salvia",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "tempoPreparazione": 15,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["gnocchi", "burro", "salvia", "parmigiano"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r009",
+    "nome": "Zuppa di miso",
+    "tipo": "pranzo",
+    "categoria": "pesce",
+    "tempoPreparazione": 15,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["miso", "tofu", "alga wakame", "cipollotto"],
+    "cucina": "giapponese"
+  },
+  {
+    "id": "r010",
+    "nome": "Panino con prosciutto e formaggio",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "tempoPreparazione": 10,
+    "strumentiRichiesti": ["tostapane"],
+    "ingredienti": ["pane", "prosciutto", "formaggio", "burro"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r011",
+    "nome": "Piadina con verdure grigliate",
+    "tipo": "pranzo",
+    "categoria": "legumi",
+    "tempoPreparazione": 15,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["piadina", "zucchine", "peperoni", "melanzane", "olio d'oliva"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r012",
+    "nome": "Tagliata di manzo con rucola",
+    "tipo": "pranzo",
+    "categoria": "carne",
+    "tempoPreparazione": 25,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["manzo", "rucola", "olio d'oliva", "sale", "pepe"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r013",
+    "nome": "Spaghetti aglio, olio e peperoncino",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "tempoPreparazione": 15,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["spaghetti", "aglio", "olio d'oliva", "peperoncino"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r014",
+    "nome": "Omelette al formaggio",
+    "tipo": "pranzo",
+    "categoria": "uova",
+    "tempoPreparazione": 10,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["uova", "formaggio", "olio d'oliva", "sale"],
+    "cucina": "francese"
+  },
+  {
+    "id": "r015",
+    "nome": "Pasta al pesto",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "tempoPreparazione": 15,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["pasta", "basilico", "olio d'oliva", "parmigiano", "pinoli"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r016",
+    "nome": "Insalata greca",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "tempoPreparazione": 15,
+    "strumentiRichiesti": ["ciotola"],
+    "ingredienti": ["pomodori", "cetrioli", "feta", "olive", "olio d'oliva"],
+    "cucina": "greca"
+  },
+  {
+    "id": "r017",
+    "nome": "Ramen veloce",
+    "tipo": "pranzo",
+    "categoria": "pesce",
+    "tempoPreparazione": 20,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["noodles", "brodo", "uova", "cipollotto", "soia"],
+    "cucina": "giapponese"
+  },
+  {
+    "id": "r018",
+    "nome": "Vitello tonnato",
+    "tipo": "pranzo",
+    "categoria": "carne",
+    "tempoPreparazione": 30,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["vitello", "tonno", "maionese", "capperi", "acciughe"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r019",
+    "nome": "Pollo teriyaki",
+    "tipo": "pranzo",
+    "categoria": "carne",
+    "tempoPreparazione": 25,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["pollo", "soia", "zucchero", "zenzero", "cipollotto"],
+    "cucina": "giapponese"
+  },
+  {
+    "id": "r020",
+    "nome": "Pasta e ceci",
+    "tipo": "pranzo",
+    "categoria": "legumi",
+    "tempoPreparazione": 20,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["pasta", "ceci", "rosmarino", "olio d'oliva", "aglio"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r021",
+    "nome": "Salmone al vapore con asparagi",
+    "tipo": "cena",
+    "categoria": "pesce",
+    "tempoPreparazione": 40,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["salmone", "asparagi", "olio d'oliva", "limone", "aglio"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r022",
+    "nome": "Pollo al limone",
+    "tipo": "cena",
+    "categoria": "carne",
+    "tempoPreparazione": 30,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["pollo", "limone", "aglio", "rosmarino", "olio d'oliva"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r023",
+    "nome": "Zuppa di verdure miste",
+    "tipo": "cena",
+    "categoria": "legumi",
+    "tempoPreparazione": 35,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["carote", "patate", "zucchine", "pomodoro", "cipolla"],
+    "cucina": "italiana"
+  },
+  {
+    "id": "r024",
+    "nome": "Insalata di tonno e fagioli",
+    "tipo": "cena",
+    "categoria": "pesce",
+    "tempoPreparazione": 20,
+    "strumentiRichiesti": ["ciotola"],
+    "ingredienti": ["tonno", "fagioli", "cipolla rossa", "pomodori", "olio d'oliva"],
+    "cucina": "italiana"
+  }
+]
