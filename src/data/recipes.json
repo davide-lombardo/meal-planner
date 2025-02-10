@@ -1,23 +1,12 @@
 [
   {
-    "id": "r001",
-    "nome": "Spaghetti al pomodoro",
-    "tipo": "pranzo",
-    "categoria": "formaggio",
-    "tempoPreparazione": 20,
-    "strumentiRichiesti": ["pentola"],
-    "ingredienti": ["spaghetti", "pomodoro", "basilico", "olio d'oliva", "parmigiano"],
-    "cucina": "italiana"
-  },
-  {
     "id": "r002",
     "nome": "Pasta alla carbonara",
     "tipo": "pranzo",
     "categoria": "uova",
     "tempoPreparazione": 20,
     "strumentiRichiesti": ["pentola"],
-    "ingredienti": ["pasta", "guanciale", "uova", "pecorino", "pepe nero"],
-    "cucina": "italiana"
+    "ingredienti": ["pasta", "guanciale", "uova", "pecorino", "pepe nero"]
   },
   {
     "id": "r003",
@@ -36,7 +25,7 @@
     "categoria": "legumi",
     "tempoPreparazione": 15,
     "strumentiRichiesti": ["ciotola"],
-    "ingredienti": ["couscous", "zucchine", "carote", "peperoni", "olio d'oliva"],
+    "ingredienti": ["couscous", "zucchine", "carote", "peperoni"],
     "cucina": "mediorientale"
   },
   {
@@ -46,18 +35,7 @@
     "categoria": "uova",
     "tempoPreparazione": 15,
     "strumentiRichiesti": ["padella"],
-    "ingredienti": ["uova", "cipolle", "olio d'oliva", "sale"],
-    "cucina": "italiana"
-  },
-  {
-    "id": "r006",
-    "nome": "Insalata di pollo",
-    "tipo": "pranzo",
-    "categoria": "carne",
-    "tempoPreparazione": 20,
-    "strumentiRichiesti": ["ciotola"],
-    "ingredienti": ["pollo", "lattuga", "pomodori", "mais", "olio d'oliva"],
-    "cucina": "internazionale"
+    "ingredienti": ["uova", "cipolle", "sale"]
   },
   {
     "id": "r007",
@@ -70,74 +48,13 @@
     "cucina": "indiana"
   },
   {
-    "id": "r008",
-    "nome": "Gnocchi al burro e salvia",
-    "tipo": "pranzo",
-    "categoria": "formaggio",
-    "tempoPreparazione": 15,
-    "strumentiRichiesti": ["pentola"],
-    "ingredienti": ["gnocchi", "burro", "salvia", "parmigiano"],
-    "cucina": "italiana"
-  },
-  {
-    "id": "r009",
-    "nome": "Zuppa di miso",
-    "tipo": "pranzo",
-    "categoria": "pesce",
-    "tempoPreparazione": 15,
-    "strumentiRichiesti": ["pentola"],
-    "ingredienti": ["miso", "tofu", "alga wakame", "cipollotto"],
-    "cucina": "giapponese"
-  },
-  {
-    "id": "r010",
-    "nome": "Panino con prosciutto e formaggio",
-    "tipo": "pranzo",
-    "categoria": "formaggio",
-    "tempoPreparazione": 10,
-    "strumentiRichiesti": ["tostapane"],
-    "ingredienti": ["pane", "prosciutto", "formaggio", "burro"],
-    "cucina": "italiana"
-  },
-  {
-    "id": "r011",
-    "nome": "Piadina con verdure grigliate",
-    "tipo": "pranzo",
-    "categoria": "legumi",
-    "tempoPreparazione": 15,
-    "strumentiRichiesti": ["padella"],
-    "ingredienti": ["piadina", "zucchine", "peperoni", "melanzane", "olio d'oliva"],
-    "cucina": "italiana"
-  },
-  {
     "id": "r012",
     "nome": "Tagliata di manzo con rucola",
     "tipo": "pranzo",
     "categoria": "carne",
     "tempoPreparazione": 25,
     "strumentiRichiesti": ["padella"],
-    "ingredienti": ["manzo", "rucola", "olio d'oliva", "sale", "pepe"],
-    "cucina": "italiana"
-  },
-  {
-    "id": "r013",
-    "nome": "Spaghetti aglio, olio e peperoncino",
-    "tipo": "pranzo",
-    "categoria": "formaggio",
-    "tempoPreparazione": 15,
-    "strumentiRichiesti": ["pentola"],
-    "ingredienti": ["spaghetti", "aglio", "olio d'oliva", "peperoncino"],
-    "cucina": "italiana"
-  },
-  {
-    "id": "r014",
-    "nome": "Omelette al formaggio",
-    "tipo": "pranzo",
-    "categoria": "uova",
-    "tempoPreparazione": 10,
-    "strumentiRichiesti": ["padella"],
-    "ingredienti": ["uova", "formaggio", "olio d'oliva", "sale"],
-    "cucina": "francese"
+    "ingredienti": ["manzo", "rucola", "sale", "pepe"]
   },
   {
     "id": "r015",
@@ -146,18 +63,7 @@
     "categoria": "formaggio",
     "tempoPreparazione": 15,
     "strumentiRichiesti": ["pentola"],
-    "ingredienti": ["pasta", "basilico", "olio d'oliva", "parmigiano", "pinoli"],
-    "cucina": "italiana"
-  },
-  {
-    "id": "r016",
-    "nome": "Insalata greca",
-    "tipo": "pranzo",
-    "categoria": "formaggio",
-    "tempoPreparazione": 15,
-    "strumentiRichiesti": ["ciotola"],
-    "ingredienti": ["pomodori", "cetrioli", "feta", "olive", "olio d'oliva"],
-    "cucina": "greca"
+    "ingredienti": ["pasta", "basilico", "parmigiano", "pinoli"]
   },
   {
     "id": "r017",
@@ -168,16 +74,6 @@
     "strumentiRichiesti": ["pentola"],
     "ingredienti": ["noodles", "brodo", "uova", "cipollotto", "soia"],
     "cucina": "giapponese"
-  },
-  {
-    "id": "r018",
-    "nome": "Vitello tonnato",
-    "tipo": "pranzo",
-    "categoria": "carne",
-    "tempoPreparazione": 30,
-    "strumentiRichiesti": ["padella"],
-    "ingredienti": ["vitello", "tonno", "maionese", "capperi", "acciughe"],
-    "cucina": "italiana"
   },
   {
     "id": "r019",
@@ -196,47 +92,123 @@
     "categoria": "legumi",
     "tempoPreparazione": 20,
     "strumentiRichiesti": ["pentola"],
-    "ingredienti": ["pasta", "ceci", "rosmarino", "olio d'oliva", "aglio"],
-    "cucina": "italiana"
+    "ingredienti": ["pasta", "ceci", "rosmarino", "aglio"]
   },
   {
-    "id": "r021",
-    "nome": "Salmone al vapore con asparagi",
-    "tipo": "cena",
-    "categoria": "pesce",
-    "tempoPreparazione": 40,
-    "strumentiRichiesti": ["pentola"],
-    "ingredienti": ["salmone", "asparagi", "olio d'oliva", "limone", "aglio"],
-    "cucina": "italiana"
+    "id": "r025",
+    "nome": "Orzotto ai funghi champignon",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "tempoPreparazione": 35,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["brodo vegetale", "orzo perlato", "cipolla", "funghi champignon", "grana padano", "zucca", "timo"]
   },
   {
-    "id": "r022",
-    "nome": "Pollo al limone",
+    "id": "r026",
+    "nome": "Petto di pollo all paprika",
     "tipo": "cena",
     "categoria": "carne",
-    "tempoPreparazione": 30,
+    "tempoPreparazione": 40,
     "strumentiRichiesti": ["padella"],
-    "ingredienti": ["pollo", "limone", "aglio", "rosmarino", "olio d'oliva"],
-    "cucina": "italiana"
+    "ingredienti": ["petto di pollo", "zucca", "cipolla", "salsa aioli", "origano", "paprika"]
   },
   {
-    "id": "r023",
-    "nome": "Zuppa di verdure miste",
+    "id": "r027",
+    "nome": "Mondeghili",
     "tipo": "cena",
-    "categoria": "legumi",
+    "categoria": "carne",
     "tempoPreparazione": 35,
-    "strumentiRichiesti": ["pentola"],
-    "ingredienti": ["carote", "patate", "zucchine", "pomodoro", "cipolla"],
-    "cucina": "italiana"
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["macinato di suino", "zucca", "patate", "salvia", "pangrattato", "aglio"]
   },
   {
-    "id": "r024",
-    "nome": "Insalata di tonno e fagioli",
+    "id": "r028",
+    "nome": "Risotto alla zucca e gorgonzola",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "tempoPreparazione": 45,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["gorgonzola", "zucca", "riso", "scalogno", "brodo granulare", "salvia"]
+  },
+  {
+    "id": "r029",
+    "nome": "Couscous perlato al maiale sfilacciato",
     "tipo": "cena",
-    "categoria": "pesce",
+    "categoria": "carne",
     "tempoPreparazione": 20,
-    "strumentiRichiesti": ["ciotola"],
-    "ingredienti": ["tonno", "fagioli", "cipolla rossa", "pomodori", "olio d'oliva"],
-    "cucina": "italiana"
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["pulled pork", "verza", "couscous perlato", "noci", "salvia", "sedano", "brodo granulare"]
+  },
+  {
+    "id": "r030",
+    "nome": "Bocconcini di lonza di mailae al lime",
+    "tipo": "cena",
+    "categoria": "carne",
+    "tempoPreparazione": 40,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["lonza di maiale", "lime", "aglio", "finocchio", "panko", "formaggio grattugiato", "prezzemolo", "carota"]
+  },
+  {
+    "id": "r031",
+    "nome": "Mazzancolle in cream di currry e cocco",
+    "tipo": "cena",
+    "categoria": "carne",
+    "tempoPreparazione": 40,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["cipolla", "prezzemolo", "brodo granulare", "latte di cocco", "riso basmati", "mazzancolle tropicali", "curry", "zucchina", "zenzero", "carota"]
+  },
+  {
+    "id": "r032",
+    "nome": "Nasi goreng",
+    "tipo": "pranzo",
+    "categoria": "carne",
+    "tempoPreparazione": 40,
+    "strumentiRichiesti": ["padella"],
+    "ingredienti": ["porro", "salsa di soia", "brodo granulare", "marinatura stile asia", "lime", "carota"]
+  },
+  {
+    "id": "r040",
+    "nome": "Spaghetti alle vongole",
+    "tipo": "pranzo",
+    "categoria": "pesce",
+    "tempoPreparazione": 30,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["spaghetti", "vongole", "aglio", "prezzemolo", "vino bianco"]
+  },
+  {
+    "id": "r041",
+    "nome": "Orecchiette e lenticchie in crema di bufala",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "tempoPreparazione": 30,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["orecchiette", "pomodori datterini", "aglio", "alloro", "lenticchie", "brodo granulare", "basilico", "mozzarella di bufala", "grana padano"]
+  },
+  {
+    "id": "r042",
+    "nome": "Tacos al ragù bianco di suino",
+    "tipo": "pranzo",
+    "categoria": "carne",
+    "tempoPreparazione": 25,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["torillias", "pasta di miso", "zenzero", "yogurt bianco", "porro", "cipollotto", "macinato di suino"]
+  },
+  {
+    "id": "r043",
+    "nome": "Gnocchetti alle mazzancolle e burrata",
+    "tipo": "pranzo",
+    "categoria": "carne",
+    "tempoPreparazione": 45,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["zucca", "scalogno", "zenzero", "brodo granulare", "burrata", "mazzancolle tropicali", "chicche di patate", "timo"]
+  },
+  {
+    "id": "r044",
+    "nome": "Strozzapreti al pesto rosso di ricotta",
+    "tipo": "pranzo",
+    "categoria": "carne",
+    "tempoPreparazione": 45,
+    "strumentiRichiesti": ["pentola"],
+    "ingredienti": ["strozzapreti", "basilico", "pomodori secchi", "mandorle", "ricotta", "grana padano", "aglio"]
   }
 ]
