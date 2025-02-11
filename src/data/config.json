@@ -1,7 +1,7 @@
 {
   "useHistory": true,
   "menuOptions": {
-    "maxRepetitionWeeks": 3,
+    "maxRepetitionWeeks": 2,
     "mealTypeQuotas": {
       "carne": 4,
       "legumi": 4,

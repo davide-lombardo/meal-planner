@@ -72,7 +72,7 @@
   },
   {
     "id": "r030",
-    "nome": "Bocconcini di lonza di mailae al lime",
+    "nome": "Bocconcini di lonza di maiale al lime",
     "tipo": "cena",
     "categoria": "carne",
     "ingredienti": ["lonza di maiale", "lime", "aglio", "finocchio", "panko", "formaggio grattugiato", "prezzemolo", "carota"]
@@ -81,15 +81,15 @@
     "id": "r031",
     "nome": "Mazzancolle in crema di currry e cocco",
     "tipo": "cena",
-    "categoria": "carne",
+    "categoria": "pesce",
     "ingredienti": ["cipolla", "prezzemolo", "brodo granulare", "latte di cocco", "riso basmati", "mazzancolle tropicali", "curry", "zucchina", "zenzero", "carota"]
   },
   {
     "id": "r032",
     "nome": "Nasi goreng",
     "tipo": "pranzo",
-    "categoria": "carne",
-    "ingredienti": ["porro", "salsa di soia", "brodo granulare", "marinatura stile asia", "lime", "carota"]
+    "categoria": "pesce",
+    "ingredienti": ["mazzancolle tropicali", "porro", "salsa di soia", "brodo granulare", "marinatura stile asia", "lime", "carota"]
   },
   {
     "id": "r040",
@@ -116,14 +116,14 @@
     "id": "r043",
     "nome": "Gnocchetti alle mazzancolle e burrata",
     "tipo": "pranzo",
-    "categoria": "carne",
+    "categoria": "pesce",
     "ingredienti": ["zucca", "scalogno", "zenzero", "brodo granulare", "burrata", "mazzancolle tropicali", "chicche di patate", "timo"]
   },
   {
     "id": "r044",
     "nome": "Strozzapreti al pesto rosso di ricotta",
     "tipo": "pranzo",
-    "categoria": "carne",
+    "categoria": "formaggio",
     "ingredienti": ["strozzapreti", "basilico", "pomodori secchi", "mandorle", "ricotta", "grana padano", "aglio"]
   },
   {
@@ -134,8 +134,8 @@
     "ingredienti": ["merluzzo", "semi di sesamo", "pasta di miso", "finoccio", "miele", "aglio", "zenzero", "carota", "porro"]
   },
   {
-    "id": "r045",
-    "nome": "Kaeng Kari mu - mailae al curry giallo",
+    "id": "r046",
+    "nome": "Kaeng Kari mu - maiale al curry giallo",
     "tipo": "cena",
     "categoria": "carne",
     "ingredienti": ["lonza di maiale", "latte di cocco", "arachidi", "riso jasmine", "lime", "zucchina", "cipolla", "curry", "carota", "brodo granulare", "zenzero"]

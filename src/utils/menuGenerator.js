@@ -12,71 +12,144 @@ const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
  */
 function generateMenu(recipes, history = []) {
   const menu = { pranzo: [], cena: [] };
-
+  
   // Configuration values
-  const maxWeeks = config.menuOptions.maxRepetitionWeeks || 4;
+  const maxWeeks = config.menuOptions.maxRepetitionWeeks || 2;
   const useQuotas = config.menuOptions.useQuotas !== false;
-  const quotas = useQuotas ? { ...config.menuOptions.mealTypeQuotas } : null;
 
-  // Get recent history to prevent repetition of meals within maxWeeks
-  const recentHistory = history.slice(-maxWeeks);
-  const usedRecipes = new Set(
-    recentHistory.flatMap((menu) =>
+  const weeklyQuotas = useQuotas ? { ...config.menuOptions.mealTypeQuotas } : null;
+
+  // Track used recipes for this week and from recent history
+  const usedThisWeek = new Set();
+  const recentlyUsed = new Set(
+    history.slice(-maxWeeks).flatMap((menu) =>
       [...menu.pranzo, ...menu.cena]
         .filter((r) => r && r.id)
         .map((r) => r.id)
     )
   );
- /**
-   * Filters recipes by category while ensuring they haven't been recently used.
-   * @param {string} category - The category of meals to filter.
-   * @returns {Array} A list of available recipes in the category.
-   */
-  const filterRecipesByCategory = (category) =>
-    recipes.filter(
-      (recipe) => recipe.categoria === category && !usedRecipes.has(recipe.id)
-    );
 
-     /**
-   * Selects a meal based on type (pranzo/cena), ensuring quotas and variety.
-   * @param {string} type - The meal type ("pranzo" or "cena").
-   * @returns {Object|null} The selected meal or null if no valid option is available.
+  /**
+   * Checks if a recipe can be used based on current constraints
+   * @param {Object} recipe - Recipe to check
+   * @param {string} mealType - Meal type (pranzo/cena)
+   * @returns {boolean} Whether the recipe can be used
    */
-  const assignMeal = (type) => {
-    for (const [category, quota] of Object.entries(quotas || {})) {
-      if (!useQuotas || quota > 0) {
-        const options = filterRecipesByCategory(category).filter(
-          (recipe) => recipe.tipo === type
-        );
-        if (options.length > 0) {
-          const selected = options[Math.floor(Math.random() * options.length)];
-          if (useQuotas) quotas[category]--;
-          usedRecipes.add(selected.id);
-          return selected;
-        }
-      }
+  const canUseRecipe = (recipe, mealType) => {
+    if (!recipe || usedThisWeek.has(recipe.id) || recentlyUsed.has(recipe.id)) {
+      return false;
     }
-    return null;
+    
+    if (recipe.tipo && recipe.tipo !== mealType) {
+      return false;
+    }
+
+    if (useQuotas && weeklyQuotas[recipe.categoria] <= 0) {
+      return false;
+    }
+
+    return true;
   };
 
-  // Fill the menu
-  for (let i = 0; i < 7; i++) {
-    const pranzoRecipe =
-      assignMeal("pranzo") ||
-      recipes.find((r) => r.tipo === "pranzo")
-    const cenaRecipe =
-      i === 5
-        ? { id: "pizza", nome: "Pizza", tipo: "cena" }
-        : i === 6
-        ? { id: "libero", nome: "Libero", tipo: "cena" }
-        : assignMeal("cena")
+  /**
+   * Gets all valid recipes for a meal slot
+   * @param {string} mealType - Meal type (pranzo/cena)
+   * @param {boolean} ignoreQuotas - Whether to ignore quota constraints
+   * @returns {Array} Available recipes
+   */
+  const getAvailableRecipes = (mealType, ignoreQuotas = false) => {
+    return recipes.filter(recipe => {
+      if (!ignoreQuotas) {
+        return canUseRecipe(recipe, mealType);
+      }
+      // Ignore quotas but still respect meal type and usage history
+      return recipe && 
+             !usedThisWeek.has(recipe.id) && 
+             !recentlyUsed.has(recipe.id) &&
+             (!recipe.tipo || recipe.tipo === mealType);
+    });
+  };
 
-    menu.pranzo.push(pranzoRecipe);
-    menu.cena.push(cenaRecipe);
+  /**
+   * Selects a meal for a specific slot
+   * @param {string} mealType - Meal type (pranzo/cena)
+   * @param {number} dayIndex - Current day index
+   * @returns {Object} Selected recipe
+   */
+  const selectMeal = (mealType, dayIndex) => {
+    // Handle special cases for dinner
+    if (mealType === "cena") {
+      if (dayIndex === 5) return { id: "pizza", nome: "Pizza", tipo: "cena" };
+      if (dayIndex === 6) return { id: "libero", nome: "Libero", tipo: "cena" };
+    }
+
+    // Try with all constraints
+    let available = getAvailableRecipes(mealType);
+    
+    // If no recipes available, try ignoring quotas
+    if (available.length === 0) {
+      available = getAvailableRecipes(mealType, true);
+    }
+    
+    // If still no recipes, try reusing a recipe from this week
+    if (available.length === 0) {
+      available = recipes.filter(recipe => 
+        (!recipe.tipo || recipe.tipo === mealType) &&
+        !recentlyUsed.has(recipe.id)
+      );
+    }
+
+    // If absolutely no recipes available, reuse any valid recipe
+    if (available.length === 0) {
+      available = recipes.filter(recipe => 
+        !recipe.tipo || recipe.tipo === mealType
+      );
+      console.warn(`Reusing recipes for ${mealType} on day ${dayIndex + 1}`);
+    }
+
+    if (available.length === 0) {
+      console.error(`No available recipes for ${mealType} on day ${dayIndex + 1}`);
+      return null;
+    }
+
+    // Select random recipe from available options
+    const selected = available[Math.floor(Math.random() * available.length)];
+    
+    // Update tracking
+    usedThisWeek.add(selected.id);
+    if (useQuotas && weeklyQuotas[selected.categoria]) {
+      weeklyQuotas[selected.categoria]--;
+    }
+
+    return selected;
+  };
+
+  // Pre-calculate meals for better distribution
+  const allMealSlots = [];
+  for (let i = 0; i < 7; i++) {
+    allMealSlots.push({ type: "pranzo", day: i });
+    allMealSlots.push({ type: "cena", day: i });
   }
+  
+  // Shuffle meal slots for more even distribution
+  for (let i = allMealSlots.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [allMealSlots[i], allMealSlots[j]] = [allMealSlots[j], allMealSlots[i]];
+  }
+
+  // Fill menu slots in random order
+  allMealSlots.forEach(slot => {
+    const meal = selectMeal(slot.type, slot.day);
+    if (slot.type === "pranzo") {
+      menu.pranzo[slot.day] = meal;
+    } else {
+      menu.cena[slot.day] = meal;
+    }
+  });
 
   return menu;
 }
+
 /**
  * Formats the weekly menu into plain text for email or other purposes.
  * @param {Object} menu - Weekly menu with pranzo and cena.
