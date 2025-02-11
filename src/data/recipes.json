@@ -4,94 +4,35 @@
     "nome": "Pasta alla carbonara",
     "tipo": "pranzo",
     "categoria": "uova",
-    "tempoPreparazione": 20,
-    "strumentiRichiesti": ["pentola"],
     "ingredienti": ["pasta", "guanciale", "uova", "pecorino", "pepe nero"]
-  },
-  {
-    "id": "r003",
-    "nome": "Riso alla cantonese",
-    "tipo": "pranzo",
-    "categoria": "carne",
-    "tempoPreparazione": 25,
-    "strumentiRichiesti": ["padella"],
-    "ingredienti": ["riso", "piselli", "prosciutto cotto", "uova", "salsa di soia"],
-    "cucina": "cinese"
-  },
-  {
-    "id": "r004",
-    "nome": "Couscous con verdure",
-    "tipo": "pranzo",
-    "categoria": "legumi",
-    "tempoPreparazione": 15,
-    "strumentiRichiesti": ["ciotola"],
-    "ingredienti": ["couscous", "zucchine", "carote", "peperoni"],
-    "cucina": "mediorientale"
   },
   {
     "id": "r005",
     "nome": "Frittata di cipolle",
-    "tipo": "pranzo",
+    "tipo": "cena",
     "categoria": "uova",
-    "tempoPreparazione": 15,
-    "strumentiRichiesti": ["padella"],
     "ingredienti": ["uova", "cipolle", "sale"]
   },
   {
     "id": "r007",
     "nome": "Pollo al curry con riso",
-    "tipo": "pranzo",
+    "tipo": "cena",
     "categoria": "carne",
-    "tempoPreparazione": 25,
-    "strumentiRichiesti": ["padella"],
     "ingredienti": ["pollo", "curry", "latte di cocco", "riso basmati"],
     "cucina": "indiana"
-  },
-  {
-    "id": "r012",
-    "nome": "Tagliata di manzo con rucola",
-    "tipo": "pranzo",
-    "categoria": "carne",
-    "tempoPreparazione": 25,
-    "strumentiRichiesti": ["padella"],
-    "ingredienti": ["manzo", "rucola", "sale", "pepe"]
   },
   {
     "id": "r015",
     "nome": "Pasta al pesto",
     "tipo": "pranzo",
     "categoria": "formaggio",
-    "tempoPreparazione": 15,
-    "strumentiRichiesti": ["pentola"],
     "ingredienti": ["pasta", "basilico", "parmigiano", "pinoli"]
-  },
-  {
-    "id": "r017",
-    "nome": "Ramen veloce",
-    "tipo": "pranzo",
-    "categoria": "pesce",
-    "tempoPreparazione": 20,
-    "strumentiRichiesti": ["pentola"],
-    "ingredienti": ["noodles", "brodo", "uova", "cipollotto", "soia"],
-    "cucina": "giapponese"
-  },
-  {
-    "id": "r019",
-    "nome": "Pollo teriyaki",
-    "tipo": "pranzo",
-    "categoria": "carne",
-    "tempoPreparazione": 25,
-    "strumentiRichiesti": ["padella"],
-    "ingredienti": ["pollo", "soia", "zucchero", "zenzero", "cipollotto"],
-    "cucina": "giapponese"
   },
   {
     "id": "r020",
     "nome": "Pasta e ceci",
     "tipo": "pranzo",
     "categoria": "legumi",
-    "tempoPreparazione": 20,
-    "strumentiRichiesti": ["pentola"],
     "ingredienti": ["pasta", "ceci", "rosmarino", "aglio"]
   },
   {
@@ -99,8 +40,6 @@
     "nome": "Orzotto ai funghi champignon",
     "tipo": "pranzo",
     "categoria": "formaggio",
-    "tempoPreparazione": 35,
-    "strumentiRichiesti": ["padella"],
     "ingredienti": ["brodo vegetale", "orzo perlato", "cipolla", "funghi champignon", "grana padano", "zucca", "timo"]
   },
   {
@@ -108,8 +47,6 @@
     "nome": "Petto di pollo all paprika",
     "tipo": "cena",
     "categoria": "carne",
-    "tempoPreparazione": 40,
-    "strumentiRichiesti": ["padella"],
     "ingredienti": ["petto di pollo", "zucca", "cipolla", "salsa aioli", "origano", "paprika"]
   },
   {
@@ -117,8 +54,6 @@
     "nome": "Mondeghili",
     "tipo": "cena",
     "categoria": "carne",
-    "tempoPreparazione": 35,
-    "strumentiRichiesti": ["padella"],
     "ingredienti": ["macinato di suino", "zucca", "patate", "salvia", "pangrattato", "aglio"]
   },
   {
@@ -126,8 +61,6 @@
     "nome": "Risotto alla zucca e gorgonzola",
     "tipo": "pranzo",
     "categoria": "formaggio",
-    "tempoPreparazione": 45,
-    "strumentiRichiesti": ["padella"],
     "ingredienti": ["gorgonzola", "zucca", "riso", "scalogno", "brodo granulare", "salvia"]
   },
   {
@@ -135,8 +68,6 @@
     "nome": "Couscous perlato al maiale sfilacciato",
     "tipo": "cena",
     "categoria": "carne",
-    "tempoPreparazione": 20,
-    "strumentiRichiesti": ["padella"],
     "ingredienti": ["pulled pork", "verza", "couscous perlato", "noci", "salvia", "sedano", "brodo granulare"]
   },
   {
@@ -144,17 +75,13 @@
     "nome": "Bocconcini di lonza di mailae al lime",
     "tipo": "cena",
     "categoria": "carne",
-    "tempoPreparazione": 40,
-    "strumentiRichiesti": ["padella"],
     "ingredienti": ["lonza di maiale", "lime", "aglio", "finocchio", "panko", "formaggio grattugiato", "prezzemolo", "carota"]
   },
   {
     "id": "r031",
-    "nome": "Mazzancolle in cream di currry e cocco",
+    "nome": "Mazzancolle in crema di currry e cocco",
     "tipo": "cena",
     "categoria": "carne",
-    "tempoPreparazione": 40,
-    "strumentiRichiesti": ["padella"],
     "ingredienti": ["cipolla", "prezzemolo", "brodo granulare", "latte di cocco", "riso basmati", "mazzancolle tropicali", "curry", "zucchina", "zenzero", "carota"]
   },
   {
@@ -162,8 +89,6 @@
     "nome": "Nasi goreng",
     "tipo": "pranzo",
     "categoria": "carne",
-    "tempoPreparazione": 40,
-    "strumentiRichiesti": ["padella"],
     "ingredienti": ["porro", "salsa di soia", "brodo granulare", "marinatura stile asia", "lime", "carota"]
   },
   {
@@ -171,8 +96,6 @@
     "nome": "Spaghetti alle vongole",
     "tipo": "pranzo",
     "categoria": "pesce",
-    "tempoPreparazione": 30,
-    "strumentiRichiesti": ["pentola"],
     "ingredienti": ["spaghetti", "vongole", "aglio", "prezzemolo", "vino bianco"]
   },
   {
@@ -180,17 +103,13 @@
     "nome": "Orecchiette e lenticchie in crema di bufala",
     "tipo": "pranzo",
     "categoria": "formaggio",
-    "tempoPreparazione": 30,
-    "strumentiRichiesti": ["pentola"],
     "ingredienti": ["orecchiette", "pomodori datterini", "aglio", "alloro", "lenticchie", "brodo granulare", "basilico", "mozzarella di bufala", "grana padano"]
   },
   {
     "id": "r042",
     "nome": "Tacos al ragù bianco di suino",
-    "tipo": "pranzo",
+    "tipo": "cena",
     "categoria": "carne",
-    "tempoPreparazione": 25,
-    "strumentiRichiesti": ["pentola"],
     "ingredienti": ["torillias", "pasta di miso", "zenzero", "yogurt bianco", "porro", "cipollotto", "macinato di suino"]
   },
   {
@@ -198,8 +117,6 @@
     "nome": "Gnocchetti alle mazzancolle e burrata",
     "tipo": "pranzo",
     "categoria": "carne",
-    "tempoPreparazione": 45,
-    "strumentiRichiesti": ["pentola"],
     "ingredienti": ["zucca", "scalogno", "zenzero", "brodo granulare", "burrata", "mazzancolle tropicali", "chicche di patate", "timo"]
   },
   {
@@ -207,8 +124,20 @@
     "nome": "Strozzapreti al pesto rosso di ricotta",
     "tipo": "pranzo",
     "categoria": "carne",
-    "tempoPreparazione": 45,
-    "strumentiRichiesti": ["pentola"],
     "ingredienti": ["strozzapreti", "basilico", "pomodori secchi", "mandorle", "ricotta", "grana padano", "aglio"]
+  },
+  {
+    "id": "r045",
+    "nome": "Merluzzo in pastella al sesamo nero",
+    "tipo": "cena",
+    "categoria": "pesce",
+    "ingredienti": ["merluzzo", "semi di sesamo", "pasta di miso", "finoccio", "miele", "aglio", "zenzero", "carota", "porro"]
+  },
+  {
+    "id": "r045",
+    "nome": "Kaeng Kari mu - mailae al curry giallo",
+    "tipo": "cena",
+    "categoria": "carne",
+    "ingredienti": ["lonza di maiale", "latte di cocco", "arachidi", "riso jasmine", "lime", "zucchina", "cipolla", "curry", "carota", "brodo granulare", "zenzero"]
   }
 ]

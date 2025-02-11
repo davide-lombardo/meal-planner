@@ -1,71 +1,75 @@
 const fs = require("fs");
 const path = require("path");
 
-// Load configuration
 const configPath = path.join(__dirname, "../data/config.json");
 const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
 
 /**
- * Generates a weekly menu based on recipes and past history.
- * @param {Array} recipes - List of recipes.
- * @param {Array} history - History of past weekly menus.
- * @returns {Object} Weekly menu with pranzo and cena.
+ * Generates a weekly menu with lunch (pranzo) and dinner (cena), ensuring variety and quota constraints.
+ * @param {Array} recipes - List of available recipes.
+ * @param {Array} history - List of past weekly menus to avoid repetition.
+ * @returns {Object} The generated weekly menu.
  */
 function generateMenu(recipes, history = []) {
   const menu = { pranzo: [], cena: [] };
 
+  // Configuration values
   const maxWeeks = config.menuOptions.maxRepetitionWeeks || 4;
+  const useQuotas = config.menuOptions.useQuotas !== false;
+  const quotas = useQuotas ? { ...config.menuOptions.mealTypeQuotas } : null;
+
+  // Get recent history to prevent repetition of meals within maxWeeks
   const recentHistory = history.slice(-maxWeeks);
   const usedRecipes = new Set(
     recentHistory.flatMap((menu) =>
       [...menu.pranzo, ...menu.cena]
-        .filter((r) => r && r.id) // Ensure the recipe and its ID are valid
+        .filter((r) => r && r.id)
         .map((r) => r.id)
     )
   );
-
-  // Weekly quotas for each category
-  const quotas = {
-    carne: 4,
-    legumi: 4,
-    pesce: 2,
-    formaggio: 1,
-    uova: 1
-  };
-
-  // Helper to filter recipes by category and exclusion
+ /**
+   * Filters recipes by category while ensuring they haven't been recently used.
+   * @param {string} category - The category of meals to filter.
+   * @returns {Array} A list of available recipes in the category.
+   */
   const filterRecipesByCategory = (category) =>
     recipes.filter(
-      recipe =>
-        recipe.categoria === category &&
-        !usedRecipes.has(recipe.id)
+      (recipe) => recipe.categoria === category && !usedRecipes.has(recipe.id)
     );
 
+     /**
+   * Selects a meal based on type (pranzo/cena), ensuring quotas and variety.
+   * @param {string} type - The meal type ("pranzo" or "cena").
+   * @returns {Object|null} The selected meal or null if no valid option is available.
+   */
   const assignMeal = (type) => {
-    for (const [category, quota] of Object.entries(quotas)) {
-      if (quota > 0) {
+    for (const [category, quota] of Object.entries(quotas || {})) {
+      if (!useQuotas || quota > 0) {
         const options = filterRecipesByCategory(category).filter(
-          recipe => recipe.tipo === type
+          (recipe) => recipe.tipo === type
         );
         if (options.length > 0) {
-          const selected = options.shift();
-          quotas[category]--;
+          const selected = options[Math.floor(Math.random() * options.length)];
+          if (useQuotas) quotas[category]--;
           usedRecipes.add(selected.id);
           return selected;
         }
       }
     }
-    return null; // No recipes available
+    return null;
   };
 
   // Fill the menu
   for (let i = 0; i < 7; i++) {
-    const pranzoRecipe = assignMeal("pranzo");
-    const cenaRecipe = i === 5
-      ? { id: "pizza", nome: "Pizza", tipo: "cena" } // Fixed Pizza for Saturday
-      : i === 6
-      ? { id: "libero", nome: "Libero", tipo: "cena" } // Fixed Libero for Sunday
-      : assignMeal("cena");
+    const pranzoRecipe =
+      assignMeal("pranzo") ||
+      recipes.find((r) => r.tipo === "pranzo")
+    const cenaRecipe =
+      i === 5
+        ? { id: "pizza", nome: "Pizza", tipo: "cena" }
+        : i === 6
+        ? { id: "libero", nome: "Libero", tipo: "cena" }
+        : assignMeal("cena")
 
     menu.pranzo.push(pranzoRecipe);
     menu.cena.push(cenaRecipe);
@@ -79,7 +83,15 @@ function generateMenu(recipes, history = []) {
  * @returns {string} Formatted menu as a plain text string.
  */
 function formatMenu(menu) {
-  const daysOfWeek = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
+  const daysOfWeek = [
+    "Lunedì",
+    "Martedì",
+    "Mercoledì",
+    "Giovedì",
+    "Venerdì",
+    "Sabato",
+    "Domenica",
+  ];
 
   let formattedMenu = "Menù settimanale:\n\n";
 
@@ -93,10 +105,18 @@ function formatMenu(menu) {
 }
 
 function formatMenuHtml(menu) {
-  const daysOfWeek = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
-  
-  let formattedMenu = '';
-  
+  const daysOfWeek = [
+    "Lunedì",
+    "Martedì",
+    "Mercoledì",
+    "Giovedì",
+    "Venerdì",
+    "Sabato",
+    "Domenica",
+  ];
+
+  let formattedMenu = "";
+
   for (let i = 0; i < 7; i++) {
     formattedMenu += `
       <div class="menu-day">
@@ -112,7 +132,7 @@ function formatMenuHtml(menu) {
       </div>
     `;
   }
-  
+
   return formattedMenu;
 }
 
@@ -275,11 +295,13 @@ function generateShoppingList(menu, recipes) {
 
   // Gather all ingredients from pranzo and cena recipes
   const allMeals = [...menu.pranzo, ...menu.cena];
-  allMeals.forEach(meal => {
+  allMeals.forEach((meal) => {
     if (meal && meal.id) {
-      const recipe = recipes.find(r => r.id === meal.id);
+      const recipe = recipes.find((r) => r.id === meal.id);
       if (recipe && recipe.ingredienti) {
-        recipe.ingredienti.forEach(ingredient => shoppingList.add(ingredient));
+        recipe.ingredienti.forEach((ingredient) =>
+          shoppingList.add(ingredient)
+        );
       }
     }
   });
@@ -291,11 +313,17 @@ function generateShoppingList(menu, recipes) {
 function generateShoppingListHtml(menu, recipes) {
   const shoppingList = generateShoppingList(menu, recipes);
   let listHtml = "<ul>";
-  shoppingList.forEach(item => {
+  shoppingList.forEach((item) => {
     listHtml += `<li>${item}</li>`;
   });
   listHtml += "</ul>";
   return listHtml;
 }
 
-module.exports = { generateMenu, formatMenu, saveMenuToHistory, generateShoppingList, generateHtmlEmail };
+module.exports = {
+  generateMenu,
+  formatMenu,
+  saveMenuToHistory,
+  generateShoppingList,
+  generateHtmlEmail,
+};

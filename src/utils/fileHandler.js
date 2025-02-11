@@ -1,17 +1,11 @@
 const fs = require("fs");
 const path = require("path");
 
-// Carica la configurazione
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/config.json"), "utf8"));
 
-// Percorsi dei file JSON presi dalla configurazione
 const recipesPath = path.join(__dirname, config.paths.recipesFile);
 const historyPath = path.join(__dirname, config.paths.historyFile);
 
-/**
- * Carica le ricette dal file JSON
- * @returns {Array} Array di ricette
- */
 function loadRecipes() {
   try {
     const data = fs.readFileSync(recipesPath, "utf8");
@@ -22,10 +16,6 @@ function loadRecipes() {
   }
 }
 
-/**
- * Carica la cronologia dal file JSON
- * @returns {Array} Cronologia dei menù
- */
 function loadHistory() {
   try {
     const data = fs.readFileSync(historyPath, "utf8");
@@ -36,10 +26,6 @@ function loadHistory() {
   }
 }
 
-/**
- * Aggiorna la cronologia con un nuovo menù
- * @param {Object} menu Menù da salvare nella cronologia
- */
 function updateHistory(menu) {
   try {
     const history = loadHistory();
