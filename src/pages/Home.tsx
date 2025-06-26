@@ -6,6 +6,8 @@ import type { Recipe } from '../components/RecipeCard';
 import RecipeDialog from '../components/RecipeDialog';
 import ConfirmDialog from '../components/ConfirmDialog';
 
+const API_URL = 'http://localhost:4000/api/recipes';
+
 export default function Home() {
   const [recipes, setRecipes] = React.useState<Recipe[]>([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -15,19 +17,20 @@ export default function Home() {
   const [sendSuccess, setSendSuccess] = React.useState('');
   const [loading, setLoading] = React.useState(true);
   const [deleteDialog, setDeleteDialog] = React.useState<{ open: boolean; recipe: Recipe | null }>({ open: false, recipe: null });
+  const [error, setError] = React.useState('');
 
+  // Fetch recipes from backend
   React.useEffect(() => {
     setLoading(true);
-    const local = localStorage.getItem('recipes');
-    if (local) {
-      setRecipes(JSON.parse(local));
-      setLoading(false);
-    } else {
-      import('../data/recipes.json').then((data) => {
-        setRecipes(data.default);
-        setLoading(false);
-      });
-    }
+    setError('');
+    fetch(API_URL)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch recipes');
+        return res.json();
+      })
+      .then(data => setRecipes(data))
+      .catch(() => setError('Failed to load recipes.'))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleSendMealPlan = async () => {
@@ -48,28 +51,60 @@ export default function Home() {
     }
   };
 
-  const handleSaveRecipe = (recipe: Recipe) => {
-    let updated;
-    if (recipe.id) {
-      updated = recipes.map(r => r.id === recipe.id ? recipe : r);
-    } else {
-      recipe.id = 'r' + Math.random().toString(36).slice(2, 8);
-      updated = [...recipes, recipe];
+  // Save (add or edit) recipe via backend
+  const handleSaveRecipe = async (recipe: Recipe) => {
+    setLoading(true);
+    setError('');
+    try {
+      let response;
+      if (recipe.id) {
+        response = await fetch(`${API_URL}/${recipe.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(recipe),
+        });
+      } else {
+        response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(recipe),
+        });
+      }
+      if (!response.ok) throw new Error('Failed to save recipe');
+      // Refetch recipes
+      const recipesRes = await fetch(API_URL);
+      setRecipes(await recipesRes.json());
+      setDialogOpen(false);
+    } catch {
+      setError('Failed to save recipe.');
+    } finally {
+      setLoading(false);
     }
-    setRecipes(updated);
-    localStorage.setItem('recipes', JSON.stringify(updated));
+  };
+
+  // Delete recipe via backend
+  const confirmDeleteRecipe = async () => {
+    if (!deleteDialog.recipe) return;
+    setLoading(true);
+    setError('');
+    try {
+      const response = await fetch(`${API_URL}/${deleteDialog.recipe.id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete recipe');
+      // Refetch recipes
+      const recipesRes = await fetch(API_URL);
+      setRecipes(await recipesRes.json());
+      setDeleteDialog({ open: false, recipe: null });
+    } catch {
+      setError('Failed to delete recipe.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteRecipe = (recipe: Recipe) => {
     setDeleteDialog({ open: true, recipe });
-  };
-
-  const confirmDeleteRecipe = () => {
-    if (!deleteDialog.recipe) return;
-    const updated = recipes.filter(r => r.id !== deleteDialog.recipe!.id);
-    setRecipes(updated);
-    localStorage.setItem('recipes', JSON.stringify(updated));
-    setDeleteDialog({ open: false, recipe: null });
   };
 
   return (
@@ -99,10 +134,10 @@ export default function Home() {
           <Typography level="body-lg" sx={{ fontSize: { xs: 16, md: 22 }, mb: 3, color: '#fff', maxWidth: 500 }}>
             Discover, organize, and share your favorite recipes. Generate a weekly menu and shopping list in one click!
           </Typography>
-          <Button startDecorator={<PlusCircle />} size="lg" color="warning" variant="solid" sx={{ fontWeight: 700, borderRadius: 8, mr: 2 }} onClick={() => { setEditRecipe(null); setDialogOpen(true); }}>
+          <Button data-testid="add-recipe-btn" startDecorator={<PlusCircle />} size="lg" color="warning" variant="solid" sx={{ fontWeight: 700, borderRadius: 8, mr: 2 }} onClick={() => { setEditRecipe(null); setDialogOpen(true); }}>
             Add Recipe
           </Button>
-          <Button startDecorator={<Mail />} size="lg" color="primary" variant="soft" sx={{ fontWeight: 700, borderRadius: 8 }} onClick={handleSendMealPlan} disabled={sending}>
+          <Button data-testid="send-meal-plan-btn" startDecorator={<Mail />} size="lg" color="primary" variant="soft" sx={{ fontWeight: 700, borderRadius: 8 }} onClick={handleSendMealPlan} disabled={sending}>
             {sending ? <Loader2 className="spin" size={18} /> : 'Send Meal Plan'}
           </Button>
         </Box>
@@ -119,6 +154,9 @@ export default function Home() {
         <Typography level="h2" sx={{ fontWeight: 800, mb: 2, color: 'text.primary' }}>
           Your Recipes
         </Typography>
+        {error && (
+          <Alert color="danger" variant="solid" sx={{ mb: 2 }}>{error}</Alert>
+        )}
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
             <CircularProgress size="lg" color="primary" />
@@ -136,6 +174,7 @@ export default function Home() {
                 recipe={recipe}
                 onEdit={r => { setEditRecipe(r); setDialogOpen(true); }}
                 onDelete={handleDeleteRecipe}
+                data-testid={`recipe-card-${recipe.id}`}
               />
             ))}
           </Stack>
@@ -143,8 +182,8 @@ export default function Home() {
       </Box>
 
       {/* Dialogs */}
-      <RecipeDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onSave={handleSaveRecipe} initialRecipe={editRecipe} />
-      <ConfirmDialog open={deleteDialog.open} onClose={() => setDeleteDialog({ open: false, recipe: null })} onConfirm={confirmDeleteRecipe} message="Are you sure you want to delete this recipe? This action cannot be undone." />
+      <RecipeDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onSave={handleSaveRecipe} initialRecipe={editRecipe} data-testid="recipe-dialog" />
+      <ConfirmDialog open={deleteDialog.open} onClose={() => setDeleteDialog({ open: false, recipe: null })} onConfirm={confirmDeleteRecipe} message="Are you sure you want to delete this recipe? This action cannot be undone." data-testid="confirm-dialog" />
       <Snackbar open={!!sendSuccess} autoHideDuration={3000} onClose={() => setSendSuccess('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert color="success" variant="solid">{sendSuccess}</Alert>
       </Snackbar>

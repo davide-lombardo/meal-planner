@@ -59,10 +59,10 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
         </ul>
       </CardContent>
       <Box sx={{ display: 'flex', gap: 1.5, px: 3, pb: 2.5, pt: 1.5, justifyContent: 'flex-end', borderTop: '1px solid', borderColor: 'divider', background: 'rgba(0,0,0,0.01)' }}>
-        <IconButton variant="soft" color="primary" onClick={() => onEdit(recipe)} aria-label="Edit recipe" sx={{ borderRadius: 8 }}>
+        <IconButton data-testid={`edit-btn-${recipe.id}`} variant="soft" color="primary" onClick={() => onEdit(recipe)} aria-label="Edit recipe" sx={{ borderRadius: 8 }}>
           <Pencil size={18} />
         </IconButton>
-        <IconButton variant="soft" color="danger" onClick={() => onDelete(recipe)} aria-label="Delete recipe" sx={{ borderRadius: 8 }}>
+        <IconButton data-testid={`delete-btn-${recipe.id}`} variant="soft" color="danger" onClick={() => onDelete(recipe)} aria-label="Delete recipe" sx={{ borderRadius: 8 }}>
           <Trash2 size={18} />
         </IconButton>
       </Box>
