@@ -1,0 +1,14 @@
+{
+  "useHistory": true,
+  "menuOptions": {
+    "maxRepetitionWeeks": 2,
+    "mealTypeQuotas": {
+      "carne": 4,
+      "legumi": 4,
+      "pesce": 2,
+      "formaggio": 1,
+      "uova": 1
+    },
+    "useQuotas": true
+  }
+}
