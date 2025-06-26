@@ -1,8 +1,12 @@
 {
-  "name": "meal-planner-react",
+  "name": "meal-planner",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -26,11 +30,20 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
+    "@nx/js": "21.2.1",
+    "@nx/node": "^21.2.1",
+    "@nx/react": "^21.2.1",
+    "@nx/vite": "21.2.1",
+    "@nx/web": "21.2.1",
+    "@swc-node/register": "~1.9.1",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/body-parser": "^1.19.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/node": "^20.0.0",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
@@ -41,10 +54,14 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.2.0",
+    "jiti": "2.4.2",
     "jsdom": "^26.1.0",
+    "nx": "21.2.1",
+    "prettier": "^2.6.2",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.34.1",
     "vite": "^7.0.0",
     "vitest": "^3.2.4"
-  }
+  },
+  "nx": {}
 }

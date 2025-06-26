@@ -1,0 +1,47 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "client",
+  "root": "apps/client",
+  "sourceRoot": "apps/client/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "options": {
+        "outputPath": "dist/apps/client",
+        "configFile": "apps/client/vite.config.ts",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "apps/client/public",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "serve": {
+      "executor": "@nx/vite:dev-server",
+      "options": {
+        "buildTarget": "client:build",
+        "configFile": "apps/client/vite.config.ts",
+        "port": 4200
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/client/src/**/*.ts",
+          "apps/client/src/**/*.tsx"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "configFile": "apps/client/vitest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

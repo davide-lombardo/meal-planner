@@ -1,96 +1,75 @@
-# Meal Planner React App
+# Meal Planner Monorepo (Nx + pnpm)
 
-A modern meal planner web application built with React, TypeScript, Vite, and MUI Joy, featuring recipe management and meal plan email functionality.
+A modern meal planner web application built with React (frontend) and Node/Express (backend), managed as a monorepo using Nx and pnpm.
 
 ## Features
 - Add, edit, and view recipes
-- Beautiful UI with custom color palette (60/30/10 rule)
+- Beautiful, responsive UI (MUI Joy, dark mode)
 - Send your meal plan to your email
 - Backend email sending with Node.js, Express, and Nodemailer
+- Nx-powered monorepo for scalable development
 
 ## Project Structure
 ```
-meal-planner-react/
-├── public/                # Static assets (optional)
-├── src/                   # React frontend source code
-│   ├── data/              # recipes.json, config.json, history.json
-│   ├── pages/             # Home.tsx, etc.
-│   ├── utils/             # sendMealPlanEmail.ts, etc.
-│   └── ThemeProvider.tsx  # MUI Joy theme
-├── server/                # Backend email server (TypeScript)
-│   ├── index.ts           # Express server
-│   ├── email.ts           # Email sending logic
-│   ├── package.json       # Backend dependencies/scripts
-│   └── tsconfig.json      # Backend TypeScript config
-├── .env                   # Environment variables (see below)
-├── package.json           # Frontend dependencies/scripts
-└── README.md              # This file
+apps/
+  client/    # React frontend (src, public, test, etc.)
+  server/    # Node/Express backend (index.ts, utils, etc.)
+libs/        # Shared libraries (optional)
+.env         # Environment variables (see below)
+.prettierrc  # Prettier config
+.prettierignore
+.gitignore
+pnpm-workspace.yaml
+package.json # Monorepo root
+README.md
 ```
 
 ## Prerequisites
 - Node.js v18 or newer
-- npm
+- pnpm (install with `npm install -g pnpm`)
 
 ## Setup
 
 ### 1. Clone the repository
 ```bash
 git clone <your-repo-url>
-cd meal-planner-react
+cd meal-planner
 ```
 
-### 2. Install frontend dependencies
+### 2. Install dependencies
 ```bash
-npm install
+pnpm install
 ```
 
-### 3. Install backend dependencies
+## App Usage
+
+### Start the frontend (React)
 ```bash
-cd server
-npm install
-cd ..
+nx serve client
 ```
+- Open http://localhost:4200 in your browser.
 
-### 4. Configure environment variables
-Create a `.env` file in the `meal-planner-react` folder:
-```
-SMTP_USER=your_gmail_address@gmail.com
-SMTP_PASS=your_gmail_app_password
-SMTP_HOST=smtp.gmail.com
-NOTIFICATION_EMAIL=recipient_email@gmail.com
-```
-- For Gmail, use an [App Password](https://support.google.com/accounts/answer/185833?hl=en) if you have 2FA enabled.
-
-### 5. Start the backend server
+### Start the backend (Node/Express)
 ```bash
-cd server
-npm run build   # Compile TypeScript
-npm start       # Start the server
+nx serve server
 ```
-The backend will run on http://localhost:4000
+- The API will run on the port specified in your `.env` (default: 3001).
 
-### 6. Start the frontend (React) app
-In a new terminal:
-```bash
-npm run dev
-```
-The frontend will run on http://localhost:5173
+### Build, Lint, and Test
+- Build: `nx build <client|server>`
+- Lint: `nx lint <client|server>`
+- Test: `nx test <client|server>`
 
-## Usage
-- Open http://localhost:5173 in your browser.
-- Add, edit, and view recipes.
-- Click "Send Meal Plan to Email" to email your meal plan.
+## Environment Variables
+- Copy `.env.example` to `.env` and fill in required values for email, etc.
+- Both frontend and backend use the same `.env` at the root.
 
-## Customization
-- Edit `src/data/recipes.json` to pre-populate recipes.
-- Change the color palette in `src/ThemeProvider.tsx`.
+## Nx Workspace
+- Use Nx Console or CLI for advanced monorepo management.
+- See [Nx documentation](https://nx.dev) for more info.
 
-## Troubleshooting
-- If email sending fails, check your `.env` values and backend server logs.
-- Make sure both frontend and backend servers are running.
-
-## License
-MIT
+---
+MIT License
 
 # React + TypeScript + Vite
 
