@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Typography, Button, Stack, CircularProgress, Snackbar, Alert } from '@mui/joy';
+import { Box, Typography, Button, Stack, CircularProgress, Snackbar, Alert, Input, Select, Option } from '@mui/joy';
 import { PlusCircle, Mail, Loader2 } from 'lucide-react';
 import RecipeCard from '../components/RecipeCard';
 import type { Recipe } from '../components/RecipeCard';
@@ -18,6 +18,11 @@ export default function Home() {
   const [loading, setLoading] = React.useState(true);
   const [deleteDialog, setDeleteDialog] = React.useState<{ open: boolean; recipe: Recipe | null }>({ open: false, recipe: null });
   const [error, setError] = React.useState('');
+  const [search, setSearch] = React.useState('');
+  const [actionSuccess, setActionSuccess] = React.useState('');
+  const [actionError, setActionError] = React.useState('');
+  const [filterType, setFilterType] = React.useState('');
+  const [filterCategory, setFilterCategory] = React.useState('');
 
   // Fetch recipes from backend
   React.useEffect(() => {
@@ -75,8 +80,10 @@ export default function Home() {
       const recipesRes = await fetch(API_URL);
       setRecipes(await recipesRes.json());
       setDialogOpen(false);
+      setActionSuccess(recipe.id ? 'Recipe updated!' : 'Recipe added!');
     } catch {
       setError('Failed to save recipe.');
+      setActionError('Failed to save recipe.');
     } finally {
       setLoading(false);
     }
@@ -96,8 +103,10 @@ export default function Home() {
       const recipesRes = await fetch(API_URL);
       setRecipes(await recipesRes.json());
       setDeleteDialog({ open: false, recipe: null });
+      setActionSuccess('Recipe deleted!');
     } catch {
       setError('Failed to delete recipe.');
+      setActionError('Failed to delete recipe.');
     } finally {
       setLoading(false);
     }
@@ -106,6 +115,23 @@ export default function Home() {
   const handleDeleteRecipe = (recipe: Recipe) => {
     setDeleteDialog({ open: true, recipe });
   };
+
+  // Get unique types and categories from recipes
+  const types = Array.from(new Set(recipes.map(r => r.tipo).filter(Boolean)));
+  const categories = Array.from(new Set(recipes.map(r => r.categoria).filter(Boolean)));
+
+  // Filter recipes by search and dropdowns
+  const filteredRecipes = recipes.filter(r => {
+    const q = search.toLowerCase();
+    const matchesSearch =
+      r.nome.toLowerCase().includes(q) ||
+      (r.categoria && r.categoria.toLowerCase().includes(q)) ||
+      (r.tipo && r.tipo.toLowerCase().includes(q)) ||
+      r.ingredienti.some(i => i.toLowerCase().includes(q));
+    const matchesType = !filterType || r.tipo === filterType;
+    const matchesCategory = !filterCategory || r.categoria === filterCategory;
+    return matchesSearch && matchesType && matchesCategory;
+  });
 
   return (
     <Box sx={{ bgcolor: 'background.body', minHeight: '100vh', py: 0, color: 'text.primary' }}>
@@ -154,6 +180,42 @@ export default function Home() {
         <Typography level="h2" sx={{ fontWeight: 800, mb: 2, color: 'text.primary' }}>
           Your Recipes
         </Typography>
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
+          <Input
+            placeholder="Search recipes..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            sx={{ maxWidth: 240 }}
+          />
+          <Select
+            placeholder="Filter by type"
+            value={filterType}
+            onChange={(_, v) => setFilterType(v || '')}
+            sx={{ minWidth: 140 }}
+            size="md"
+            variant="outlined"
+            color="neutral"
+          >
+            <Option value="">All Types</Option>
+            {types.map(t => (
+              <Option key={t} value={t}>{t}</Option>
+            ))}
+          </Select>
+          <Select
+            placeholder="Filter by category"
+            value={filterCategory}
+            onChange={(_, v) => setFilterCategory(v || '')}
+            sx={{ minWidth: 140 }}
+            size="md"
+            variant="outlined"
+            color="neutral"
+          >
+            <Option value="">All Categories</Option>
+            {categories.map(c => (
+              <Option key={c} value={c}>{c}</Option>
+            ))}
+          </Select>
+        </Box>
         {error && (
           <Alert color="danger" variant="solid" sx={{ mb: 2 }}>{error}</Alert>
         )}
@@ -161,14 +223,14 @@ export default function Home() {
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
             <CircularProgress size="lg" color="primary" />
           </Box>
-        ) : recipes.length === 0 ? (
+        ) : filteredRecipes.length === 0 ? (
           <Box sx={{ textAlign: 'center', color: 'text.secondary', py: 8 }}>
             <img src="/illustrations/empty.svg" alt="No Recipes" style={{ height: 120, marginBottom: 16 }} />
-            <Typography level="body-lg">No recipes yet. Add your first recipe!</Typography>
+            <Typography level="body-lg">No recipes found.</Typography>
           </Box>
         ) : (
           <Stack direction="row" flexWrap="wrap" spacing={3} useFlexGap sx={{ justifyContent: 'flex-start' }}>
-            {recipes.map((recipe) => (
+            {filteredRecipes.map((recipe) => (
               <RecipeCard
                 key={recipe.id}
                 recipe={recipe}
@@ -189,6 +251,12 @@ export default function Home() {
       </Snackbar>
       <Snackbar open={!!sendError} autoHideDuration={3000} onClose={() => setSendError('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert color="danger" variant="solid">{sendError}</Alert>
+      </Snackbar>
+      <Snackbar open={!!actionSuccess} autoHideDuration={2500} onClose={() => setActionSuccess('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert color="success" variant="solid">{actionSuccess}</Alert>
+      </Snackbar>
+      <Snackbar open={!!actionError} autoHideDuration={2500} onClose={() => setActionError('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert color="danger" variant="solid">{actionError}</Alert>
       </Snackbar>
       {/* Footer */}
       <Box sx={{ width: '100%', bgcolor: 'background.body', color: 'text.secondary', textAlign: 'center', py: 4, mt: 8, borderTop: '1px solid', borderColor: 'divider' }}>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Card, CardContent, IconButton, Sheet, Divider } from '@mui/joy';
+import { Box, Typography, Button, Card, CardContent, IconButton, Sheet, Divider, Snackbar, Alert } from '@mui/joy';
 import { ArrowLeft, Pencil, Trash2, Soup } from 'lucide-react';
 
 export default function RecipeDetails() {
@@ -9,6 +9,8 @@ export default function RecipeDetails() {
   const [recipe, setRecipe] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState('');
+  const [showSuccess, setShowSuccess] = React.useState('');
+  const [showError, setShowError] = React.useState('');
 
   React.useEffect(() => {
     setLoading(true);
@@ -25,11 +27,26 @@ export default function RecipeDetails() {
       });
   }, [id]);
 
+  const handleDelete = async () => {
+    try {
+      const res = await fetch(`http://localhost:4000/api/recipes/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete');
+      setShowSuccess('Recipe deleted');
+      setTimeout(() => navigate('/'), 1200);
+    } catch {
+      setShowError('Failed to delete recipe');
+    }
+  };
+
+  const handleEdit = () => {
+    navigate('/', { state: { editRecipe: recipe } });
+  };
+
   if (loading) return <Box sx={{ p: 4 }}>Loading...</Box>;
   if (error || !recipe) return <Box sx={{ p: 4, color: 'danger.solidBg' }}>{error || 'Recipe not found.'}</Box>;
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.body' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.body', pb: 6 }}>
       {/* Back Button */}
       <Button startDecorator={<ArrowLeft />} variant="soft" color="primary" onClick={() => navigate(-1)} sx={{ mt: 3, ml: { xs: 1, md: 4 }, mb: 2, position: 'relative', zIndex: 10, fontWeight: 700, borderRadius: 8, boxShadow: 'sm' }}>
         Back
@@ -87,14 +104,23 @@ export default function RecipeDetails() {
             </ul>
           </CardContent>
           <Box sx={{ display: 'flex', gap: 1.5, pt: 2, justifyContent: 'flex-end' }}>
-            <IconButton variant="soft" color="primary" aria-label="Edit recipe" onClick={() => {}}>
+            <IconButton variant="soft" color="primary" aria-label="Edit recipe" onClick={handleEdit}>
               <Pencil size={20} />
             </IconButton>
-            <IconButton variant="soft" color="primary" aria-label="Delete recipe" onClick={() => {}}>
+            <IconButton variant="soft" color="primary" aria-label="Delete recipe" onClick={handleDelete}>
               <Trash2 size={20} />
             </IconButton>
           </Box>
         </Card>
+        <Snackbar open={!!showSuccess} autoHideDuration={2000} onClose={() => setShowSuccess('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+          <Alert color="success" variant="solid">{showSuccess}</Alert>
+        </Snackbar>
+        <Snackbar open={!!showError} autoHideDuration={2000} onClose={() => setShowError('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+          <Alert color="danger" variant="solid">{showError}</Alert>
+        </Snackbar>
+        <Button startDecorator={<ArrowLeft />} variant="plain" color="neutral" onClick={() => navigate(-1)} sx={{ mt: 4, mb: 2, display: { xs: 'flex', md: 'none' } }}>
+          Back
+        </Button>
       </Box>
     </Box>
   );
