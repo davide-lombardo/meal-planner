@@ -1,0 +1,23 @@
+// Get meal planner config
+app.get('/api/config', async (req, res) => {
+  logger.info('GET /api/config');
+  try {
+    const config = await readJson('config.json');
+    res.json(config);
+  } catch (err) {
+    logger.error('Failed to load config: %o', err);
+    res.status(500).json({ error: 'Failed to load config' });
+  }
+});
+
+// Update meal planner config
+app.put('/api/config', async (req, res) => {
+  logger.info('PUT /api/config', { body: req.body });
+  try {
+    await writeJson('config.json', req.body);
+    res.status(200).json({ message: 'Config updated' });
+  } catch (err) {
+    logger.error('Failed to update config: %o', err);
+    res.status(500).json({ error: 'Failed to update config' });
+  }
+});
