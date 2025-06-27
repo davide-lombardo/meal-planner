@@ -134,7 +134,7 @@ export default function Home() {
           <Typography level="body-lg" sx={{ fontSize: { xs: 16, md: 22 }, mb: 3, color: '#fff', maxWidth: 500 }}>
             Discover, organize, and share your favorite recipes. Generate a weekly menu and shopping list in one click!
           </Typography>
-          <Button data-testid="add-recipe-btn" startDecorator={<PlusCircle />} size="lg" color="warning" variant="solid" sx={{ fontWeight: 700, borderRadius: 8, mr: 2 }} onClick={() => { setEditRecipe(null); setDialogOpen(true); }}>
+          <Button data-testid="add-recipe-btn" startDecorator={<PlusCircle />} size="lg" color="warning" variant="solid" sx={{ fontWeight: 700, borderRadius: 8, mr: 2, color: '#181c1f' }} onClick={() => { setEditRecipe(null); setDialogOpen(true); }}>
             Add Recipe
           </Button>
           <Button data-testid="send-meal-plan-btn" startDecorator={<Mail />} size="lg" color="primary" variant="soft" sx={{ fontWeight: 700, borderRadius: 8 }} onClick={handleSendMealPlan} disabled={sending}>
@@ -194,6 +194,9 @@ export default function Home() {
       <Box sx={{ width: '100%', bgcolor: 'background.body', color: 'text.secondary', textAlign: 'center', py: 4, mt: 8, borderTop: '1px solid', borderColor: 'divider' }}>
         <Typography level="body-md" sx={{ mb: 1 }}>
           Made with <span style={{ color: '#27ae60', fontWeight: 700 }}>Meal Planner</span> &copy; {new Date().getFullYear()} | Inspired by HelloFresh | <a href="https://undraw.co/" style={{ color: 'inherit', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer">Illustrations by unDraw</a>
+        </Typography>
+        <Typography level="body-sm" sx={{ mt: 1 }}>
+          <a href="/how-it-works" style={{ color: '#ff8500', textDecoration: 'underline', fontWeight: 600, fontSize: 15, opacity: 0.9 }}>How it works</a>
         </Typography>
       </Box>
     </Box>
