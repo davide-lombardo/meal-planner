@@ -1,10 +1,10 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: './.env' });
 export async function sendEmail(subject, text, html) {
     try {
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
+            host: process.env.SMTP_HOST || 'smtp.gmail.com',
             port: 587,
             secure: false,
             auth: {
