@@ -1,8 +1,16 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-dotenv.config({ path: './.env' });
+import path from 'path';
+import { fileURLToPath } from 'url';
+import logger from './logger.js';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const envPath = path.resolve(__dirname, '../../../.env');
+dotenv.config({ path: envPath });
 export async function sendEmail(subject, text, html) {
     try {
+        logger.info('SMTP_USER: %s', process.env.SMTP_USER);
+        logger.info('SMTP_PASS is set:', Boolean(process.env.SMTP_PASS));
         const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST || 'smtp.gmail.com',
             port: 587,
@@ -20,11 +28,11 @@ export async function sendEmail(subject, text, html) {
             html,
         };
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully:', info.response);
+        logger.info('Email sent successfully: %o', info.response);
         return info;
     }
     catch (error) {
-        console.error('Error sending email:', error);
+        logger.error('Error sending email: %o', error);
         throw error;
     }
 }
