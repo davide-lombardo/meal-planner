@@ -1,11 +1,80 @@
 import * as React from 'react';
-import { Box, Typography, Card, CardContent, Divider, Input, Button, Snackbar, Alert } from '@mui/joy';
+import {
+  Box, Typography, Card, CardContent, Divider, Input, Button, Snackbar, Alert, Switch, Chip, List, ListItem, ListItemDecorator, IconButton, Tooltip
+} from '@mui/joy';
+import { Plus, Trash2, Info as InfoIcon, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+function Section({ title, description, children }: any) {
+  return (
+    <Box sx={{ mb: 5 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+        <Typography level="h2" sx={{ fontWeight: 800, fontSize: { xs: 18, md: 22 }, color: 'text.primary', mr: 1 }}>{title}</Typography>
+        {description && (
+          <Tooltip title={description} variant="soft" color="primary" arrow>
+            <InfoIcon size={18} style={{ opacity: 0.7, cursor: 'pointer' }} />
+          </Tooltip>
+        )}
+      </Box>
+      {children}
+    </Box>
+  );
+}
+
+function EditableArray({ label, value, onChange, placeholder = '', type = 'text', tooltip, disabled = false }: any) {
+  const [input, setInput] = React.useState('');
+  return (
+    <Box sx={{ mb: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+        <Typography level="body-sm" sx={{ fontWeight: 600 }}>{label}</Typography>
+        {tooltip && (
+          <Tooltip title={tooltip} variant="soft" color="primary" arrow>
+            <InfoIcon size={15} style={{ marginLeft: 4, opacity: 0.7, cursor: 'pointer' }} />
+          </Tooltip>
+        )}
+      </Box>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>
+        {value?.map((item: string, idx: number) => (
+          <Chip key={item + idx} endDecorator={
+            <IconButton size="sm" onClick={() => onChange(value.filter((_: any, i: number) => i !== idx))} disabled={disabled}>
+              <Trash2 size={16} />
+            </IconButton>
+          }>{item}</Chip>
+        ))}
+      </Box>
+      <Box sx={{ display: 'flex', gap: 1 }}>
+        <Input
+          size="sm"
+          value={input}
+          placeholder={placeholder}
+          type={type}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => {
+            if (!disabled && e.key === 'Enter' && input.trim()) {
+              onChange([...(value || []), input.trim()]);
+              setInput('');
+            }
+          }}
+          sx={{ bgcolor: 'background.level2', color: 'text.primary' }}
+          disabled={disabled}
+        />
+        <Button size="sm" variant="soft" onClick={() => {
+          if (!disabled && input.trim()) {
+            onChange([...(value || []), input.trim()]);
+            setInput('');
+          }
+        }} disabled={disabled}><Plus size={18} /></Button>
+      </Box>
+    </Box>
+  );
+}
 
 export default function ConfigPage() {
   const [config, setConfig] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [success, setSuccess] = React.useState('');
   const [error, setError] = React.useState('');
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     fetch('http://localhost:4000/api/config')
@@ -14,8 +83,8 @@ export default function ConfigPage() {
       .catch(() => { setError('Failed to load config'); setLoading(false); });
   }, []);
 
-  const handleChange = (key: string, value: any) => {
-    setConfig((prev: any) => ({ ...prev, [key]: value }));
+  const setMenuOption = (key: string, value: any) => {
+    setConfig((prev: any) => ({ ...prev, menuOptions: { ...prev.menuOptions, [key]: value } }));
   };
 
   const handleSave = async () => {
@@ -40,29 +109,153 @@ export default function ConfigPage() {
   if (loading) return <Box sx={{ p: 4 }}>Loading...</Box>;
   if (!config) return <Box sx={{ p: 4, color: 'danger.solidBg' }}>Failed to load configuration.</Box>;
 
+  const mo = config.menuOptions || {};
+
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.body', py: 6, px: 2 }}>
-      <Card sx={{ maxWidth: 600, mx: 'auto', p: { xs: 2, md: 4 }, borderRadius: 12, boxShadow: 'lg', bgcolor: 'neutral.solidBg' }}>
+      <Button startDecorator={<ArrowLeft />} variant="soft" color="primary" onClick={() => navigate('/')} sx={{ mb: 4, ml: { xs: 0, md: 2 }, fontWeight: 700, borderRadius: 8, boxShadow: 'sm' }}>
+        Back to Home
+      </Button>
+      <Card sx={{ maxWidth: 700, mx: 'auto', p: { xs: 2, md: 4 }, borderRadius: 12, boxShadow: 'lg', bgcolor: 'background.level1', border: '1.5px solid', borderColor: 'divider' }}>
         <CardContent>
-          <Typography level="h1" sx={{ fontWeight: 900, fontSize: { xs: 24, md: 32 }, letterSpacing: 1, mb: 2 }}>
+          <Typography level="h1" sx={{ fontWeight: 900, fontSize: { xs: 26, md: 34 }, letterSpacing: 1, mb: 2, color: 'primary.solidBg', textAlign: 'center' }}>
             Meal Planner Configuration
           </Typography>
-          <Divider sx={{ mb: 2 }} />
-          <Typography level="body-md" sx={{ mb: 2, color: 'text.secondary' }}>
-            Adjust your meal planner preferences below. Changes will affect how your weekly menu is generated.
-          </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Box>
-              <Typography level="body-sm" sx={{ mb: 0.5 }}>Max times a recipe can repeat per week</Typography>
-              <Input type="number" value={config.maxRepeats ?? ''} onChange={e => handleChange('maxRepeats', Number(e.target.value))} sx={{ maxWidth: 120 }} />
+          <Divider sx={{ mb: 4 }} />
+
+          <Section title="General" description="Basic settings for how your weekly menu is generated.">
+            <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', mb: 2 }}>
+              <Box>
+                <Typography level="body-sm" sx={{ fontWeight: 600, mb: 0.5 }}>Max repetition weeks</Typography>
+                <Tooltip title="How many previous weeks to avoid repeating the same recipe." arrow variant="soft" color="primary">
+                  <Input type="number" value={mo.maxRepetitionWeeks ?? ''} onChange={e => setMenuOption('maxRepetitionWeeks', Number(e.target.value))} sx={{ maxWidth: 120, bgcolor: 'background.level2', color: 'text.primary' }} />
+                </Tooltip>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 1, borderRadius: 2, bgcolor: 'background.level2', minWidth: 220 }}>
+                <Typography level="body-sm" sx={{ fontWeight: 600, flex: 1, color: 'text.primary' }}>Use weighted selection</Typography>
+                <Tooltip title="Prioritize recipes that have been used less often recently." arrow variant="soft" color="primary">
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography level="body-xs" sx={{ color: mo.useWeightedSelection ? 'primary.solidBg' : 'neutral.plainColor', fontWeight: 700, minWidth: 32, textAlign: 'right' }}>
+                      {mo.useWeightedSelection ? 'ON' : 'OFF'}
+                    </Typography>
+                    <Switch
+                      checked={!!mo.useWeightedSelection}
+                      onChange={e => setMenuOption('useWeightedSelection', e.target.checked)}
+                      color={mo.useWeightedSelection ? 'primary' : 'neutral'}
+                      sx={{
+                        '--Switch-trackBackground': mo.useWeightedSelection ? '#1976d2' : '#bdbdbd',
+                        '--Switch-thumbBackground': mo.useWeightedSelection ? '#fff' : '#eee',
+                        mr: 0.5
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
+              </Box>
             </Box>
-            <Box>
-              <Typography level="body-sm" sx={{ mb: 0.5 }}>Days to avoid repeating the same recipe</Typography>
-              <Input type="number" value={config.avoidDays ?? ''} onChange={e => handleChange('avoidDays', Number(e.target.value))} sx={{ maxWidth: 120 }} />
+          </Section>
+
+          <Section title="Ingredient-based Planning" description="Optimize menu based on ingredients you already have at home.">
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, p: 1.5, borderRadius: 2, bgcolor: 'background.level2', maxWidth: 400 }}>
+              <Switch
+                checked={!!mo.enableIngredientPlanning}
+                onChange={e => setMenuOption('enableIngredientPlanning', e.target.checked)}
+                color={mo.enableIngredientPlanning ? 'primary' : 'neutral'}
+                sx={{
+                  '--Switch-trackBackground': mo.enableIngredientPlanning ? '#1976d2' : '#bdbdbd',
+                  '--Switch-thumbBackground': mo.enableIngredientPlanning ? '#fff' : '#eee',
+                  mr: 1
+                }}
+              />
+              <Typography level="body-sm" sx={{ fontWeight: 600, color: 'text.primary', flex: 1 }}>
+                Enable ingredient-based planning
+              </Typography>
+              <Tooltip title="If enabled, the planner will prefer recipes using your available ingredients." arrow variant="soft" color="primary">
+                <Typography level="body-xs" sx={{ color: mo.enableIngredientPlanning ? 'primary.solidBg' : 'neutral.plainColor', fontWeight: 700, minWidth: 32, textAlign: 'right' }}>
+                  {mo.enableIngredientPlanning ? 'ON' : 'OFF'}
+                </Typography>
+              </Tooltip>
             </Box>
-            {/* Add more config fields as needed */}
+            <EditableArray
+              label="Available ingredients at home"
+              value={mo.availableIngredients || []}
+              onChange={arr => setMenuOption('availableIngredients', arr)}
+              placeholder="Add ingredient"
+              tooltip="List ingredients you want to prioritize in menu planning."
+              disabled={!mo.enableIngredientPlanning}
+            />
+          </Section>
+
+          <Section title="Quotas & Preferences" description="Control how often meal types appear and set your recipe preferences.">
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, p: 1.5, borderRadius: 2, bgcolor: 'background.level2', maxWidth: 400 }}>
+              <Switch
+                checked={!!mo.useQuotas}
+                onChange={e => setMenuOption('useQuotas', e.target.checked)}
+                color={mo.useQuotas ? 'primary' : 'neutral'}
+                sx={{
+                  '--Switch-trackBackground': mo.useQuotas ? '#1976d2' : '#bdbdbd',
+                  '--Switch-thumbBackground': mo.useQuotas ? '#fff' : '#eee',
+                  mr: 1
+                }}
+              />
+              <Typography level="body-sm" sx={{ fontWeight: 600, color: 'text.primary', flex: 1 }}>
+                Use quotas for meal types
+              </Typography>
+              <Tooltip title="Limit how many times each meal type (e.g. meat, fish) can appear per week." arrow variant="soft" color="primary">
+                <Typography level="body-xs" sx={{ color: mo.useQuotas ? 'primary.solidBg' : 'neutral.plainColor', fontWeight: 700, minWidth: 32, textAlign: 'right' }}>
+                  {mo.useQuotas ? 'ON' : 'OFF'}
+                </Typography>
+              </Tooltip>
+            </Box>
+            <Box sx={{ mb: 2 }}>
+              <Typography level="body-sm" sx={{ fontWeight: 600, mb: 0.5 }}>Meal type quotas (per week)</Typography>
+              <Tooltip title="Set the maximum number of times each meal type can appear in a week." arrow variant="soft" color="primary">
+                <List sx={{ maxWidth: 400, bgcolor: 'background.level2', borderRadius: 2, p: 1 }}>
+                  {Object.entries(mo.mealTypeQuotas || {}).map(([cat, val]: any) => (
+                    <ListItem key={cat} sx={{ gap: 1 }}>
+                      <ListItemDecorator>{cat}</ListItemDecorator>
+                      <Input type="number" value={val} onChange={e => setMenuOption('mealTypeQuotas', { ...mo.mealTypeQuotas, [cat]: Number(e.target.value) })} sx={{ maxWidth: 80, bgcolor: 'background.body', color: 'text.primary' }} />
+                      <IconButton size="sm" color="danger" onClick={() => {
+                        const copy = { ...mo.mealTypeQuotas };
+                        delete copy[cat];
+                        setMenuOption('mealTypeQuotas', copy);
+                      }}><Trash2 size={16} /></IconButton>
+                    </ListItem>
+                  ))}
+                  <ListItem sx={{ gap: 1 }}>
+                    <Input size="sm" placeholder="Category" sx={{ maxWidth: 100, bgcolor: 'background.body', color: 'text.primary' }} id="new-cat" />
+                    <Input size="sm" placeholder="Quota" type="number" sx={{ maxWidth: 80, bgcolor: 'background.body', color: 'text.primary' }} id="new-quota" />
+                    <IconButton size="sm" color="primary" onClick={() => {
+                      const cat = (document.getElementById('new-cat') as HTMLInputElement)?.value.trim();
+                      const quota = Number((document.getElementById('new-quota') as HTMLInputElement)?.value);
+                      if (cat && quota > 0) {
+                        setMenuOption('mealTypeQuotas', { ...mo.mealTypeQuotas, [cat]: quota });
+                        (document.getElementById('new-cat') as HTMLInputElement).value = '';
+                        (document.getElementById('new-quota') as HTMLInputElement).value = '';
+                      }
+                    }}><Plus size={16} /></IconButton>
+                  </ListItem>
+                </List>
+              </Tooltip>
+            </Box>
+            <EditableArray
+              label="Preferred recipes (IDs)"
+              value={mo.preferredRecipes || []}
+              onChange={arr => setMenuOption('preferredRecipes', arr)}
+              placeholder="Add recipe ID"
+              tooltip="Recipe IDs you want to prioritize in your menu."
+            />
+            <EditableArray
+              label="Avoided recipes (IDs)"
+              value={mo.avoidedRecipes || []}
+              onChange={arr => setMenuOption('avoidedRecipes', arr)}
+              placeholder="Add recipe ID"
+              tooltip="Recipe IDs you want to avoid in your menu."
+            />
+          </Section>
+
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
+            <Button onClick={handleSave} sx={{ fontWeight: 700, fontSize: 18, letterSpacing: 1, minWidth: 120, borderRadius: 8 }} color="primary" variant="solid" disabled={loading}>Save</Button>
           </Box>
-          <Button onClick={handleSave} sx={{ mt: 3 }} color="primary" variant="solid" disabled={loading}>Save</Button>
         </CardContent>
       </Card>
       <Snackbar open={!!success} autoHideDuration={2500} onClose={() => setSuccess('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>

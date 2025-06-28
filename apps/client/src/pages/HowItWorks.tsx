@@ -7,14 +7,14 @@ export default function HowItWorks() {
   const navigate = useNavigate();
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.body', py: 6, px: 2 }}>
-      <Button startDecorator={<ArrowLeft />} variant="soft" color="primary" onClick={() => navigate(-1)} sx={{ mb: 4, ml: { xs: 0, md: 2 }, fontWeight: 700, borderRadius: 8, boxShadow: 'sm' }}>
-        Back
+      <Button startDecorator={<ArrowLeft />} variant="soft" color="primary" onClick={() => navigate('/')} sx={{ mb: 4, ml: { xs: 0, md: 2 }, fontWeight: 700, borderRadius: 8, boxShadow: 'sm' }}>
+        Back to Home
       </Button>
       <Card sx={{ maxWidth: 700, mx: 'auto', p: { xs: 2, md: 4 }, borderRadius: 12, boxShadow: 'lg', bgcolor: 'neutral.solidBg' }}>
         <CardContent>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <ChefHat size={36} style={{ marginRight: 16, color: '#ff8500' }} />
-            <Typography level="h1" sx={{ fontWeight: 900, fontSize: { xs: 28, md: 36 }, letterSpacing: 1 }}>
+            <Typography level="h1" sx={{ fontWeight: 900, fontSize: { xs: 26, md: 36 }, letterSpacing: 1, mb: 2, color: 'primary.solidBg', textAlign: 'center' }}>
               How Meal Plan Generation Works
             </Typography>
           </Box>
