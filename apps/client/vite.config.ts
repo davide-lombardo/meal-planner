@@ -16,7 +16,6 @@ export default defineConfig(() => ({
   },
   plugins: [react(), nxViteTsPaths()],
   build: {
-    outDir: '../../dist/apps/client',
     emptyOutDir: true,
     reportCompressedSize: true,
     commonjsOptions: {

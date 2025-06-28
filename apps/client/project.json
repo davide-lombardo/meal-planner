@@ -8,23 +8,15 @@
     "build": {
       "executor": "@nx/vite:build",
       "options": {
-        "outputPath": "dist/apps/client",
-        "configFile": "apps/client/vite.config.ts",
-        "assets": [
-          {
-            "glob": "**/*",
-            "input": "apps/client/public",
-            "output": "."
-          }
-        ]
+        "outputPath": "../../dist/apps/client",
+        "configFile": "apps/client/vite.config.ts"
       }
     },
-    "serve": {
-      "executor": "@nx/vite:dev-server",
+    "dev": {
+      "executor": "nx:run-commands",
       "options": {
-        "buildTarget": "client:build",
-        "configFile": "apps/client/vite.config.ts",
-        "port": 4200
+        "command": "vite",
+        "cwd": "apps/client"
       }
     },
     "lint": {

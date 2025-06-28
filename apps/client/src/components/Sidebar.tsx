@@ -21,7 +21,7 @@ export default function Sidebar() {
 
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 600px)').matches;
 
-  const handleNav = (path) => {
+  const handleNav = (path: string) => {
     navigate(path);
     if (isMobile) setMobileOpen(false);
   };

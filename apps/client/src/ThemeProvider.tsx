@@ -16,12 +16,6 @@ const theme = extendTheme({
           solidActiveBg: '#cc6600',
           plainColor: '#ff8500',
         },
-        secondary: {
-          solidBg: '#2d3a4a',
-          solidHoverBg: '#223042',
-          solidActiveBg: '#1a2533',
-          plainColor: '#2d3a4a',
-        },
         warning: {
           solidBg: '#ffe066',
           solidHoverBg: '#ffd60a',
@@ -33,7 +27,6 @@ const theme = extendTheme({
         },
         text: {
           primary: '#181c1f',
-          secondary: '#333',
         },
       },
     },
@@ -48,12 +41,6 @@ const theme = extendTheme({
           solidActiveBg: '#cc6600',
           plainColor: '#ff8500',
         },
-        secondary: {
-          solidBg: '#223042',
-          solidHoverBg: '#1a2533',
-          solidActiveBg: '#141a22',
-          plainColor: '#223042',
-        },
         warning: {
           solidBg: '#ffe066',
           solidHoverBg: '#ffd60a',
@@ -65,7 +52,6 @@ const theme = extendTheme({
         },
         text: {
           primary: '#fff',
-          secondary: '#bdbdbd',
         },
       },
     },
