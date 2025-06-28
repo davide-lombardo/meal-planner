@@ -11,6 +11,7 @@ export type Recipe = {
   categoria: Category;
   tipo: RecipeType;
   ingredienti: string[];
+  link?: string; // Optional website link
 };
 
 interface RecipeCardProps {

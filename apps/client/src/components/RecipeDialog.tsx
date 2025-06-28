@@ -12,15 +12,17 @@ interface RecipeDialogProps {
 export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: RecipeDialogProps) {
   const [nome, setNome] = React.useState(initialRecipe?.nome || '');
   const [ingredienti, setIngredienti] = React.useState(initialRecipe?.ingredienti?.join('\n') || '');
-  const [categoria, setCategoria] = React.useState<Category | undefined>(initialRecipe?.categoria);
-  const [tipo, setTipo] = React.useState<RecipeType | undefined>(initialRecipe?.tipo);
+  const [categoria, setCategoria] = React.useState<Category | ''>(initialRecipe?.categoria || '');
+  const [tipo, setTipo] = React.useState<RecipeType | ''>(initialRecipe?.tipo || '');
+  const [link, setLink] = React.useState(initialRecipe?.link || '');
   const [error, setError] = React.useState('');
 
   React.useEffect(() => {
     setNome(initialRecipe?.nome || '');
     setIngredienti(initialRecipe?.ingredienti?.join('\n') || '');
-    setCategoria(initialRecipe?.categoria);
-    setTipo(initialRecipe?.tipo);
+    setCategoria(initialRecipe?.categoria || '');
+    setTipo(initialRecipe?.tipo || '');
+    setLink(initialRecipe?.link || '');
   }, [initialRecipe, open]);
 
   const validCategories: Category[] = ['pesce', 'carne', 'formaggio', 'uova'];
@@ -32,20 +34,21 @@ export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: R
       setError('Please fill in all fields.');
       return;
     }
-    if (!validCategories.includes(categoria)) {
+    if (!validCategories.includes(categoria as Category)) {
       setError('Categoria non valida.');
       return;
     }
-    if (!validTypes.includes(tipo)) {
+    if (!validTypes.includes(tipo as RecipeType)) {
       setError('Tipo non valido.');
       return;
     }
     const recipeToSave: Recipe = {
       id: initialRecipe?.id || '',
       nome,
-      categoria,
-      tipo,
+      categoria: categoria as Category,
+      tipo: tipo as RecipeType,
       ingredienti: ingredienti.split(/\n|\r|\r\n/).map(i => i.trim()).filter(Boolean),
+      link: link.trim() || undefined,
     };
     onSave(recipeToSave);
     setError('');
@@ -64,7 +67,7 @@ export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: R
             </FormControl>
             <FormControl required sx={{ mb: 2 }}>
               <FormLabel>Categoria</FormLabel>
-              <Select value={categoria} onChange={(_, v) => setCategoria(v as Category)} placeholder="Seleziona categoria">
+              <Select value={categoria} onChange={(_, v) => setCategoria((v as Category) || '')} placeholder="Seleziona categoria">
                 {validCategories.map(cat => (
                   <Option key={cat} value={cat}>{cat}</Option>
                 ))}
@@ -72,7 +75,7 @@ export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: R
             </FormControl>
             <FormControl required sx={{ mb: 2 }}>
               <FormLabel>Tipo</FormLabel>
-              <Select value={tipo} onChange={(_, v) => setTipo(v as RecipeType)} placeholder="Seleziona tipo">
+              <Select value={tipo} onChange={(_, v) => setTipo((v as RecipeType) || '')} placeholder="Seleziona tipo">
                 {validTypes.map(t => (
                   <Option key={t} value={t}>{t}</Option>
                 ))}
@@ -85,6 +88,15 @@ export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: R
                 value={ingredienti}
                 onChange={e => setIngredienti(e.target.value)}
                 placeholder="pasta\nuova\nguanciale\n..."
+              />
+            </FormControl>
+            <FormControl sx={{ mb: 2 }}>
+              <FormLabel>Link alla ricetta (opzionale)</FormLabel>
+              <Input
+                value={link}
+                onChange={e => setLink(e.target.value)}
+                placeholder="https://esempio.com/ricetta"
+                type="url"
               />
             </FormControl>
             {error && <Typography color="danger" level="body-sm" sx={{ mt: 1 }}>{error}</Typography>}

@@ -9,6 +9,7 @@ interface Recipe {
   categoria?: string;
   tipo?: string;
   ingredienti: string[];
+  link?: string;
 }
 
 export default function RecipeDetails() {
@@ -111,6 +112,14 @@ export default function RecipeDetails() {
               ))}
             </ul>
           </CardContent>
+          {recipe.link && (
+            <Box sx={{ mt: 2, mb: 1 }}>
+              <Typography level="body-md" sx={{ fontWeight: 600, mb: 0.5 }}>Link alla ricetta:</Typography>
+              <a href={recipe.link} target="_blank" rel="noopener noreferrer" style={{ color: '#1976d2', wordBreak: 'break-all', textDecoration: 'underline' }}>
+                {recipe.link}
+              </a>
+            </Box>
+          )}
           <Box sx={{ display: 'flex', gap: 1.5, pt: 2, justifyContent: 'flex-end' }}>
             <IconButton variant="soft" color="primary" aria-label="Edit recipe" onClick={handleEdit}>
               <Pencil size={20} />
