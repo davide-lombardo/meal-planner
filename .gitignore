@@ -38,7 +38,11 @@ node_modules/
 .prettierrc
 
 # Misc
-.cursor/rules/nx-rules.mdc
-.github/instructions/nx.instructions.md
-vite.config.*.timestamp*
-vitest.config.*.timestamp*
+
+# Additional cache, dist, and env files
+.cache/
+*.cache/
+*.env
+*.env.*
+cache/
+dists/
