@@ -22,7 +22,7 @@ export default function Header() {
       <Typography
         level="h2"
         sx={{
-          color: mode === 'dark' ? '#fff' : 'primary.solidBg',
+          color: mode === 'dark' ? '#fff' : 'black',
           fontWeight: 900,
           letterSpacing: 1,
           transition: 'color 0.2s',

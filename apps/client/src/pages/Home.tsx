@@ -314,7 +314,7 @@ export default function Home() {
           <span
             style={{
               fontWeight: 700,
-              color: typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#181c1f',
+              color: typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? '#d46a00' : '#181c1f',
             }}
           >
             Meal Planner
