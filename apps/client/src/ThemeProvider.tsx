@@ -9,6 +9,8 @@ const theme = extendTheme({
       palette: {
         background: {
           body: '#f7f7f7',
+          level1: '#fff',
+          level2: '#f0f0f0',
         },
         primary: {
           solidBg: '#ff8500',
@@ -27,13 +29,17 @@ const theme = extendTheme({
         },
         text: {
           primary: '#181c1f',
+          secondary: '#666',
         },
+        divider: '#e0e0e0',
       },
     },
     dark: {
       palette: {
         background: {
           body: '#181c1f',
+          level1: '#23272a',
+          level2: '#23272a',
         },
         primary: {
           solidBg: '#ff8500',
@@ -52,7 +58,9 @@ const theme = extendTheme({
         },
         text: {
           primary: '#fff',
+          secondary: '#aaa',
         },
+        divider: '#333',
       },
     },
   },
