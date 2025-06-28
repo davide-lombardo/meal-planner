@@ -9,6 +9,22 @@
       "formaggio": 1,
       "uova": 1
     },
-    "useQuotas": true
+    "useQuotas": true,
+    "useWeightedSelection": false,
+    "enableIngredientPlanning": false,
+    "lockedMeals": {
+      "pranzo-2": "r041"
+    },
+    "availableIngredients": [
+      "pasta",
+      "ceci",
+      "rosmarino"
+    ],
+    "preferredRecipes": [
+      "r041"
+    ],
+    "avoidedRecipes": [
+      "r020"
+    ]
   }
 }

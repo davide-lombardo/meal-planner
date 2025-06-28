@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Box, IconButton, List, ListItem, ListItemButton, ListItemDecorator, Typography } from '@mui/joy';
-import { Home, PlusCircle, Settings, Info, Menu as MenuIcon, ChevronLeft } from 'lucide-react';
+import { Home, Settings, Info, Menu as MenuIcon, ChevronLeft } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+// Removed 'Add Recipe' nav item
 const navItems = [
   { label: 'Home', icon: <Home size={20} />, path: '/' },
-  { label: 'Add Recipe', icon: <PlusCircle size={20} />, path: '/add' },
   { label: 'Config', icon: <Settings size={20} />, path: '/config' },
   { label: 'How it works', icon: <Info size={20} />, path: '/how-it-works' },
 ];
@@ -43,7 +43,7 @@ export default function Sidebar() {
         <IconButton onClick={() => setOpen(o => !o)} variant="plain" color="neutral" sx={{ mr: open ? 1 : 0 }}>
           {open ? <ChevronLeft size={22} /> : <MenuIcon size={22} />}
         </IconButton>
-        {open && <Typography level="h4" sx={{ fontWeight: 900, fontSize: 22, ml: 1 }}>Meal Planner</Typography>}
+        {/* Removed sidebar title */}
       </Box>
       <List sx={{ flex: 1, mt: 2 }}>
         {navItems.map(item => (
@@ -64,7 +64,17 @@ export default function Sidebar() {
                 },
               }}
             >
-              <ListItemDecorator sx={{ minWidth: 0, mr: open ? 1.5 : 0 }}>{item.icon}</ListItemDecorator>
+              {/* Icon color: black in light mode, white in dark mode, with left spacing */}
+              <ListItemDecorator
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 2 : 0,
+                  ml: 1,
+                  color: theme => theme.palette.mode === 'dark' ? '#fff' : '#222',
+                }}
+              >
+                {item.icon}
+              </ListItemDecorator>
               {open && <Typography sx={{ fontWeight: 700 }}>{item.label}</Typography>}
             </ListItemButton>
           </ListItem>

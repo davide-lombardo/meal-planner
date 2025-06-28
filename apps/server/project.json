@@ -5,15 +5,19 @@
   "name": "server",
   "targets": {
     "build": {
-      "executor": "@nx/node:build",
+      "executor": "@nx/js:tsc",
       "options": {
         "outputPath": "dist/apps/server",
         "main": "apps/server/index.ts",
-        "tsConfig": "apps/server/tsconfig.json"
+        "tsConfig": "apps/server/tsconfig.json",
+        "assets": [
+          "apps/server/src/data",
+          "apps/server/src/**/*.json"
+        ]
       }
     },
     "serve": {
-      "executor": "@nx/node:execute",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "server:build"
       }

@@ -8,6 +8,16 @@ A modern meal planner web application built with React (frontend) and Node/Expre
 - Send your meal plan to your email
 - Backend email sending with Node.js, Express, and Nodemailer
 - Nx-powered monorepo for scalable development
+- **Advanced meal planning logic:**
+  - Avoids recent repetitions using meal history
+  - Supports quotas for meal types and categories
+  - **Feature flags for advanced planning:**
+    - Weighted selection (prefer less-used recipes)
+    - Ingredient-based planning (prioritize recipes using ingredients you have)
+    - Lock specific meals for any day/type
+    - User preferences (prioritize or avoid certain recipes)
+    - Caching for fast repeated menu generation
+    - Analytics/statistics on recipe and category usage
 
 ## Project Structure
 ```
@@ -24,22 +34,33 @@ package.json # Monorepo root
 README.md
 ```
 
-## Prerequisites
-- Node.js v18 or newer
-- pnpm (install with `npm install -g pnpm`)
+## Config Options (apps/client/src/data/config.json)
 
-## Setup
-
-### 1. Clone the repository
-```bash
-git clone <your-repo-url>
-cd meal-planner
+```json
+{
+  "useHistory": true,
+  "menuOptions": {
+    "maxRepetitionWeeks": 2,
+    "mealTypeQuotas": { "carne": 4, "legumi": 4, "pesce": 2, "formaggio": 1, "uova": 1 },
+    "useQuotas": true,
+    "useWeightedSelection": false,
+    "enableIngredientPlanning": false,
+    "lockedMeals": { "pranzo-2": "r041" },
+    "availableIngredients": ["pasta", "ceci", "rosmarino"],
+    "preferredRecipes": ["r041"],
+    "avoidedRecipes": ["r020"]
+  }
+}
 ```
 
-### 2. Install dependencies
-```bash
-pnpm install
-```
+- **maxRepetitionWeeks**: How many weeks to look back to avoid repeats
+- **mealTypeQuotas**: How many times each category can appear in a week
+- **useWeightedSelection**: Prefer recipes less used in history
+- **enableIngredientPlanning**: Prefer recipes using available ingredients
+- **lockedMeals**: Lock a recipe for a specific meal slot (e.g. `"pranzo-2": "r041"`)
+- **availableIngredients**: List of ingredients you want to use up
+- **preferredRecipes**: Recipe IDs to prioritize
+- **avoidedRecipes**: Recipe IDs to avoid
 
 ## App Usage
 
