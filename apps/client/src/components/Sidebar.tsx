@@ -1,16 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, IconButton, List, ListItem, ListItemButton, ListItemDecorator, Typography, Drawer } from '@mui/joy';
 import { Home, Settings, Info, Menu as MenuIcon, ChevronLeft } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ColorSchemeToggle } from '../ThemeProvider';
 
-// Explicitly type navItems to avoid TS 'never' errors
-interface NavItem {
-  label: string;
-  icon: React.ReactNode;
-  path: string;
-}
-const navItems: NavItem[] = [
+const navItems = [
   { label: 'Home', icon: <Home size={20} />, path: '/' },
   { label: 'Config', icon: <Settings size={20} />, path: '/config' },
   { label: 'How it works', icon: <Info size={20} />, path: '/how-it-works' },
@@ -22,45 +15,40 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Communicate sidebar width to parent via custom event (desktop only)
-  React.useEffect(() => {
-    const event = new CustomEvent('sidebar-width', { detail: open ? 220 : 64 });
-    window.dispatchEvent(event);
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('sidebar-width', { detail: open ? 220 : 64 }));
   }, [open]);
 
-  // Responsive check
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 600px)').matches;
 
-  // Sidebar content (shared for desktop and mobile)
-  const sidebarContent = (
-    <Box sx={{ width: isMobile ? '100vw' : open ? 220 : 64, height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.level1' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', p: 2, pb: 1 }}>
-        {!isMobile && (
-          <IconButton onClick={() => setOpen(o => !o)} variant="plain" color="neutral" sx={{ mr: open ? 1 : 0 }}>
-            {open ? <ChevronLeft size={22} /> : <MenuIcon size={22} />}
-          </IconButton>
-        )}
-        {/* No sidebar title */}
-      </Box>
-      <List sx={{ flex: 1, mt: 2 }}>
-        {navItems.map(item => (
-          <ListItem key={item.path} sx={{ mb: 0.5, p: 0 }}>
+  const handleNav = (path) => {
+    navigate(path);
+    if (isMobile) setMobileOpen(false);
+  };
+
+  const renderNavList = () => (
+    <List sx={{ flex: 1, mt: 2 }}>
+      {navItems.map(({ label, icon, path }) => {
+        const selected = location.pathname === path;
+        return (
+          <ListItem key={path} sx={{ mb: 0.5, p: 0 }}>
             <ListItemButton
-              selected={location.pathname === item.path}
-              onClick={() => {
-                navigate(item.path);
-                if (isMobile) setMobileOpen(false);
-              }}
+              selected={selected}
+              onClick={() => handleNav(path)}
               sx={{
                 borderRadius: 8,
                 minHeight: 48,
                 px: open || isMobile ? 2 : 1.5,
                 justifyContent: open || isMobile ? 'flex-start' : 'center',
-                bgcolor: location.pathname === item.path ? 'primary.solidBg' : 'transparent',
-                color: location.pathname === item.path ? '#fff' : 'text.primary',
+                bgcolor: selected ? 'primary.solidBg' : 'transparent',
+                color: selected ? '#fff' : 'text.primary',
                 '&:hover': {
                   bgcolor: 'primary.softBg',
                   color: 'primary.solidColor',
+                },
+                '&:focus-visible': {
+                  outline: 'none',
+                  boxShadow: '0 0 0 2px #1976d2',
                 },
               }}
             >
@@ -69,20 +57,29 @@ export default function Sidebar() {
                   minWidth: 0,
                   mr: open || isMobile ? 2 : 0,
                   ml: 1,
-                  color: theme => theme.palette.mode === 'dark' ? '#fff' : '#222',
+                  color: (theme) => theme.palette.mode === 'dark' ? '#fff' : '#222',
                 }}
               >
-                {item.icon}
+                {icon}
               </ListItemDecorator>
-              {(open || isMobile) && <Typography sx={{ fontWeight: 700 }}>{item.label}</Typography>}
+              {(open || isMobile) && <Typography sx={{ fontWeight: 700 }}>{label}</Typography>}
             </ListItemButton>
           </ListItem>
-        ))}
-      </List>
-    </Box>
+        );
+      })}
+    </List>
   );
 
-  // Mobile burger button
+  const sidebarBoxProps = {
+    sx: {
+      width: isMobile ? '100vw' : open ? 220 : 64,
+      height: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      bgcolor: 'background.level1',
+    },
+  };
+
   if (isMobile) {
     return (
       <>
@@ -96,7 +93,6 @@ export default function Sidebar() {
           >
             <MenuIcon size={28} />
           </IconButton>
-          {/* Removed ColorSchemeToggle from Sidebar on mobile */}
         </Box>
         <Drawer
           open={mobileOpen}
@@ -107,19 +103,17 @@ export default function Sidebar() {
           slotProps={{ content: { sx: { p: 0, width: '100vw', maxWidth: '100vw', position: 'relative' } } }}
           hideBackdrop={false}
         >
-          {/* Close icon at top right of drawer */}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', p: 2, pb: 0 }}>
             <IconButton onClick={() => setMobileOpen(false)} variant="plain" color="neutral" aria-label="Close sidebar">
               <ChevronLeft size={28} />
             </IconButton>
           </Box>
-          {sidebarContent}
+          <Box {...sidebarBoxProps}>{renderNavList()}</Box>
         </Drawer>
       </>
     );
   }
 
-  // Desktop sidebar
   return (
     <Box
       sx={{
@@ -138,7 +132,14 @@ export default function Sidebar() {
         borderColor: 'divider',
       }}
     >
-      {sidebarContent}
+      <Box sx={{ display: 'flex', alignItems: 'center', p: 2, pb: 1 }}>
+        {!isMobile && (
+          <IconButton onClick={() => setOpen((o) => !o)} variant="plain" color="neutral" sx={{ mr: open ? 1 : 0 }}>
+            {open ? <ChevronLeft size={22} /> : <MenuIcon size={22} />}
+          </IconButton>
+        )}
+      </Box>
+      <Box {...sidebarBoxProps}>{renderNavList()}</Box>
     </Box>
   );
 }

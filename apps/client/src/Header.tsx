@@ -13,7 +13,7 @@ export default function Header() {
         px: 4,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center', // Center title
+        justifyContent: 'center',
         boxShadow: 'sm',
         mb: 2,
         position: 'relative',
@@ -26,7 +26,7 @@ export default function Header() {
           fontWeight: 900,
           letterSpacing: 1,
           transition: 'color 0.2s',
-          fontSize: { xs: '1.3rem', sm: '2rem', md: '2.5rem' }, // Smaller on mobile
+          fontSize: { xs: '1.3rem', sm: '2rem', md: '2.5rem' },
           flex: 1,
           textAlign: 'center',
         }}

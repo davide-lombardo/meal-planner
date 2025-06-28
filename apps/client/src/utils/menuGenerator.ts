@@ -104,13 +104,6 @@ export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Co
     return filtered;
   }
 
-  const canUseRecipe = (recipe: Recipe, mealType: string) => {
-    if (!recipe || usedThisWeek.has(recipe.id) || recentlyUsed.has(recipe.id)) return false;
-    if (recipe.tipo && recipe.tipo !== mealType) return false;
-    if (useQuotas && weeklyQuotas && weeklyQuotas[recipe.categoria || ''] <= 0) return false;
-    return true;
-  };
-
   // Optimize getAvailableRecipes to avoid repeated filtering
   const getAvailableRecipes = (() => {
     const filterCache = new WeakMap<Recipe[], Map<string, Recipe[]>>();

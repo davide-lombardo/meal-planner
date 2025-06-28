@@ -5,7 +5,12 @@ import {
 import { Plus, Trash2, Info as InfoIcon, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-function Section({ title, description, children }: any) {
+interface SectionProps {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}
+function Section({ title, description, children }: SectionProps) {
   return (
     <Box sx={{ mb: 5 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
@@ -21,7 +26,16 @@ function Section({ title, description, children }: any) {
   );
 }
 
-function EditableArray({ label, value, onChange, placeholder = '', type = 'text', tooltip, disabled = false }: any) {
+interface EditableArrayProps {
+  label: string;
+  value: string[];
+  onChange: (arr: string[]) => void;
+  placeholder?: string;
+  type?: string;
+  tooltip?: string;
+  disabled?: boolean;
+}
+function EditableArray({ label, value, onChange, placeholder = '', type = 'text', tooltip, disabled = false }: EditableArrayProps) {
   const [input, setInput] = React.useState('');
   return (
     <Box sx={{ mb: 2 }}>
@@ -36,7 +50,7 @@ function EditableArray({ label, value, onChange, placeholder = '', type = 'text'
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>
         {value?.map((item: string, idx: number) => (
           <Chip key={item + idx} endDecorator={
-            <IconButton size="sm" onClick={() => onChange(value.filter((_: any, i: number) => i !== idx))} disabled={disabled}>
+            <IconButton size="sm" onClick={() => onChange(value.filter((_, i) => i !== idx))} disabled={disabled}>
               <Trash2 size={16} />
             </IconButton>
           }>{item}</Chip>
@@ -69,8 +83,23 @@ function EditableArray({ label, value, onChange, placeholder = '', type = 'text'
   );
 }
 
+interface MenuOptions {
+  maxRepetitionWeeks?: number;
+  useWeightedSelection?: boolean;
+  enableIngredientPlanning?: boolean;
+  availableIngredients?: string[];
+  useQuotas?: boolean;
+  mealTypeQuotas?: Record<string, number>;
+  preferredRecipes?: string[];
+  avoidedRecipes?: string[];
+}
+interface Config {
+  menuOptions: MenuOptions;
+  [key: string]: any;
+}
+
 export default function ConfigPage() {
-  const [config, setConfig] = React.useState<any>(null);
+  const [config, setConfig] = React.useState<Config | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [success, setSuccess] = React.useState('');
   const [error, setError] = React.useState('');
@@ -79,12 +108,12 @@ export default function ConfigPage() {
   React.useEffect(() => {
     fetch('http://localhost:4000/api/config')
       .then(res => res.json())
-      .then(data => { setConfig(data); setLoading(false); })
+      .then((data: Config) => { setConfig(data); setLoading(false); })
       .catch(() => { setError('Failed to load config'); setLoading(false); });
   }, []);
 
-  const setMenuOption = (key: string, value: any) => {
-    setConfig((prev: any) => ({ ...prev, menuOptions: { ...prev.menuOptions, [key]: value } }));
+  const setMenuOption = (key: keyof MenuOptions, value: unknown) => {
+    setConfig((prev: Config | null) => prev ? { ...prev, menuOptions: { ...prev.menuOptions, [key]: value } } : prev);
   };
 
   const handleSave = async () => {
@@ -210,7 +239,7 @@ export default function ConfigPage() {
               <Typography level="body-sm" sx={{ fontWeight: 600, mb: 0.5 }}>Meal type quotas (per week)</Typography>
               <Tooltip title="Set the maximum number of times each meal type can appear in a week." arrow variant="soft" color="primary">
                 <List sx={{ maxWidth: 400, bgcolor: 'background.level2', borderRadius: 2, p: 1 }}>
-                  {Object.entries(mo.mealTypeQuotas || {}).map(([cat, val]: any) => (
+                  {Object.entries(mo.mealTypeQuotas || {}).map(([cat, val]: [string, number]) => (
                     <ListItem key={cat} sx={{ gap: 1 }}>
                       <ListItemDecorator>{cat}</ListItemDecorator>
                       <Input type="number" value={val} onChange={e => setMenuOption('mealTypeQuotas', { ...mo.mealTypeQuotas, [cat]: Number(e.target.value) })} sx={{ maxWidth: 80, bgcolor: 'background.body', color: 'text.primary' }} />

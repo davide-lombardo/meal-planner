@@ -4,14 +4,14 @@ import ThemeProvider from './ThemeProvider';
 import AppRouter from './AppRouter';
 import Sidebar from './components/Sidebar';
 
-export default function App({ children }: { children?: React.ReactNode }) {
+export default function App() {
   const [sidebarWidth, setSidebarWidth] = React.useState(220);
   const [isMobile, setIsMobile] = React.useState(false);
 
   React.useEffect(() => {
-    const handler = (e: any) => setSidebarWidth(e.detail);
-    window.addEventListener('sidebar-width', handler);
-    return () => window.removeEventListener('sidebar-width', handler);
+    const handler = (e: CustomEvent) => setSidebarWidth(e.detail);
+    window.addEventListener('sidebar-width', handler as EventListener);
+    return () => window.removeEventListener('sidebar-width', handler as EventListener);
   }, []);
 
   React.useEffect(() => {

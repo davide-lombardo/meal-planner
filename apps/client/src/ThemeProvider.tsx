@@ -3,22 +3,21 @@ import { CssBaseline, useColorScheme, IconButton } from '@mui/joy';
 import { extendTheme, CssVarsProvider } from '@mui/joy/styles';
 import { Sun, Moon } from 'lucide-react';
 
-// Orange as primary accent, blue as secondary, neutrals for backgrounds
 const theme = extendTheme({
   colorSchemes: {
     light: {
       palette: {
         background: {
-          body: '#f7f7f7', // 60%: neutral light
+          body: '#f7f7f7',
         },
         primary: {
-          solidBg: '#ff8500', // 10%: vibrant orange
+          solidBg: '#ff8500',
           solidHoverBg: '#e67300',
           solidActiveBg: '#cc6600',
           plainColor: '#ff8500',
         },
         secondary: {
-          solidBg: '#2d3a4a', // 30%: deep blue for cards/surfaces
+          solidBg: '#2d3a4a',
           solidHoverBg: '#223042',
           solidActiveBg: '#1a2533',
           plainColor: '#2d3a4a',
@@ -30,10 +29,10 @@ const theme = extendTheme({
           plainColor: '#ffd60a',
         },
         neutral: {
-          solidBg: '#fff', // white for cards
+          solidBg: '#fff',
         },
         text: {
-          primary: '#181c1f', // high contrast text
+          primary: '#181c1f',
           secondary: '#333',
         },
       },
@@ -41,16 +40,16 @@ const theme = extendTheme({
     dark: {
       palette: {
         background: {
-          body: '#181c1f', // 60%: dark neutral
+          body: '#181c1f',
         },
         primary: {
-          solidBg: '#ff8500', // 10%: orange accent
+          solidBg: '#ff8500',
           solidHoverBg: '#e67300',
           solidActiveBg: '#cc6600',
           plainColor: '#ff8500',
         },
         secondary: {
-          solidBg: '#223042', // 30%: deep blue for cards/surfaces
+          solidBg: '#223042',
           solidHoverBg: '#1a2533',
           solidActiveBg: '#141a22',
           plainColor: '#223042',
@@ -62,11 +61,11 @@ const theme = extendTheme({
           plainColor: '#ffd60a',
         },
         neutral: {
-          solidBg: '#23272a', // dark card background
+          solidBg: '#23272a',
         },
         text: {
-          primary: '#fff', // high contrast text
-          secondary: '#e0e0e0',
+          primary: '#fff',
+          secondary: '#bdbdbd',
         },
       },
     },
@@ -78,12 +77,12 @@ export function ColorSchemeToggle() {
   return (
     <IconButton
       variant="plain"
-      color="primary"
-      onClick={() => setMode(mode === 'light' ? 'dark' : 'light')}
-      sx={{ position: 'fixed', top: 16, right: 16, zIndex: 1200 }}
+      color="neutral"
+      onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
       aria-label="Toggle dark mode"
+      sx={{ ml: 1 }}
     >
-      {mode === 'light' ? <Moon /> : <Sun />}
+      {mode === 'dark' ? <Sun size={22} /> : <Moon size={22} />}
     </IconButton>
   );
 }

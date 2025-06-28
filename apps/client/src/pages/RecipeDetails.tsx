@@ -3,10 +3,18 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Card, CardContent, IconButton, Sheet, Divider, Snackbar, Alert } from '@mui/joy';
 import { ArrowLeft, Pencil, Trash2, Soup } from 'lucide-react';
 
+interface Recipe {
+  id: string;
+  nome: string;
+  categoria?: string;
+  tipo?: string;
+  ingredienti: string[];
+}
+
 export default function RecipeDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [recipe, setRecipe] = React.useState<any>(null);
+  const [recipe, setRecipe] = React.useState<Recipe | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState('');
   const [showSuccess, setShowSuccess] = React.useState('');
@@ -16,9 +24,9 @@ export default function RecipeDetails() {
     setLoading(true);
     fetch(`http://localhost:4000/api/recipes`)
       .then(res => res.json())
-      .then(data => {
-        const found = data.find((r: any) => r.id === id);
-        setRecipe(found);
+      .then((data: Recipe[]) => {
+        const found = data.find((r) => r.id === id);
+        setRecipe(found || null);
         setLoading(false);
       })
       .catch(() => {
