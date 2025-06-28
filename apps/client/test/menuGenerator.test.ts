@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { generateMenu, formatMenu, generateShoppingList, generateHtmlEmail, Recipe, Menu, Config, getRecipeUsageStats, getCategoryStats } from '../src/utils/menuGenerator';
+import { RecipeSchema, MenuSchema, ConfigSchema } from '../src/utils/schemas';
 
 const sampleRecipes: Recipe[] = [
   { id: '1', nome: 'Pasta', categoria: 'carne', tipo: 'pranzo', ingredienti: ['pasta', 'pomodoro'] },
@@ -114,5 +115,16 @@ describe('menuGenerator', () => {
     expect(recipeStats['1']).toBe(1);
     expect(catStats['carne']).toBe(1);
     expect(catStats['uova']).toBe(1);
+  });
+});
+
+describe('zod validation', () => {
+  it('validates Recipe, Menu, and Config with Zod', () => {
+    sampleRecipes.forEach(recipe => {
+      expect(() => RecipeSchema.parse(recipe)).not.toThrow();
+    });
+    const menu = generateMenu(sampleRecipes, [], baseConfig);
+    expect(() => MenuSchema.parse(menu)).not.toThrow();
+    expect(() => ConfigSchema.parse(baseConfig)).not.toThrow();
   });
 });

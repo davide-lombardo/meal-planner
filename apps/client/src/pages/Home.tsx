@@ -7,6 +7,7 @@ import RecipeDialog from '../components/RecipeDialog';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { useLocation } from 'react-router-dom';
 import Skeleton from '@mui/joy/Skeleton';
+import { RecipeSchema } from '../utils/schemas';
 
 // Debounce hook
 function useDebouncedValue<T>(value: T, delay: number): T {
@@ -48,8 +49,18 @@ export default function Home() {
         return res.json();
       })
       .then(data => {
-        // Sort recipes by timestamp descending
-        setRecipes(data.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)));
+        // Validate and sort recipes by timestamp descending
+        const validRecipes = data.filter((recipe: any) => {
+          const result = RecipeSchema.safeParse(recipe);
+          if (!result.success) {
+            setError('Some recipes are invalid and were skipped.');
+            console.error('Invalid recipe data:', recipe, result.error.format());
+            return false;
+          }
+          return true;
+        });
+        setRecipes(validRecipes.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)));
+        setLoading(false);
       })
       .catch(() => setError('Failed to load recipes.'))
       .finally(() => setLoading(false));

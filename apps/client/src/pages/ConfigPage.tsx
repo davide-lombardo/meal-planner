@@ -4,6 +4,7 @@ import {
 } from '@mui/joy';
 import { Plus, Trash2, Info as InfoIcon, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { ConfigSchema } from '../utils/schemas';
 
 interface SectionProps {
   title: string;
@@ -108,7 +109,15 @@ export default function ConfigPage() {
   React.useEffect(() => {
     fetch('http://localhost:4000/api/config')
       .then(res => res.json())
-      .then((data: Config) => { setConfig(data); setLoading(false); })
+      .then((data: Config) => {
+        try {
+          ConfigSchema.parse(data);
+          setConfig(data);
+        } catch (e) {
+          setError('Loaded config is invalid: ' + (e instanceof Error ? e.message : 'Unknown error'));
+        }
+        setLoading(false);
+      })
       .catch(() => { setError('Failed to load config'); setLoading(false); });
   }, []);
 
@@ -121,6 +130,8 @@ export default function ConfigPage() {
     setError('');
     setSuccess('');
     try {
+      if (!config) throw new Error('No config to save');
+      ConfigSchema.parse(config); // Validate before saving
       const res = await fetch('http://localhost:4000/api/config', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -128,8 +139,8 @@ export default function ConfigPage() {
       });
       if (!res.ok) throw new Error('Failed to save config');
       setSuccess('Configuration saved!');
-    } catch {
-      setError('Failed to save configuration');
+    } catch (e) {
+      setError('Failed to save configuration: ' + (e instanceof Error ? e.message : 'Unknown error'));
     } finally {
       setLoading(false);
     }
