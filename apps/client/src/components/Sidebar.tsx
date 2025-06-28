@@ -40,29 +40,43 @@ export default function Sidebar() {
                 minHeight: 48,
                 px: open || isMobile ? 2 : 1.5,
                 justifyContent: open || isMobile ? 'flex-start' : 'center',
-                bgcolor: selected ? 'primary.solidBg' : 'transparent',
-                color: selected ? '#fff' : 'text.primary',
+                bgcolor: selected ? '#d46a00 !important' : 'transparent', // force darker orange for selected
+                color: selected ? '#fff !important' : 'text.primary',
                 '&:hover': {
-                  bgcolor: 'primary.softBg',
-                  color: 'primary.solidColor',
+                  bgcolor: 'rgba(255, 133, 0, 0.12)',
+                  color: '#ff8500',
+                  '& .Sidebar-icon, & .Sidebar-label': {
+                    color: '#ff8500',
+                  },
+                },
+                '&.Mui-selected, &.Mui-selected:hover': {
+                  bgcolor: '#d46a00 !important',
+                  color: '#fff !important',
+                  '& .Sidebar-icon, & .Sidebar-label': {
+                    color: '#fff !important',
+                  },
                 },
                 '&:focus-visible': {
                   outline: 'none',
-                  boxShadow: '0 0 0 2px #1976d2',
+                  boxShadow: '0 0 0 2px #ff8500',
                 },
               }}
             >
               <ListItemDecorator
+                className="Sidebar-icon"
                 sx={{
                   minWidth: 0,
                   mr: open || isMobile ? 2 : 0,
                   ml: 1,
-                  color: (theme) => theme.palette.mode === 'dark' ? '#fff' : '#222',
+                  color: selected ? '#fff !important' : 'inherit',
+                  transition: 'color 0.2s',
                 }}
               >
                 {icon}
               </ListItemDecorator>
-              {(open || isMobile) && <Typography sx={{ fontWeight: 700 }}>{label}</Typography>}
+              {(open || isMobile) && (
+                <Typography className="Sidebar-label" sx={{ fontWeight: 700, color: selected ? '#fff !important' : 'inherit', transition: 'color 0.2s' }}>{label}</Typography>
+              )}
             </ListItemButton>
           </ListItem>
         );

@@ -1,11 +1,22 @@
 import * as React from 'react';
-import { Box, Typography, Button, Stack, CircularProgress, Snackbar, Alert, Input, Select, Option } from '@mui/joy';
+import { Box, Typography, Button, Stack, CircularProgress, Snackbar, Alert, Input, Select, Option, Card, CardContent } from '@mui/joy';
 import { PlusCircle, Mail, Loader2 } from 'lucide-react';
 import RecipeCard from '../components/RecipeCard';
 import type { Recipe } from '../components/RecipeCard';
 import RecipeDialog from '../components/RecipeDialog';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { useLocation } from 'react-router-dom';
+import Skeleton from '@mui/joy/Skeleton';
+
+// Debounce hook
+function useDebouncedValue<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = React.useState(value);
+  React.useEffect(() => {
+    const handler = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  return debounced;
+}
 
 const API_URL = 'http://localhost:4000/api/recipes';
 
@@ -25,6 +36,7 @@ export default function Home() {
   const [actionError, setActionError] = React.useState('');
   const [filterType, setFilterType] = React.useState('');
   const [filterCategory, setFilterCategory] = React.useState('');
+  const debouncedSearch = useDebouncedValue(search, 250);
 
   // Fetch recipes from backend
   React.useEffect(() => {
@@ -140,7 +152,7 @@ export default function Home() {
 
   // Filter recipes by search and dropdowns
   const filteredRecipes = recipes.filter(r => {
-    const q = search.toLowerCase();
+    const q = debouncedSearch.toLowerCase();
     const matchesSearch =
       r.nome.toLowerCase().includes(q) ||
       (r.categoria && r.categoria.toLowerCase().includes(q)) ||
@@ -195,7 +207,7 @@ export default function Home() {
 
       {/* Recipes Section */}
       <Box sx={{ maxWidth: 1100, mx: 'auto', px: 2, py: 2 }}>
-        <Typography level="h2" sx={{ fontWeight: 800, mb: 2, color: 'text.primary' }}>
+        <Typography level="h2" sx={{ fontWeight: 800, mb: 2, color: theme => theme.palette.mode === 'dark' ? '#fff' : '#181c1f' }}>
           Your Recipes
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
@@ -238,8 +250,18 @@ export default function Home() {
           <Alert color="danger" variant="solid" sx={{ mb: 2 }}>{error}</Alert>
         )}
         {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
-            <CircularProgress size="lg" color="primary" />
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, minHeight: 200 }}>
+            {[...Array(4)].map((_, i) => (
+              <Card key={i} variant="soft" sx={{ bgcolor: 'neutral.solidBg', width: 340, height: 220, mb: 3, borderRadius: 12, boxShadow: 'md', p: 0, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+                <CardContent sx={{ p: 3, pt: 2.5, pb: 1.5 }}>
+                  <Skeleton variant="text" width={180} height={32} sx={{ mb: 2, borderRadius: 2 }} />
+                  <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+                    <Skeleton variant="rectangular" width={60} height={20} sx={{ borderRadius: 10 }} />
+                    <Skeleton variant="rectangular" width={40} height={20} sx={{ borderRadius: 10 }} />
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
           </Box>
         ) : filteredRecipes.length === 0 ? (
           <Box sx={{ textAlign: 'center', color: 'text.secondary', py: 8 }}>
@@ -263,7 +285,17 @@ export default function Home() {
 
       {/* Dialogs */}
       <RecipeDialog open={dialogOpen} onClose={() => setDialogOpen(false)} onSave={handleSaveRecipe} initialRecipe={editRecipe} data-testid="recipe-dialog" />
-      <ConfirmDialog open={deleteDialog.open} onClose={() => setDeleteDialog({ open: false, recipe: null })} onConfirm={confirmDeleteRecipe} message="Are you sure you want to delete this recipe? This action cannot be undone." data-testid="confirm-dialog" />
+      <ConfirmDialog
+        open={deleteDialog.open}
+        onClose={() => setDeleteDialog({ open: false, recipe: null })}
+        onConfirm={confirmDeleteRecipe}
+        message={
+          deleteDialog.recipe
+            ? `Are you sure you want to delete the recipe "${deleteDialog.recipe.nome}"? This action cannot be undone.`
+            : 'Are you sure you want to delete this recipe? This action cannot be undone.'
+        }
+        data-testid="confirm-dialog"
+      />
       <Snackbar open={!!sendSuccess} autoHideDuration={3000} onClose={() => setSendSuccess('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert color="success" variant="solid">{sendSuccess}</Alert>
       </Snackbar>
@@ -279,7 +311,15 @@ export default function Home() {
       {/* Footer */}
       <Box sx={{ width: '100%', bgcolor: 'background.body', color: 'text.secondary', textAlign: 'center', py: 4, mt: 8, borderTop: '1px solid', borderColor: 'divider' }}>
         <Typography level="body-md" sx={{ mb: 1 }}>
-          Made with <span style={{ color: '#27ae60', fontWeight: 700 }}>Meal Planner</span> &copy; {new Date().getFullYear()} | <a href="https://undraw.co/" style={{ color: 'inherit', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer">Illustrations by unDraw</a>
+          <span
+            style={{
+              fontWeight: 700,
+              color: typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? '#fff' : '#181c1f',
+            }}
+          >
+            Meal Planner
+          </span>
+          &copy; {new Date().getFullYear()} | <a href="https://undraw.co/" style={{ color: 'inherit', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer">Illustrations by unDraw</a>
         </Typography>
         <Typography level="body-sm" sx={{ mt: 1 }}>
           <a href="/how-it-works" style={{ color: '#ff8500', textDecoration: 'underline', fontWeight: 600, fontSize: 15, opacity: 0.9 }}>How it works</a>

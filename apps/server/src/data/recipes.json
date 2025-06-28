@@ -278,8 +278,8 @@
   {
     "id": "r045",
     "nome": "Merluzzo in pastella al sesamo nero",
-    "tipo": "cena",
     "categoria": "pesce",
+    "tipo": "cena",
     "ingredienti": [
       "merluzzo",
       "semi di sesamo",
@@ -290,8 +290,7 @@
       "zenzero",
       "carota",
       "porro"
-    ],
-    "timestamp": 1724880000018
+    ]
   },
   {
     "id": "r046",
@@ -329,19 +328,5 @@
       "cipolle dorate"
     ],
     "link": "https://blog.giallozafferano.it/cucinadisabrina/ricetta-lonza-con-le-mele-in-padella/"
-  },
-  {
-    "id": "r1751124454321",
-    "nome": "Riso alla cantonese",
-    "categoria": "uova",
-    "tipo": "pranzo",
-    "ingredienti": [
-      "riso",
-      "piselli",
-      "uova",
-      "olio di semi",
-      "prosciutto cotto"
-    ],
-    "timestamp": 1751124454321
   }
 ]

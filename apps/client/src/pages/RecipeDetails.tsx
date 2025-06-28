@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Card, CardContent, IconButton, Sheet, Divider, Snackbar, Alert } from '@mui/joy';
 import { ArrowLeft, Pencil, Trash2, Soup } from 'lucide-react';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 interface Recipe {
   id: string;
@@ -20,6 +21,7 @@ export default function RecipeDetails() {
   const [error, setError] = React.useState('');
   const [showSuccess, setShowSuccess] = React.useState('');
   const [showError, setShowError] = React.useState('');
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
 
   React.useEffect(() => {
     setLoading(true);
@@ -37,6 +39,11 @@ export default function RecipeDetails() {
   }, [id]);
 
   const handleDelete = async () => {
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    setConfirmOpen(false);
     try {
       const res = await fetch(`http://localhost:4000/api/recipes/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete');
@@ -128,6 +135,12 @@ export default function RecipeDetails() {
               <Trash2 size={20} />
             </IconButton>
           </Box>
+          <ConfirmDialog
+            open={confirmOpen}
+            onClose={() => setConfirmOpen(false)}
+            onConfirm={handleConfirmDelete}
+            message={`Are you sure you want to delete the recipe "${recipe.nome}"? This action cannot be undone.`}
+          />
         </Card>
         <Snackbar open={!!showSuccess} autoHideDuration={2000} onClose={() => setShowSuccess('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
           <Alert color="success" variant="solid">{showSuccess}</Alert>
