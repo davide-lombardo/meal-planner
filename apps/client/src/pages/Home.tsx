@@ -5,10 +5,12 @@ import RecipeCard from '../components/RecipeCard';
 import type { Recipe } from '../components/RecipeCard';
 import RecipeDialog from '../components/RecipeDialog';
 import ConfirmDialog from '../components/ConfirmDialog';
+import { useLocation } from 'react-router-dom';
 
 const API_URL = 'http://localhost:4000/api/recipes';
 
 export default function Home() {
+  const location = useLocation();
   const [recipes, setRecipes] = React.useState<Recipe[]>([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editRecipe, setEditRecipe] = React.useState<Recipe | null>(null);
@@ -33,10 +35,22 @@ export default function Home() {
         if (!res.ok) throw new Error('Failed to fetch recipes');
         return res.json();
       })
-      .then(data => setRecipes(data))
+      .then(data => {
+        // Sort recipes by timestamp descending
+        setRecipes(data.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)));
+      })
       .catch(() => setError('Failed to load recipes.'))
       .finally(() => setLoading(false));
   }, []);
+
+  React.useEffect(() => {
+    if (location.state && location.state.editRecipe) {
+      setEditRecipe(location.state.editRecipe);
+      setDialogOpen(true);
+      // Clean up state so dialog doesn't reopen on next visit
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const handleSendMealPlan = async () => {
     setSending(true);
@@ -62,15 +76,19 @@ export default function Home() {
     setError('');
     try {
       let response;
-      if (recipe.id) {
-        response = await fetch(`${API_URL}/${recipe.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(recipe),
-        });
-      } else {
+      // If recipe.id is empty or undefined, treat as new recipe
+      if (!recipe.id) {
+        // Generate a unique id and timestamp
+        const now = Date.now();
+        const newRecipe = { ...recipe, id: `r${now}`, timestamp: now };
         response = await fetch(API_URL, {
           method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newRecipe),
+        });
+      } else {
+        response = await fetch(`${API_URL}/${recipe.id}`, {
+          method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(recipe),
         });
@@ -78,7 +96,7 @@ export default function Home() {
       if (!response.ok) throw new Error('Failed to save recipe');
       // Refetch recipes
       const recipesRes = await fetch(API_URL);
-      setRecipes(await recipesRes.json());
+      setRecipes((await recipesRes.json()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)));
       setDialogOpen(false);
       setActionSuccess(recipe.id ? 'Recipe updated!' : 'Recipe added!');
     } catch {
@@ -261,7 +279,7 @@ export default function Home() {
       {/* Footer */}
       <Box sx={{ width: '100%', bgcolor: 'background.body', color: 'text.secondary', textAlign: 'center', py: 4, mt: 8, borderTop: '1px solid', borderColor: 'divider' }}>
         <Typography level="body-md" sx={{ mb: 1 }}>
-          Made with <span style={{ color: '#27ae60', fontWeight: 700 }}>Meal Planner</span> &copy; {new Date().getFullYear()} | Inspired by HelloFresh | <a href="https://undraw.co/" style={{ color: 'inherit', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer">Illustrations by unDraw</a>
+          Made with <span style={{ color: '#27ae60', fontWeight: 700 }}>Meal Planner</span> &copy; {new Date().getFullYear()} | <a href="https://undraw.co/" style={{ color: 'inherit', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer">Illustrations by unDraw</a>
         </Typography>
         <Typography level="body-sm" sx={{ mt: 1 }}>
           <a href="/how-it-works" style={{ color: '#ff8500', textDecoration: 'underline', fontWeight: 600, fontSize: 15, opacity: 0.9 }}>How it works</a>

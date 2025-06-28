@@ -13,6 +13,7 @@ node_modules/
 # Build output
 /dist/
 /dist-ssr/
+functions/dist/
 
 # Local env files
 *.local
@@ -46,3 +47,6 @@ node_modules/
 *.env.*
 cache/
 dists/
+
+# Ignore client-side recipes.json (should not exist)
+apps/client/src/data/recipes.json

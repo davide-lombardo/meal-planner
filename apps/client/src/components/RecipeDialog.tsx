@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Modal, ModalDialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, FormLabel, Input, Textarea, Typography } from '@mui/joy';
-import type { Recipe } from './RecipeCard';
+import { Modal, ModalDialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, FormLabel, Input, Textarea, Typography, Select, Option } from '@mui/joy';
+import type { Recipe, Category, RecipeType } from './RecipeCard';
 
 interface RecipeDialogProps {
   open: boolean;
@@ -12,20 +12,42 @@ interface RecipeDialogProps {
 export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: RecipeDialogProps) {
   const [nome, setNome] = React.useState(initialRecipe?.nome || '');
   const [ingredienti, setIngredienti] = React.useState(initialRecipe?.ingredienti?.join('\n') || '');
+  const [categoria, setCategoria] = React.useState<Category | undefined>(initialRecipe?.categoria);
+  const [tipo, setTipo] = React.useState<RecipeType | undefined>(initialRecipe?.tipo);
   const [error, setError] = React.useState('');
 
   React.useEffect(() => {
     setNome(initialRecipe?.nome || '');
     setIngredienti(initialRecipe?.ingredienti?.join('\n') || '');
+    setCategoria(initialRecipe?.categoria);
+    setTipo(initialRecipe?.tipo);
   }, [initialRecipe, open]);
+
+  const validCategories: Category[] = ['pesce', 'carne', 'formaggio', 'uova'];
+  const validTypes: RecipeType[] = ['pranzo', 'cena'];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nome.trim() || !ingredienti.trim()) {
+    if (!nome.trim() || !ingredienti.trim() || !categoria || !tipo) {
       setError('Please fill in all fields.');
       return;
     }
-    onSave({ ...initialRecipe, nome, ingredienti: ingredienti.split(/\n|\r|\r\n/).map(i => i.trim()).filter(Boolean) } as Recipe);
+    if (!validCategories.includes(categoria)) {
+      setError('Categoria non valida.');
+      return;
+    }
+    if (!validTypes.includes(tipo)) {
+      setError('Tipo non valido.');
+      return;
+    }
+    const recipeToSave: Recipe = {
+      id: initialRecipe?.id || '',
+      nome,
+      categoria,
+      tipo,
+      ingredienti: ingredienti.split(/\n|\r|\r\n/).map(i => i.trim()).filter(Boolean),
+    };
+    onSave(recipeToSave);
     setError('');
     onClose();
   };
@@ -39,6 +61,22 @@ export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: R
             <FormControl required sx={{ mb: 2 }}>
               <FormLabel>Nome Ricetta</FormLabel>
               <Input value={nome} onChange={e => setNome(e.target.value)} placeholder="e.g. Pasta alla carbonara" />
+            </FormControl>
+            <FormControl required sx={{ mb: 2 }}>
+              <FormLabel>Categoria</FormLabel>
+              <Select value={categoria} onChange={(_, v) => setCategoria(v as Category)} placeholder="Seleziona categoria">
+                {validCategories.map(cat => (
+                  <Option key={cat} value={cat}>{cat}</Option>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl required sx={{ mb: 2 }}>
+              <FormLabel>Tipo</FormLabel>
+              <Select value={tipo} onChange={(_, v) => setTipo(v as RecipeType)} placeholder="Seleziona tipo">
+                {validTypes.map(t => (
+                  <Option key={t} value={t}>{t}</Option>
+                ))}
+              </Select>
             </FormControl>
             <FormControl required>
               <FormLabel>Ingredienti (uno per riga)</FormLabel>

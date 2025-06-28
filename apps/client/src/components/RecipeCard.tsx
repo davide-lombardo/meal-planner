@@ -2,11 +2,14 @@ import { Card, CardContent, Typography, Box, IconButton } from '@mui/joy';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+export type Category = 'pesce' | 'carne' | 'formaggio' | 'uova';
+export type RecipeType = 'pranzo' | 'cena';
+
 export type Recipe = {
   id: string;
   nome: string;
-  categoria?: string;
-  tipo?: string;
+  categoria: Category;
+  tipo: RecipeType;
   ingredienti: string[];
 };
 

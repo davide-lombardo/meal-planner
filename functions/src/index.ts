@@ -8,8 +8,6 @@
  */
 
 import {setGlobalOptions} from "firebase-functions";
-import {onRequest} from "firebase-functions/https";
-import * as logger from "firebase-functions/logger";
 // @ts-ignore: No type declarations for built Express app
 import expressApp from '../../dist/apps/server/index.js';
 import * as functions from 'firebase-functions';
