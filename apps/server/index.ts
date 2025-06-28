@@ -4,8 +4,33 @@ import bodyParser from 'body-parser';
 import { sendEmail } from './email.js';
 import dotenv from 'dotenv';
 import { readJson, writeJson } from './fileHandler.js';
-import { generateMenu, formatMenu, generateHtmlEmail } from './utils/menuGenerator.js'; // Updated import path
+import { generateMenu, formatMenu, generateHtmlEmail } from './utils/menuGenerator.js';
 import logger from './logger.js';
+import { z } from 'zod';
+
+// Zod schemas
+const RecipeSchema = z.object({
+  id: z.string(),
+  nome: z.string(),
+  tipo: z.string().optional(),
+  categoria: z.string().optional(),
+  ingredienti: z.array(z.string()),
+});
+const HistoryEntrySchema = z.record(z.string(), z.any()); // Accepts any object for now
+const ConfigSchema = z.object({
+  useHistory: z.boolean().optional(),
+  menuOptions: z.object({
+    maxRepetitionWeeks: z.number(),
+    mealTypeQuotas: z.record(z.string(), z.number()),
+    useQuotas: z.boolean(),
+    useWeightedSelection: z.boolean().optional(),
+    enableIngredientPlanning: z.boolean().optional(),
+    lockedMeals: z.record(z.string(), z.string()).optional(),
+    availableIngredients: z.array(z.string()).optional(),
+    preferredRecipes: z.array(z.string()).optional(),
+    avoidedRecipes: z.array(z.string()).optional(),
+  }),
+});
 
 dotenv.config({ path: '../.env' });
 
@@ -31,8 +56,13 @@ app.get('/api/recipes', async (req, res) => {
 app.post('/api/recipes', async (req, res) => {
   logger.info('POST /api/recipes', { body: req.body });
   try {
+    const parseResult = RecipeSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      logger.warn('Invalid recipe input: %o', parseResult.error);
+      return res.status(400).json({ error: 'Invalid recipe input', details: parseResult.error.errors });
+    }
     const recipes = await readJson('recipes.json');
-    const newRecipe = req.body;
+    const newRecipe = parseResult.data;
     recipes.push(newRecipe);
     await writeJson('recipes.json', recipes);
     logger.info('Added recipe: %o', newRecipe);
@@ -46,13 +76,18 @@ app.post('/api/recipes', async (req, res) => {
 app.put('/api/recipes/:id', async (req, res) => {
   logger.info('PUT /api/recipes/%s', req.params.id, { body: req.body });
   try {
-    const recipes = await readJson('recipes.json');
+    const parseResult = RecipeSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      logger.warn('Invalid recipe input: %o', parseResult.error);
+      return res.status(400).json({ error: 'Invalid recipe input', details: parseResult.error.errors });
+    }
+    const recipes: Array<z.infer<typeof RecipeSchema>> = await readJson('recipes.json');
     const idx = recipes.findIndex((r: any) => r.id === req.params.id);
     if (idx === -1) {
       logger.warn('Recipe not found: %s', req.params.id);
       return res.status(404).json({ error: 'Recipe not found' });
     }
-    recipes[idx] = req.body;
+    recipes[idx] = parseResult.data;
     await writeJson('recipes.json', recipes);
     logger.info('Updated recipe: %o', req.body);
     res.json(recipes[idx]);
@@ -65,8 +100,8 @@ app.put('/api/recipes/:id', async (req, res) => {
 app.delete('/api/recipes/:id', async (req, res) => {
   logger.info('DELETE /api/recipes/%s', req.params.id);
   try {
-    let recipes = await readJson('recipes.json');
-    recipes = recipes.filter((r: any) => r.id !== req.params.id);
+    let recipes: Array<{ id: string }> = await readJson('recipes.json');
+    recipes = recipes.filter((r) => r.id !== req.params.id);
     await writeJson('recipes.json', recipes);
     logger.info('Deleted recipe: %s', req.params.id);
     res.status(204).end();
@@ -92,8 +127,14 @@ app.get('/api/history', async (req, res) => {
 app.post('/api/history', async (req, res) => {
   logger.info('POST /api/history', { body: req.body });
   try {
+    // Accept any object for now, but could be improved with a stricter schema
+    const parseResult = HistoryEntrySchema.safeParse(req.body);
+    if (!parseResult.success) {
+      logger.warn('Invalid history entry: %o', parseResult.error);
+      return res.status(400).json({ error: 'Invalid history entry', details: parseResult.error.errors });
+    }
     const history = await readJson('history.json');
-    const newEntry = req.body;
+    const newEntry = parseResult.data;
     history.push(newEntry);
     await writeJson('history.json', history);
     logger.info('Added history entry: %o', newEntry);
@@ -172,7 +213,12 @@ app.get('/api/config', async (req, res) => {
 app.put('/api/config', async (req, res) => {
   logger.info('PUT /api/config', { body: req.body });
   try {
-    await writeJson('config.json', req.body);
+    const parseResult = ConfigSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      logger.warn('Invalid config input: %o', parseResult.error);
+      return res.status(400).json({ error: 'Invalid config input', details: parseResult.error.errors });
+    }
+    await writeJson('config.json', parseResult.data);
     res.status(200).json({ message: 'Config updated' });
   } catch (err) {
     logger.error('Failed to update config: %o', err);
