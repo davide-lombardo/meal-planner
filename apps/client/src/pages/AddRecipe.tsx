@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Box, Button, FormControl, FormLabel, Input, Typography, Stack, Card, Textarea } from '@mui/joy';
+import { Box, Button, Input, Typography, Stack, Card, Textarea } from '@mui/joy';
 import { useNavigate } from 'react-router-dom';
+import { FormField } from '../components/common/FormField';
 
 export default function AddRecipe() {
   const [name, setName] = React.useState('');
@@ -31,14 +32,12 @@ export default function AddRecipe() {
               Add New Recipe
             </Typography>
             <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <FormControl required>
-                <FormLabel>Recipe Name</FormLabel>
-                <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Spaghetti Carbonara" />
-              </FormControl>
-              <FormControl required>
-                <FormLabel>Ingredients (one per line)</FormLabel>
-                <Textarea minRows={4} value={ingredients} onChange={e => setIngredients(e.target.value)} placeholder="e.g.\n200g spaghetti\n2 eggs\n100g pancetta" />
-              </FormControl>
+              <FormField label="Recipe Name" htmlFor="recipe-name" required>
+                <Input id="recipe-name" value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Spaghetti Carbonara" />
+              </FormField>
+              <FormField label="Ingredients (one per line)" htmlFor="ingredients" required>
+                <Textarea id="ingredients" minRows={4} value={ingredients} onChange={e => setIngredients(e.target.value)} placeholder={"e.g.\n200g spaghetti\n2 eggs\n100g pancetta"} />
+              </FormField>
               {error && <Typography color="danger" level="body-sm">{error}</Typography>}
               <Button type="submit" color="primary" variant="solid" size="lg" sx={{ fontWeight: 700, borderRadius: 8, mt: 2 }}>
                 Add Recipe

@@ -5,84 +5,9 @@ import {
 import { Plus, Trash2, Info as InfoIcon, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ConfigSchema } from '../utils/schemas';
-
-interface SectionProps {
-  title: string;
-  description?: string;
-  children: React.ReactNode;
-}
-function Section({ title, description, children }: SectionProps) {
-  return (
-    <Box sx={{ mb: 5 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-        <Typography level="h2" sx={{ fontWeight: 800, fontSize: { xs: 18, md: 22 }, color: 'text.primary', mr: 1 }}>{title}</Typography>
-        {description && (
-          <Tooltip title={description} variant="soft" color="primary" arrow>
-            <InfoIcon size={18} style={{ opacity: 0.7, cursor: 'pointer' }} />
-          </Tooltip>
-        )}
-      </Box>
-      {children}
-    </Box>
-  );
-}
-
-interface EditableArrayProps {
-  label: string;
-  value: string[];
-  onChange: (arr: string[]) => void;
-  placeholder?: string;
-  type?: string;
-  tooltip?: string;
-  disabled?: boolean;
-}
-function EditableArray({ label, value, onChange, placeholder = '', type = 'text', tooltip, disabled = false }: EditableArrayProps) {
-  const [input, setInput] = React.useState('');
-  return (
-    <Box sx={{ mb: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-        <Typography level="body-sm" sx={{ fontWeight: 600 }}>{label}</Typography>
-        {tooltip && (
-          <Tooltip title={tooltip} variant="soft" color="primary" arrow>
-            <InfoIcon size={15} style={{ marginLeft: 4, opacity: 0.7, cursor: 'pointer' }} />
-          </Tooltip>
-        )}
-      </Box>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 1 }}>
-        {value?.map((item: string, idx: number) => (
-          <Chip key={item + idx} endDecorator={
-            <IconButton size="sm" onClick={() => onChange(value.filter((_, i) => i !== idx))} disabled={disabled}>
-              <Trash2 size={16} />
-            </IconButton>
-          }>{item}</Chip>
-        ))}
-      </Box>
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <Input
-          size="sm"
-          value={input}
-          placeholder={placeholder}
-          type={type}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => {
-            if (!disabled && e.key === 'Enter' && input.trim()) {
-              onChange([...(value || []), input.trim()]);
-              setInput('');
-            }
-          }}
-          sx={{ bgcolor: 'background.level2', color: 'text.primary' }}
-          disabled={disabled}
-        />
-        <Button size="sm" variant="soft" onClick={() => {
-          if (!disabled && input.trim()) {
-            onChange([...(value || []), input.trim()]);
-            setInput('');
-          }
-        }} disabled={disabled}><Plus size={18} /></Button>
-      </Box>
-    </Box>
-  );
-}
+import { Section } from '../components/common/Section';
+import { EditableArray } from '../components/common/EditableArray';
+import { FormField } from '../components/common/FormField';
 
 interface MenuOptions {
   maxRepetitionWeeks?: number;
@@ -165,12 +90,9 @@ export default function ConfigPage() {
 
           <Section title="General" description="Basic settings for how your weekly menu is generated.">
             <Box sx={{ display: 'flex', gap: 4, flexWrap: 'wrap', mb: 2 }}>
-              <Box>
-                <Typography level="body-sm" sx={{ fontWeight: 600, mb: 0.5 }}>Max repetition weeks</Typography>
-                <Tooltip title="How many previous weeks to avoid repeating the same recipe." arrow variant="soft" color="primary">
-                  <Input type="number" value={mo.maxRepetitionWeeks ?? ''} onChange={e => setMenuOption('maxRepetitionWeeks', Number(e.target.value))} sx={{ maxWidth: 120, bgcolor: 'background.level2', color: 'text.primary' }} />
-                </Tooltip>
-              </Box>
+              <FormField label="Max repetition weeks" tooltip="How many previous weeks to avoid repeating the same recipe.">
+                <Input type="number" value={mo.maxRepetitionWeeks ?? ''} onChange={e => setMenuOption('maxRepetitionWeeks', Number(e.target.value))} sx={{ maxWidth: 120, bgcolor: 'background.level2', color: 'text.primary' }} />
+              </FormField>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 1, borderRadius: 2, bgcolor: 'background.level2', minWidth: 220 }}>
                 <Typography level="body-sm" sx={{ fontWeight: 600, flex: 1, color: 'text.primary' }}>Use weighted selection</Typography>
                 <Tooltip title="Prioritize recipes that have been used less often recently." arrow variant="soft" color="primary">

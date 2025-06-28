@@ -57,39 +57,85 @@ export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: R
 
   return (
     <Modal open={open} onClose={onClose}>
-      <ModalDialog aria-labelledby="edit-recipe-title" sx={{ bgcolor: 'background.body', color: 'text.primary', borderRadius: 6, boxShadow: 'lg' }}>
-        <DialogTitle id="edit-recipe-title">{initialRecipe ? 'Edit Recipe' : 'Add New Recipe'}</DialogTitle>
-        <form onSubmit={handleSubmit}>
-          <DialogContent sx={{ minWidth: 350 }}>
+      <ModalDialog 
+        aria-labelledby="edit-recipe-title" 
+        sx={{ 
+          bgcolor: 'background.body', 
+          color: 'text.primary', 
+          borderRadius: 6, 
+          boxShadow: 'lg',
+          // Fix horizontal overflow
+          width: '100%',
+          maxWidth: { xs: '95vw', sm: '500px' },
+          // Fix vertical overflow
+          maxHeight: '95vh',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden'
+        }}
+      >
+        <DialogTitle id="edit-recipe-title">
+          {initialRecipe ? 'Edit Recipe' : 'Add New Recipe'}
+        </DialogTitle>
+        
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+          <DialogContent sx={{ 
+            flex: 1,
+            overflow: 'auto',
+            // Ensure content doesn't break out horizontally
+            width: '100%',
+            boxSizing: 'border-box'
+          }}>
             <FormControl required sx={{ mb: 2 }}>
               <FormLabel>Nome Ricetta</FormLabel>
-              <Input value={nome} onChange={e => setNome(e.target.value)} placeholder="e.g. Pasta alla carbonara" />
+              <Input 
+                value={nome} 
+                onChange={e => setNome(e.target.value)} 
+                placeholder="e.g. Pasta alla carbonara"
+                sx={{ width: '100%' }}
+              />
             </FormControl>
+            
             <FormControl required sx={{ mb: 2 }}>
               <FormLabel>Categoria</FormLabel>
-              <Select value={categoria} onChange={(_, v) => setCategoria((v as Category) || '')} placeholder="Seleziona categoria">
+              <Select 
+                value={categoria} 
+                onChange={(_, v) => setCategoria((v as Category) || '')} 
+                placeholder="Seleziona categoria"
+                sx={{ width: '100%' }}
+              >
                 {validCategories.map(cat => (
                   <Option key={cat} value={cat}>{cat}</Option>
                 ))}
               </Select>
             </FormControl>
+            
             <FormControl required sx={{ mb: 2 }}>
               <FormLabel>Tipo</FormLabel>
-              <Select value={tipo} onChange={(_, v) => setTipo((v as RecipeType) || '')} placeholder="Seleziona tipo">
+              <Select 
+                value={tipo} 
+                onChange={(_, v) => setTipo((v as RecipeType) || '')} 
+                placeholder="Seleziona tipo"
+                sx={{ width: '100%' }}
+              >
                 {validTypes.map(t => (
                   <Option key={t} value={t}>{t}</Option>
                 ))}
               </Select>
             </FormControl>
-            <FormControl required>
+            
+            <FormControl required sx={{ mb: 2 }}>
               <FormLabel>Ingredienti (uno per riga)</FormLabel>
               <Textarea
                 minRows={3}
+                maxRows={6}
                 value={ingredienti}
                 onChange={e => setIngredienti(e.target.value)}
                 placeholder="pasta\nuova\nguanciale\n..."
+                sx={{ width: '100%', resize: 'none' }}
               />
             </FormControl>
+            
             <FormControl sx={{ mb: 2 }}>
               <FormLabel>Link alla ricetta (opzionale)</FormLabel>
               <Input
@@ -97,13 +143,28 @@ export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: R
                 onChange={e => setLink(e.target.value)}
                 placeholder="https://esempio.com/ricetta"
                 type="url"
+                sx={{ width: '100%' }}
               />
             </FormControl>
-            {error && <Typography color="danger" level="body-sm" sx={{ mt: 1 }}>{error}</Typography>}
+            
+            {error && (
+              <Typography color="danger" level="body-sm" sx={{ mt: 1 }}>
+                {error}
+              </Typography>
+            )}
           </DialogContent>
-          <DialogActions>
-            <Button variant="plain" color="neutral" onClick={onClose}>Cancel</Button>
-            <Button type="submit" color="primary" variant="solid">{initialRecipe ? 'Save' : 'Add Recipe'}</Button>
+          
+          <DialogActions sx={{ 
+            flexShrink: 0,
+            pt: 2,
+            gap: 1
+          }}>
+            <Button variant="plain" color="neutral" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" color="primary" variant="solid">
+              {initialRecipe ? 'Save' : 'Add Recipe'}
+            </Button>
           </DialogActions>
         </form>
       </ModalDialog>

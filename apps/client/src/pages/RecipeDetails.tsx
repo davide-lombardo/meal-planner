@@ -106,8 +106,8 @@ export default function RecipeDetails() {
           </Box>
         </Box>
       </Sheet>
-      <Box sx={{ maxWidth: 520, mx: 'auto', mt: -6, position: 'relative', zIndex: 2 }}>
-        <Card sx={{ p: { xs: 2, md: 4 }, borderRadius: 12, boxShadow: 'lg', bgcolor: 'neutral.solidBg', mt: 0 }}>
+      <Box sx={{ maxWidth: 700, mx: 'auto', mt: -6, position: 'relative', zIndex: 2 }}>
+        <Card sx={{ maxWidth: 700, mx: 'auto', p: { xs: 2, md: 4 }, borderRadius: 12, boxShadow: 'lg', bgcolor: 'background.level1', border: '1.5px solid', borderColor: 'divider', mt: 4 }}>
           <CardContent>
             <Typography level="h3" sx={{ fontWeight: 800, mb: 2, color: 'text.primary', letterSpacing: 0.5 }}>
               Ingredienti
@@ -127,13 +127,16 @@ export default function RecipeDetails() {
               </a>
             </Box>
           )}
-          <Box sx={{ display: 'flex', gap: 1.5, pt: 2, justifyContent: 'flex-end' }}>
-            <IconButton variant="soft" color="primary" aria-label="Edit recipe" onClick={handleEdit}>
-              <Pencil size={20} />
-            </IconButton>
-            <IconButton variant="soft" color="primary" aria-label="Delete recipe" onClick={handleDelete}>
-              <Trash2 size={20} />
-            </IconButton>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}>
+            <Button startDecorator={<ArrowLeft />} variant="soft" color="primary" onClick={() => navigate('/')} sx={{ fontWeight: 700, borderRadius: 8, boxShadow: 'sm' }}>
+              Back
+            </Button>
+            <Button startDecorator={<Pencil />} variant="outlined" color="primary" onClick={handleEdit} sx={{ fontWeight: 700, borderRadius: 8 }} aria-label="Edit Recipe">
+              Edit
+            </Button>
+            <Button startDecorator={<Trash2 />} variant="solid" color="danger" onClick={handleDelete} sx={{ fontWeight: 700, borderRadius: 8 }} aria-label="Delete Recipe">
+              Delete
+            </Button>
           </Box>
           <ConfirmDialog
             open={confirmOpen}

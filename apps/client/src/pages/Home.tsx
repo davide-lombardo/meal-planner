@@ -8,6 +8,8 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import { useLocation } from 'react-router-dom';
 import Skeleton from '@mui/joy/Skeleton';
 import { RecipeSchema } from '../utils/schemas';
+import { Section } from '../components/common/Section';
+import { FormField } from '../components/common/FormField';
 
 // Debounce hook
 function useDebouncedValue<T>(value: T, delay: number): T {
@@ -221,42 +223,29 @@ export default function Home() {
         <Typography level="h2" sx={{ fontWeight: 800, mb: 2, color: theme => theme.palette.mode === 'dark' ? '#fff' : '#181c1f' }}>
           Your Recipes
         </Typography>
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
-          <Input
-            placeholder="Search recipes..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            sx={{ maxWidth: 240 }}
-          />
-          <Select
-            placeholder="Filter by type"
-            value={filterType}
-            onChange={(_, v) => setFilterType(v || '')}
-            sx={{ minWidth: 140 }}
-            size="md"
-            variant="outlined"
-            color="neutral"
-          >
-            <Option value="">All Types</Option>
-            {types.map(t => (
-              <Option key={t} value={t}>{t}</Option>
-            ))}
-          </Select>
-          <Select
-            placeholder="Filter by category"
-            value={filterCategory}
-            onChange={(_, v) => setFilterCategory(v || '')}
-            sx={{ minWidth: 140 }}
-            size="md"
-            variant="outlined"
-            color="neutral"
-          >
-            <Option value="">All Categories</Option>
-            {categories.map(c => (
-              <Option key={c} value={c}>{c}</Option>
-            ))}
-          </Select>
-        </Box>
+        <Section title="Search & Filter" description="Find recipes by name, type, or category.">
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
+            <FormField label="Search" htmlFor="search-input">
+              <Input id="search-input" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search recipes..." />
+            </FormField>
+            <FormField label="Type" htmlFor="type-select">
+              <Select id="type-select" value={filterType} onChange={(_, v) => setFilterType(v || '')} placeholder="All Types">
+                <Option value="">All</Option>
+                {types.map(t => (
+                  <Option key={t} value={t}>{t}</Option>
+                ))}
+              </Select>
+            </FormField>
+            <FormField label="Category" htmlFor="category-select">
+              <Select id="category-select" value={filterCategory} onChange={(_, v) => setFilterCategory(v || '')} placeholder="All Categories">
+                <Option value="">All</Option>
+                {categories.map(c => (
+                  <Option key={c} value={c}>{c}</Option>
+                ))}
+              </Select>
+            </FormField>
+          </Box>
+        </Section>
         {error && (
           <Alert color="danger" variant="solid" sx={{ mb: 2 }}>{error}</Alert>
         )}

@@ -64,6 +64,25 @@ const theme = extendTheme({
       },
     },
   },
+  radius: {
+    xs: '2px',
+    sm: '4px',
+    md: '8px',
+    lg: '12px',
+    xl: '20px',
+  },
+  shadow: {
+    sm: '0 1px 4px rgba(0,0,0,0.06)',
+    md: '0 2px 8px rgba(0,0,0,0.10)',
+    lg: '0 4px 16px rgba(0,0,0,0.12)',
+  },
+  typography: {
+    h1: { fontWeight: 900, fontSize: '2.125rem', letterSpacing: '0.05em' },
+    h2: { fontWeight: 800, fontSize: '1.375rem' },
+    h3: { fontWeight: 700, fontSize: '1.125rem' },
+    button: { fontWeight: 700, fontSize: '1rem' },
+    fontFamily: 'Inter, Roboto, Arial, sans-serif',
+  },
 });
 
 export function ColorSchemeToggle() {
@@ -85,6 +104,15 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   return (
     <CssVarsProvider theme={theme} defaultMode="light">
       <CssBaseline />
+      <style>{`
+        html, body {
+          font-family: Inter, Roboto, Arial, sans-serif;
+        }
+        *:focus-visible {
+          outline: 2px solid #ff8500;
+          outline-offset: 2px;
+        }
+      `}</style>
       {children}
     </CssVarsProvider>
   );

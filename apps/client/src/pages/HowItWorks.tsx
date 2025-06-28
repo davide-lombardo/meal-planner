@@ -12,7 +12,7 @@ export default function HowItWorks() {
       </Button>
       <Card sx={{ maxWidth: 700, mx: 'auto', p: { xs: 2, md: 4 }, borderRadius: 12, boxShadow: 'lg', bgcolor: 'neutral.solidBg' }}>
         <CardContent>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, flexWrap: 'wrap' }}>
             <ChefHat size={36} style={{ marginRight: 16, color: '#ff8500' }} />
             <Typography level="h1" sx={{ fontWeight: 900, fontSize: { xs: 26, md: 36 }, letterSpacing: 1, mb: 2, color: 'primary.solidBg', textAlign: 'center' }}>
               How Meal Plan Generation Works
