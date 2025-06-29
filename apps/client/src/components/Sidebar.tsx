@@ -36,29 +36,29 @@ export default function Sidebar() {
               selected={selected}
               onClick={() => handleNav(path)}
               sx={{
-                borderRadius: 8,
+                borderRadius: 'md',
                 minHeight: 48,
                 px: open || isMobile ? 2 : 1.5,
                 justifyContent: open || isMobile ? 'flex-start' : 'center',
-                bgcolor: selected ? '#d46a00 !important' : 'transparent', // force darker orange for selected
-                color: selected ? '#fff !important' : 'text.primary',
+                bgcolor: selected ? 'primary.solidActiveBg' : 'transparent',
+                color: selected ? 'primary.solidColor' : 'text.primary',
                 '&:hover': {
-                  bgcolor: 'rgba(255, 133, 0, 0.12)',
-                  color: '#ff8500',
+                  bgcolor: 'primary.softBg',
+                  color: 'primary.plainColor',
                   '& .Sidebar-icon, & .Sidebar-label': {
-                    color: '#ff8500',
+                    color: 'primary.plainColor',
                   },
                 },
                 '&.Mui-selected, &.Mui-selected:hover': {
-                  bgcolor: '#d46a00 !important',
-                  color: '#fff !important',
+                  bgcolor: 'primary.solidActiveBg',
+                  color: 'primary.solidColor',
                   '& .Sidebar-icon, & .Sidebar-label': {
-                    color: '#fff !important',
+                    color: 'primary.solidColor',
                   },
                 },
                 '&:focus-visible': {
                   outline: 'none',
-                  boxShadow: '0 0 0 2px #ff8500',
+                  boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.plainColor}`,
                 },
               }}
             >
@@ -68,14 +68,23 @@ export default function Sidebar() {
                   minWidth: 0,
                   mr: open || isMobile ? 2 : 0,
                   ml: 1,
-                  color: selected ? '#fff !important' : 'inherit',
+                  color: selected ? 'primary.solidColor' : 'inherit',
                   transition: 'color 0.2s',
                 }}
               >
                 {icon}
               </ListItemDecorator>
               {(open || isMobile) && (
-                <Typography className="Sidebar-label" sx={{ fontWeight: 700, color: selected ? '#fff !important' : 'inherit', transition: 'color 0.2s' }}>{label}</Typography>
+                <Typography 
+                  className="Sidebar-label" 
+                  sx={{ 
+                    fontWeight: 700, 
+                    color: selected ? 'primary.solidColor' : 'inherit', 
+                    transition: 'color 0.2s' 
+                  }}
+                >
+                  {label}
+                </Typography>
               )}
             </ListItemButton>
           </ListItem>

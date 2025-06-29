@@ -80,8 +80,6 @@ const theme = extendTheme({
     h1: { fontWeight: 900, fontSize: '2.125rem', letterSpacing: '0.05em' },
     h2: { fontWeight: 800, fontSize: '1.375rem' },
     h3: { fontWeight: 700, fontSize: '1.125rem' },
-    button: { fontWeight: 700, fontSize: '1rem' },
-    fontFamily: 'Inter, Roboto, Arial, sans-serif',
   },
 });
 
