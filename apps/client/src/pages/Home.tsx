@@ -10,6 +10,7 @@ import Skeleton from '@mui/joy/Skeleton';
 import { RecipeSchema } from '../utils/schemas';
 import { Section } from '../components/common/Section';
 import { FormField } from '../components/common/FormField';
+import FilterSection from '../components/FiltersSection';
 
 // Debounce hook
 function useDebouncedValue<T>(value: T, delay: number): T {
@@ -223,29 +224,19 @@ export default function Home() {
         <Typography level="h2" sx={{ fontWeight: 800, mb: 2, color: theme => theme.palette.mode === 'dark' ? '#fff' : '#181c1f' }}>
           Your Recipes
         </Typography>
-        <Section title="Search & Filter" description="Find recipes by name, type, or category.">
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 2 }}>
-            <FormField label="Search" htmlFor="search-input">
-              <Input id="search-input" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search recipes..." />
-            </FormField>
-            <FormField label="Type" htmlFor="type-select">
-              <Select id="type-select" value={filterType} onChange={(_, v) => setFilterType(v || '')} placeholder="All Types">
-                <Option value="">All</Option>
-                {types.map(t => (
-                  <Option key={t} value={t}>{t}</Option>
-                ))}
-              </Select>
-            </FormField>
-            <FormField label="Category" htmlFor="category-select">
-              <Select id="category-select" value={filterCategory} onChange={(_, v) => setFilterCategory(v || '')} placeholder="All Categories">
-                <Option value="">All</Option>
-                {categories.map(c => (
-                  <Option key={c} value={c}>{c}</Option>
-                ))}
-              </Select>
-            </FormField>
-          </Box>
-        </Section>
+
+        <FilterSection
+          search={search}
+          onSearchChange={setSearch}
+          filterType={filterType}
+          onTypeChange={setFilterType}
+          filterCategory={filterCategory}
+          onCategoryChange={setFilterCategory}
+          types={types}
+          categories={categories}
+          filteredCount={filteredRecipes.length}
+          totalCount={recipes.length}
+        />
         {error && (
           <Alert color="danger" variant="solid" sx={{ mb: 2 }}>{error}</Alert>
         )}
