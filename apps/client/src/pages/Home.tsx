@@ -183,8 +183,8 @@ export default function Home() {
       <Box sx={{
         width: '100%',
         minHeight: 260,
-        bgcolor: theme => theme.palette.mode === 'dark' ? '#11151a' : 'primary.solidBg',
-        color: '#fff',
+        bgcolor: theme => theme.palette.mode === 'dark' ? 'background.level2' : 'primary.solidBg',
+        color: 'color.white',
         display: 'flex',
         flexDirection: { xs: 'column', md: 'row' },
         alignItems: 'center',
@@ -305,7 +305,7 @@ export default function Home() {
           <span
             style={{
               fontWeight: 700,
-              color: typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? '#d46a00' : '#181c1f',
+              color: '#ff8500',
             }}
           >
             Meal Planner

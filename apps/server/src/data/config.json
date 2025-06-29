@@ -1,7 +1,8 @@
 {
   "menuOptions": {
     "maxRepetitionWeeks": 4,
+    "mealTypeQuotas": {},
     "useQuotas": false,
-    "mealTypeQuotas": {}
+    "useWeightedSelection": false
   }
 }

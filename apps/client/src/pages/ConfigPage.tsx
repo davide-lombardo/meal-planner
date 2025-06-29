@@ -259,7 +259,7 @@ export default function ConfigPage() {
                       <Switch
                         checked={!!mo.useWeightedSelection}
                         onChange={e => setMenuOption('useWeightedSelection', e.target.checked)}
-                        color="primary"
+                        color={mo.useWeightedSelection ? "success" : "primary"}
                       />
                     </Box>
                   </Box>
@@ -315,7 +315,7 @@ export default function ConfigPage() {
                     <Switch
                       checked={!!mo.enableIngredientPlanning}
                       onChange={e => setMenuOption('enableIngredientPlanning', e.target.checked)}
-                      color="primary"
+                      color={mo.enableIngredientPlanning ? "success" : "primary"}
                     />
                   </Box>
 
@@ -383,7 +383,7 @@ export default function ConfigPage() {
                         <Switch
                           checked={!!mo.useQuotas}
                           onChange={e => setMenuOption('useQuotas', e.target.checked)}
-                          color="primary"
+                          color={mo.useQuotas ? "success" : "primary"}
                         />
                       </Box>
 
