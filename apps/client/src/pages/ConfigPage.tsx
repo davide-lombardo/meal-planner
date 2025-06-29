@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {
-  Box, Typography, Card, CardContent, Divider, Input, Button, Snackbar, Alert, Switch, Chip, List, ListItem, ListItemDecorator, IconButton, Tooltip, Stack, Grid
+  Box, Typography, Card, CardContent, Input, Button, Snackbar, Alert, Switch, Chip, List, ListItem, ListItemDecorator, IconButton, Stack, Grid
 } from '@mui/joy';
-import { Plus, Trash2, Info as InfoIcon, ArrowLeft, Save, Settings } from 'lucide-react';
+import { Plus, Trash2, ArrowLeft, Save, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ConfigSchema } from '../utils/schemas';
-import { Section } from '../components/common/Section';
 import { EditableArray } from '../components/common/EditableArray';
 import { FormField } from '../components/common/FormField';
+import { CONFIG } from '../utils/constants';
 
 interface MenuOptions {
   maxRepetitionWeeks?: number;
@@ -35,7 +35,7 @@ export default function ConfigPage() {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    fetch('http://localhost:4000/api/config')
+    fetch(`${CONFIG.API_BASE_URL}/config`)
       .then(res => res.json())
       .then((data: Config) => {
         try {
@@ -70,7 +70,7 @@ export default function ConfigPage() {
       
       ConfigSchema.parse(config);
       
-      const response = await fetch('http://localhost:4000/api/config', {
+      const response = await fetch(`${CONFIG.API_BASE_URL}/config`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(config),
@@ -174,7 +174,6 @@ export default function ConfigPage() {
         </Stack>
 
         <Box sx={{ textAlign: 'center', mb: 2 }}>
-          <Settings size={32} style={{ color: 'var(--joy-palette-primary-500)', marginBottom: 8 }} />
           <Typography 
             level="h1" 
             sx={{ 
@@ -184,7 +183,7 @@ export default function ConfigPage() {
               mb: 1
             }}
           >
-            Meal Planner Settings
+            Planner Settings
           </Typography>
           <Typography level="body-lg" sx={{ color: 'text.secondary' }}>
             Customize how your weekly menus are generated

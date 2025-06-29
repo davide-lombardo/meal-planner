@@ -2,6 +2,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import Home from '../src/pages/Home';
 import ThemeProvider from '../src/ThemeProvider';
 import React from 'react';
+import { beforeEach } from 'vitest';
+import { describe } from 'vitest';
+import { expect } from 'vitest';
+import { it } from 'vitest';
 
 describe('Home page', () => {
   beforeEach(() => {

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Card, CardContent, IconButton, Sheet, Divider, Snackbar, Alert } from '@mui/joy';
 import { ArrowLeft, Pencil, Trash2, Soup } from 'lucide-react';
 import ConfirmDialog from '../components/ConfirmDialog';
+import { CONFIG } from '../utils/constants';
 
 interface Recipe {
   id: string;
@@ -25,7 +26,7 @@ export default function RecipeDetails() {
 
   React.useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:4000/api/recipes`)
+    fetch(`${CONFIG.API_BASE_URL}/recipes`)
       .then(res => res.json())
       .then((data: Recipe[]) => {
         const found = data.find((r) => r.id === id);
@@ -45,7 +46,7 @@ export default function RecipeDetails() {
   const handleConfirmDelete = async () => {
     setConfirmOpen(false);
     try {
-      const res = await fetch(`http://localhost:4000/api/recipes/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${CONFIG.API_BASE_URL}/recipes/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete');
       setShowSuccess('Recipe deleted');
       setTimeout(() => navigate('/'), 1200);
@@ -128,13 +129,13 @@ export default function RecipeDetails() {
             </Box>
           )}
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}>
-            <Button startDecorator={<ArrowLeft />} variant="soft" color="primary" onClick={() => navigate('/')} sx={{ fontWeight: 700, borderRadius: 8, boxShadow: 'sm' }}>
+            <Button startDecorator={<ArrowLeft />} variant="outlined" color="primary" onClick={() => navigate('/')} sx={{ fontWeight: 700, borderRadius: 8, boxShadow: 'sm' }}>
               Back
             </Button>
-            <Button startDecorator={<Pencil />} variant="outlined" color="primary" onClick={handleEdit} sx={{ fontWeight: 700, borderRadius: 8 }} aria-label="Edit Recipe">
+            <Button startDecorator={<Pencil />} variant="soft" color="primary" onClick={handleEdit} sx={{ fontWeight: 700, borderRadius: 8 }} aria-label="Edit Recipe">
               Edit
             </Button>
-            <Button startDecorator={<Trash2 />} variant="solid" color="danger" onClick={handleDelete} sx={{ fontWeight: 700, borderRadius: 8 }} aria-label="Delete Recipe">
+            <Button startDecorator={<Trash2 />} variant="soft" color="danger" onClick={handleDelete} sx={{ fontWeight: 700, borderRadius: 8 }} aria-label="Delete Recipe">
               Delete
             </Button>
           </Box>

@@ -4,7 +4,6 @@ import { Info as InfoIcon } from 'lucide-react';
 
 /**
  * Section component for grouping related settings with a title and optional description.
- * Consistent spacing and accessible tooltip for description.
  */
 export interface SectionProps {
   title: string;

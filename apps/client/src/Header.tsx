@@ -1,9 +1,7 @@
 import { Box, Typography } from '@mui/joy';
 import { ColorSchemeToggle } from './ThemeProvider';
-import { useColorScheme } from '@mui/joy/styles';
 
 export default function Header() {
-  const { mode } = useColorScheme();
   return (
     <Box
       sx={{

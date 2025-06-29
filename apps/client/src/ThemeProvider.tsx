@@ -102,15 +102,6 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
   return (
     <CssVarsProvider theme={theme} defaultMode="light">
       <CssBaseline />
-      <style>{`
-        html, body {
-          font-family: Inter, Roboto, Arial, sans-serif;
-        }
-        *:focus-visible {
-          outline: 2px solid #ff8500;
-          outline-offset: 2px;
-        }
-      `}</style>
       {children}
     </CssVarsProvider>
   );

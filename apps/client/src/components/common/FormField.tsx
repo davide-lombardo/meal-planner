@@ -4,7 +4,6 @@ import { Info as InfoIcon } from 'lucide-react';
 
 /**
  * FormField - a wrapper for form fields with label, tooltip, and consistent spacing.
- * Ensures accessibility and layout consistency.
  */
 export interface FormFieldProps {
   label: string;

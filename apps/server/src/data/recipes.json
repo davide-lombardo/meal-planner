@@ -66,22 +66,6 @@
     "timestamp": 1724880000004
   },
   {
-    "id": "r025",
-    "nome": "Orzotto ai funghi champignon",
-    "tipo": "pranzo",
-    "categoria": "formaggio",
-    "ingredienti": [
-      "brodo vegetale",
-      "orzo perlato",
-      "cipolla",
-      "funghi champignon",
-      "grana padano",
-      "zucca",
-      "timo"
-    ],
-    "timestamp": 1724880000005
-  },
-  {
     "id": "r026",
     "nome": "Petto di pollo all paprika",
     "tipo": "cena",
@@ -328,5 +312,117 @@
       "cipolle dorate"
     ],
     "link": "https://blog.giallozafferano.it/cucinadisabrina/ricetta-lonza-con-le-mele-in-padella/"
+  },
+  {
+    "id": "r047",
+    "nome": "Zuppa di lenticchie rosse con curcuma e zenzero",
+    "tipo": "pranzo",
+    "categoria": "legumi",
+    "ingredienti": [
+      "lenticchie rosse",
+      "curcuma",
+      "zenzero",
+      "carote",
+      "cipolla",
+      "brodo vegetale",
+      "coriandolo"
+    ],
+    "timestamp": 1724880000020
+  },
+  {
+    "id": "r049",
+    "nome": "Risotto ai funghi porcini",
+    "tipo": "pranzo",
+    "categoria": "funghi",
+    "ingredienti": [
+      "riso Arborio",
+      "funghi porcini secchi",
+      "brodo vegetale",
+      "parmigiano reggiano",
+      "cipolla",
+      "vino bianco",
+      "prezzemolo"
+    ],
+    "timestamp": 1724880000022
+  },
+  {
+    "id": "r050",
+    "nome": "Involtini di verza ripieni",
+    "tipo": "cena",
+    "categoria": "carne",
+    "ingredienti": [
+      "verza",
+      "carne macinata",
+      "riso",
+      "passata di pomodoro",
+      "cipolla",
+      "uova",
+      "parmigiano"
+    ],
+    "timestamp": 1724880000023
+  },
+  {
+    "id": "r051",
+    "nome": "Gnocchi di patate al ragù",
+    "tipo": "pranzo",
+    "categoria": "carne",
+    "ingredienti": [
+      "patate",
+      "farina",
+      "uova",
+      "carne macinata",
+      "passata di pomodoro",
+      "carote",
+      "sedano",
+      "cipolla"
+    ],
+    "timestamp": 1724880000024
+  },
+  {
+    "id": "r053",
+    "nome": "Cotolette di pollo alla milanese",
+    "tipo": "cena",
+    "categoria": "carne",
+    "ingredienti": [
+      "petto di pollo",
+      "uova",
+      "pangrattato",
+      "farina",
+      "limone",
+      "olio per friggere"
+    ],
+    "timestamp": 1724880000026
+  },
+  {
+    "id": "r056",
+    "nome": "Polpette al sugo",
+    "tipo": "cena",
+    "categoria": "carne",
+    "ingredienti": [
+      "carne macinata",
+      "pane raffermo",
+      "latte",
+      "uova",
+      "parmigiano",
+      "passata di pomodoro",
+      "cipolla",
+      "basilico"
+    ],
+    "timestamp": 1724880000029
+  },
+    {
+    "id": "r058",
+    "nome": "Panzanella",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "ingredienti": [
+      "pane raffermo",
+      "pomodori",
+      "cetrioli",
+      "cipolla rossa",
+      "basilico",
+      "aceto di vino rosso"
+    ],
+    "timestamp": 1724966400001
   }
 ]

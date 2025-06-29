@@ -1,4 +1,8 @@
 import { Card, CardContent, Typography, Box, IconButton } from '@mui/joy';
+import { Drumstick } from 'lucide-react';
+import { Milk } from 'lucide-react';
+import { Egg } from 'lucide-react';
+import { Fish } from 'lucide-react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,8 +24,35 @@ interface RecipeCardProps {
   onDelete: (recipe: Recipe) => void;
 }
 
+const categoryMap = {
+  pesce: {
+    bgColor: '#87CEEB', // Sky Blue
+    textColor: '#181c1f', // A dark color for light background
+    icon: <Fish size={16} />
+  },
+  carne: {
+    bgColor: '#FA8072', // Salmon
+    textColor: '#181c1f', // A dark color for light background
+    icon: <Drumstick size={16} />
+  },
+  formaggio: {
+    bgColor: '#DAA520', // Goldenrod
+    textColor: '#181c1f', // A dark color for light background
+    icon: <Milk size={16} />
+  },
+  uova: {
+    bgColor: '#228B22', // Forest Green
+    textColor: '#ffffff', // White for dark background
+    icon: <Egg size={16} />
+  },
+};
+
 export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
   const navigate = useNavigate();
+
+  // Get the category details from the map
+  const categoryDetails = recipe.categoria ? categoryMap[recipe.categoria] : null;
+
   return (
     <Card
       variant="soft"
@@ -122,21 +153,27 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 1 }}>
-          {recipe.categoria && (
+               {recipe.categoria && categoryDetails && (
             <Box
               sx={{
                 px: 1.2,
                 py: 0.3,
-                bgcolor: 'primary.solidBg',
-                color: '#fff',
+                bgcolor: categoryDetails.bgColor,
+                color: categoryDetails.textColor, 
                 borderRadius: 10,
                 fontSize: 12,
                 fontWeight: 700,
                 letterSpacing: 0.5,
                 minWidth: 0,
                 whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
               }}
             >
+              {categoryDetails.icon}
               {recipe.categoria}
             </Box>
           )}

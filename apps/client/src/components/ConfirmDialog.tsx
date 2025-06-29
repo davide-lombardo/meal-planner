@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Modal, ModalDialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/joy';
 
 interface ConfirmDialogProps {

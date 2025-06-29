@@ -64,10 +64,8 @@ export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: R
           color: 'text.primary', 
           borderRadius: 6, 
           boxShadow: 'lg',
-          // Fix horizontal overflow
           width: '100%',
           maxWidth: { xs: '95vw', sm: '500px' },
-          // Fix vertical overflow
           maxHeight: '95vh',
           display: 'flex',
           flexDirection: 'column',
@@ -82,7 +80,6 @@ export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: R
           <DialogContent sx={{ 
             flex: 1,
             overflow: 'auto',
-            // Ensure content doesn't break out horizontally
             width: '100%',
             boxSizing: 'border-box'
           }}>

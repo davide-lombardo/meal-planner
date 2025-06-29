@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { Box, Typography, Card, CardContent, Divider, Button, Chip } from '@mui/joy';
+import { Box, Typography, Card, CardContent, Button, Chip, Stack } from '@mui/joy';
 import { ChefHat, ArrowLeft, Database, History, BarChart3, ShoppingCart, Settings, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -51,87 +50,60 @@ export default function HowItWorks() {
   return (
     <Box sx={{ 
       minHeight: '100vh', 
-      bgcolor: 'background.body', 
-      py: 4, 
-      px: 2,
-      background: 'linear-gradient(135deg, var(--joy-palette-background-body) 0%, var(--joy-palette-background-surface) 100%)'
+      bgcolor: 'background.body',
+      py: { xs: 3, md: 6 },
+      px: { xs: 2, md: 3 }
     }}>
       {/* Header */}
-      <Box sx={{ maxWidth: 800, mx: 'auto', mb: 4 }}>
-        <Button 
-          startDecorator={<ArrowLeft size={18} />} 
-          variant="soft" 
-          color="primary" 
-          onClick={() => navigate('/')} 
-          sx={{ 
-            mb: 3,
-            fontWeight: 600,
-            borderRadius: 12,
-            px: 3,
-            py: 1.5,
-            transition: 'all 0.2s ease',
-            '&:hover': {
-              transform: 'translateY(-2px)',
-              boxShadow: 'md'
-            }
-          }}
-        >
-          Back to Home
-        </Button>
-        
-        <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Box sx={{ 
-            display: 'inline-flex', 
-            alignItems: 'center', 
-            gap: 2, 
-            mb: 2,
-            p: 2,
-            borderRadius: 16,
-            bgcolor: 'primary.50',
-            border: '1px solid',
-            borderColor: 'primary.200'
-          }}>
-            <ChefHat size={40} style={{ color: '#ff8500' }} />
-            <Typography 
-              level="h1" 
-              sx={{ 
-                fontWeight: 800, 
-                fontSize: { xs: 28, md: 36 }, 
-                color: 'primary.solidBg',
-                mb: 0
-              }}
-            >
-              How It Works
-            </Typography>
-          </Box>
-          <Typography 
-            level="body-lg" 
+      <Box sx={{ maxWidth: 1200, mx: 'auto', mb: 4 }}>
+        <Stack direction="row" alignItems="center" justifyContent="flex-start" sx={{ mb: 3 }}>
+          <Button 
+            variant="soft" 
+            color="neutral"
+            startDecorator={<ArrowLeft size={18} />}
+            onClick={() => navigate('/')}
             sx={{ 
-              color: 'text.secondary', 
-              maxWidth: 600, 
-              mx: 'auto',
-              fontSize: 18
+              fontWeight: 600,
+              borderRadius: 2,
+              px: 3
             }}
           >
+            Back to Home
+          </Button>
+        </Stack>
+
+        <Box sx={{ textAlign: 'center', mb: 2 }}>
+          <Typography 
+            level="h1" 
+            sx={{ 
+              fontWeight: 800,
+              fontSize: { xs: 28, md: 36 },
+              color: 'text.primary',
+              mb: 1
+            }}
+          >
+            How It Works
+          </Typography>
+          <Typography level="body-lg" sx={{ color: 'text.secondary' }}>
             Your personal meal planning assistant that learns your preferences and creates balanced, varied menus
           </Typography>
         </Box>
       </Box>
 
       {/* Main Content */}
-      <Box sx={{ maxWidth: 800, mx: 'auto' }}>
+      <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
         {/* Steps */}
         <Box sx={{ mb: 6 }}>
           {steps.map((step, index) => (
             <Card 
               key={index}
+              variant="outlined"
               sx={{ 
                 mb: 3, 
                 p: 3,
-                borderRadius: 16,
-                boxShadow: 'sm',
+                borderRadius: 3,
                 border: '1px solid',
-                borderColor: 'neutral.200',
+                borderColor: 'divider',
                 transition: 'all 0.3s ease',
                 '&:hover': {
                   boxShadow: 'md',
@@ -148,7 +120,7 @@ export default function HowItWorks() {
                     justifyContent: 'center',
                     width: 48,
                     height: 48,
-                    borderRadius: 12,
+                    borderRadius: 2,
                     bgcolor: 'primary.100',
                     color: 'primary.600',
                     flexShrink: 0
@@ -183,14 +155,17 @@ export default function HowItWorks() {
         </Box>
 
         {/* Advanced Features Callout */}
-        <Card sx={{ 
-          p: 4, 
-          borderRadius: 20,
-          bgcolor: 'warning.50',
-          border: '2px solid',
-          borderColor: 'warning.200',
-          mb: 4
-        }}>
+        <Card 
+          variant="outlined"
+          sx={{ 
+            p: 4, 
+            borderRadius: 3,
+            bgcolor: 'warning.50',
+            border: '2px solid',
+            borderColor: 'warning.200',
+            mb: 4
+          }}
+        >
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
               <Zap size={28} style={{ color: '#ff8500' }} />
@@ -225,14 +200,17 @@ export default function HowItWorks() {
         </Card>
 
         {/* Bottom Summary */}
-        <Card sx={{ 
-          p: 4, 
-          borderRadius: 20,
-          bgcolor: 'success.50',
-          border: '1px solid',
-          borderColor: 'success.200',
-          textAlign: 'center'
-        }}>
+        <Card 
+          variant="outlined"
+          sx={{ 
+            p: 4, 
+            borderRadius: 3,
+            bgcolor: 'success.50',
+            border: '1px solid',
+            borderColor: 'success.200',
+            textAlign: 'center'
+          }}
+        >
           <CardContent>
             <Typography level="h4" sx={{ fontWeight: 700, color: 'success.800', mb: 2 }}>
               The Result?
