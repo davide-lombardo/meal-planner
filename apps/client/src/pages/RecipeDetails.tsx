@@ -192,43 +192,38 @@ export default function RecipeDetails() {
             >
               {recipe.nome}
             </Typography>
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-start' } }}>
+             <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                justifyContent: { xs: 'center', md: 'flex-start' },
+              }}
+            >
               {recipe.categoria && (
-                <Box
+                <Typography
+                  level="body-md"
                   sx={{
-                    px: 2,
-                    py: 0.8,
-                    bgcolor: 'secondary.solidBg',
                     color: '#fff',
-                    borderRadius: 20,
-                    fontSize: 14,
-                    fontWeight: 700,
-                    display: 'inline-block',
-                    letterSpacing: 0.5,
+                    fontWeight: 500,
+                    fontSize: 16,
                   }}
                 >
-                  {recipe.categoria}
-                </Box>
+                  Category: {recipe.categoria}
+                </Typography>
               )}
               {recipe.tipo && (
-                <Box
+                <Typography
+                  level="body-md"
                   sx={{
-                    px: 1.8,
-                    py: 0.8,
-                    bgcolor: 'warning.solidBg',
-                    color:
-                      recipe.tipo.toLowerCase() === 'pranzo' || recipe.tipo.toLowerCase() === 'cena'
-                        ? 'warning.dark'
-                        : 'warning.dark',
-                    borderRadius: 20,
-                    fontSize: 13,
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: 1,
+                    color: '#fff',
+                    fontWeight: 500,
+                    fontSize: 16,
                   }}
                 >
-                  {recipe.tipo}
-                </Box>
+                  Type: {recipe.tipo}
+                </Typography>
               )}
             </Box>
           </Box>
@@ -238,8 +233,8 @@ export default function RecipeDetails() {
         <Box sx={{ display: 'flex', gap: 2, mt: { xs: 3, md: 4 } }}>
           <Button
             startDecorator={<Pencil />}
-            variant="soft"
-            color="primary"
+            variant="plain"
+            color="neutral"
             onClick={handleEdit}
             sx={{ fontWeight: 700, borderRadius: 8, px: 3, py: 1.2 }}
             aria-label="Edit Recipe"
@@ -248,8 +243,8 @@ export default function RecipeDetails() {
           </Button>
           <Button
             startDecorator={<Trash2 />}
-            variant="soft"
-            color="danger"
+            variant="plain"
+            color="neutral"
             onClick={handleDelete}
             sx={{ fontWeight: 700, borderRadius: 8, px: 3, py: 1.2 }}
             aria-label="Delete Recipe"
