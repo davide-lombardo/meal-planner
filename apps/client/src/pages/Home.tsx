@@ -213,8 +213,7 @@ export default function Home() {
             level="body-lg"
             sx={{ fontSize: { xs: 16, md: 22 }, mb: 3, color: '#fff', maxWidth: 500 }}
           >
-            Discover, organize, and share your favorite recipes. Generate a weekly menu and shopping
-            list in one click!
+            Organize your favorite recipes. Generate a weekly menu and shopping list in one click!
           </Typography>
           <Button
             data-testid="add-recipe-btn"
@@ -253,17 +252,6 @@ export default function Home() {
 
       {/* Recipes Section */}
       <Box sx={{ maxWidth: 1100, mx: 'auto', px: 2, py: 2 }}>
-        <Typography
-          level="h2"
-          sx={{
-            fontWeight: 800,
-            mb: 2,
-            color: (theme) => (theme.palette.mode === 'dark' ? '#fff' : '#181c1f'),
-          }}
-        >
-          Your Recipes
-        </Typography>
-
         <FilterSection
           search={search}
           onSearchChange={setSearch}

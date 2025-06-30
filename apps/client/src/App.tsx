@@ -33,7 +33,7 @@ export default function App() {
               minHeight: '100vh',
               display: 'flex',
               flexDirection: 'column',
-              transition: 'margin-left 0.2s',
+              transition: 'margin-left 0.2s ease-in-out, width 0.2s ease-in-out, padding 0.2s ease-in-out', 
             }}
           >
             <AppRouter />

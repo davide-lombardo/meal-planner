@@ -1,10 +1,7 @@
-import { Card, CardContent, Typography, Box, IconButton } from '@mui/joy';
-import { Drumstick } from 'lucide-react';
-import { Milk } from 'lucide-react';
-import { Egg } from 'lucide-react';
-import { Fish } from 'lucide-react';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Card, CardContent, Typography, Box, IconButton, Menu, MenuItem } from '@mui/joy';
+import { Drumstick, Milk, Egg, Fish, Pencil, Trash2, EllipsisVertical } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import * as React from 'react';
 
 export type Category = 'pesce' | 'carne' | 'formaggio' | 'uova';
 export type RecipeType = 'pranzo' | 'cena';
@@ -26,24 +23,20 @@ interface RecipeCardProps {
 
 const categoryMap = {
   pesce: {
-    bgColor: '#87CEEB', // Sky Blue
-    textColor: '#181c1f', // A dark color for light background
-    icon: <Fish size={16} />
+    color: '#87CEEB', // Sky Blue
+    icon: <Fish size={16} />,
   },
   carne: {
-    bgColor: '#FA8072', // Salmon
-    textColor: '#181c1f', // A dark color for light background
-    icon: <Drumstick size={16} />
+    color: '#FA8072', // Salmon
+    icon: <Drumstick size={16} />,
   },
   formaggio: {
-    bgColor: '#DAA520', // Goldenrod
-    textColor: '#181c1f', // A dark color for light background
-    icon: <Milk size={16} />
+    color: '#DAA520', // Goldenrod
+    icon: <Milk size={16} />,
   },
   uova: {
-    bgColor: '#228B22', // Forest Green
-    textColor: '#ffffff', // White for dark background
-    icon: <Egg size={16} />
+    color: '#228B22', // Forest Green
+    icon: <Egg size={16} />,
   },
 };
 
@@ -52,6 +45,35 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
 
   // Get the category details from the map
   const categoryDetails = recipe.categoria ? categoryMap[recipe.categoria] : null;
+
+  // Menu state and handlers
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenuToggle = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    if (open) {
+      setAnchorEl(null);
+    } else {
+      setAnchorEl(event.currentTarget);
+    }
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const onEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleMenuClose();
+    onEdit(recipe);
+  };
+
+  const onDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleMenuClose();
+    onDelete(recipe);
+  };
 
   return (
     <Card
@@ -76,90 +98,92 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
           transform: 'translateY(-4px) scale(1.025)',
           boxShadow: 'lg',
         },
-        '&:hover .card-actions': {
-          opacity: 1,
-          pointerEvents: 'auto',
-        },
       }}
       onClick={() => navigate(`/recipe/${recipe.id}`)}
     >
-      {/* Floating actions, visible on hover only */}
-      <Box
-        className="card-actions"
-        sx={{
-          position: 'absolute',
-          top: 12,
-          right: 12,
-          zIndex: 2,
-          display: 'flex',
-          gap: 1,
-          opacity: 0,
-          pointerEvents: 'none',
-          transition: 'opacity 0.2s',
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <Box sx={{ position: 'absolute', top: 12, right: 12, zIndex: 2 }}>
         <IconButton
-          data-testid={`edit-btn-${recipe.id}`}
-          variant="soft"
-          color="primary"
-          onClick={() => onEdit(recipe)}
-          aria-label="Edit recipe"
+          aria-label="more actions"
+          aria-controls={open ? `recipe-menu-${recipe.id}` : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          onClick={handleMenuToggle}
+          size="sm"
+          variant="plain"
           sx={{
             borderRadius: '50%',
-            bgcolor: 'background.body',
-            boxShadow: 'sm',
-            '&:hover': { bgcolor: 'primary.solidBg', color: '#fff' },
+            p: 0.5,
+            color: 'text.primary',
+            '&:hover': {
+              bgcolor: 'transparent',
+              color: 'text.primary',
+              boxShadow: 'none',
+            },
+            '&:focus-visible': {
+              bgcolor: 'transparent',
+              boxShadow: 'none',
+            },
           }}
         >
-          <Pencil size={18} />
+          <EllipsisVertical />
         </IconButton>
-        <IconButton
-          data-testid={`delete-btn-${recipe.id}`}
-          variant="soft"
-          color="danger"
-          onClick={() => onDelete(recipe)}
-          aria-label="Delete recipe"
-          sx={{
-            borderRadius: '50%',
-            bgcolor: 'background.body',
-            boxShadow: 'sm',
-            '&:hover': { bgcolor: 'danger.solidBg', color: '#fff' },
-          }}
+        <Menu
+          id={`recipe-menu-${recipe.id}`}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}
+          placement="bottom-end"
+          onClick={(e) => e.stopPropagation()} // prevent closing card click
         >
-          <Trash2 size={18} />
-        </IconButton>
+          <MenuItem onClick={onEditClick} sx={{ gap: 1 }}>
+            <Pencil size={16} /> Edit
+          </MenuItem>
+          <MenuItem onClick={onDeleteClick} sx={{ gap: 1, color: 'danger.600' }}>
+            <Trash2 size={16} /> Delete
+          </MenuItem>
+        </Menu>
       </Box>
-      <CardContent sx={{ p: 3, pt: 2.5, pb: 1.5 }}>
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', width: '100%' }}>
-          <Typography
-            level="h3"
-            sx={{
-              fontWeight: 900,
-              fontSize: 22,
-              lineHeight: 1.2,
-              mb: 1,
-              pr: 0,
-              flex: 1,
-              minWidth: 0,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              transition: 'padding-right 0.2s',
-            }}
-            title={recipe.nome}
-          >
-            {recipe.nome}
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 1 }}>
-               {recipe.categoria && categoryDetails && (
+
+      <CardContent
+        sx={{
+          p: 3,
+          pt: 2.5,
+          pb: 1.5,
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+        }}
+      >
+        <Typography
+          level="h3"
+          sx={{
+            fontWeight: 900,
+            fontSize: 22,
+            lineHeight: 1.2,
+            mb: 1,
+            pr: 0,
+            flex: '0 0 auto',
+            minWidth: 0,
+            whiteSpace: 'normal',
+            overflow: 'visible',
+            textOverflow: 'unset',
+            transition: 'padding-right 0.2s',
+          }}
+          title={recipe.nome}
+        >
+          {recipe.nome}
+        </Typography>
+
+        <Box sx={{ mt: 'auto', display: 'flex', gap: 1, alignItems: 'center' }}>
+          {recipe.categoria && categoryDetails && (
             <Box
               sx={{
                 px: 1.2,
                 py: 0.3,
-                bgcolor: categoryDetails.bgColor,
-                color: categoryDetails.textColor, 
+                border: '1.5px solid',
+                borderColor: categoryDetails.color,
+                color: categoryDetails.color,
+                bgcolor: 'transparent',
                 borderRadius: 10,
                 fontSize: 12,
                 fontWeight: 700,
@@ -180,16 +204,19 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
           {recipe.tipo && (
             <Box
               sx={{
-                px: 1,
-                py: 0.3,
-                bgcolor: 'warning.solidBg',
-                color: '#b88600',
-                borderRadius: 10,
-                fontSize: 11,
-                fontWeight: 700,
+                px: 0.6,
+                py: 0.2,
+                border: `1px solid #666`,
+                color: '#444',
+                borderRadius: 2,
+                fontSize: 10,
+                fontWeight: 500,
                 textTransform: 'uppercase',
-                letterSpacing: 1,
-                ml: 0,
+                letterSpacing: 0.8,
+                userSelect: 'none',
+                alignSelf: 'center',
+                minWidth: 40,
+                textAlign: 'center',
               }}
             >
               {recipe.tipo}

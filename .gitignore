@@ -50,3 +50,4 @@ dists/
 
 # Ignore client-side recipes.json (should not exist)
 apps/client/src/data/recipes.json
+tmp/apps/server/serve/

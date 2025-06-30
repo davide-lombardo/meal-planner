@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, List, ListItem, ListItemButton, ListItemDecorator, Typography, Drawer } from '@mui/joy';
+import { Box, IconButton, List, ListItem, ListItemButton, ListItemDecorator, Typography, Drawer, useColorScheme } from '@mui/joy';
 import { Home, Settings, Info, Menu as MenuIcon, ChevronLeft } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -14,12 +14,14 @@ export default function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { mode } = useColorScheme();
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent('sidebar-width', { detail: open ? 220 : 64 }));
   }, [open]);
 
-  const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 600px)').matches;
+  // Using a more reliable way to check for mobile, although direct window.matchMedia is fine if SSR isn't a concern
+  const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
 
   const handleNav = (path: string) => {
     navigate(path);
@@ -40,25 +42,18 @@ export default function Sidebar() {
                 minHeight: 48,
                 px: open || isMobile ? 2 : 1.5,
                 justifyContent: open || isMobile ? 'flex-start' : 'center',
-                bgcolor: selected ? 'primary.solidActiveBg' : 'transparent',
-                color: selected ? 'primary.solidColor' : 'text.primary',
-                '&:hover': {
-                  bgcolor: 'primary.softBg',
-                  color: 'primary.plainColor',
-                  '& .Sidebar-icon, & .Sidebar-label': {
-                    color: 'primary.plainColor',
-                  },
-                },
+                overflow: 'hidden',
+                transition: 'background-color 0.2s, color 0.2s, padding-left 0.2s, padding-right 0.2s, width 0.2s',
                 '&.Mui-selected, &.Mui-selected:hover': {
-                  bgcolor: 'primary.solidActiveBg',
-                  color: 'primary.solidColor',
+                  bgcolor: mode === 'dark' ? 'neutral.700' : 'neutral.300',
+                  color: mode === 'dark' ? 'neutral.100' : 'neutral.900',
                   '& .Sidebar-icon, & .Sidebar-label': {
-                    color: 'primary.solidColor',
+                    color: mode === 'dark' ? 'neutral.100' : 'neutral.900',
                   },
                 },
                 '&:focus-visible': {
                   outline: 'none',
-                  boxShadow: (theme) => `0 0 0 2px ${theme.palette.primary.plainColor}`,
+                  boxShadow: (theme) => `0 0 0 2px ${theme.palette.neutral.outlinedBorder}`,
                 },
               }}
             >
@@ -68,19 +63,26 @@ export default function Sidebar() {
                   minWidth: 0,
                   mr: open || isMobile ? 2 : 0,
                   ml: 1,
-                  color: selected ? 'primary.solidColor' : 'inherit',
-                  transition: 'color 0.2s',
+                  color: selected
+                    ? (mode === 'dark' ? 'neutral.100' : 'neutral.900')
+                    : 'neutral.plainColor',
+                  transition: 'color 0.2s, margin-right 0.2s',
                 }}
               >
                 {icon}
               </ListItemDecorator>
+              {/* Only render Typography if open or on mobile for smooth animation */}
               {(open || isMobile) && (
-                <Typography 
-                  className="Sidebar-label" 
-                  sx={{ 
-                    fontWeight: 700, 
-                    color: selected ? 'primary.solidColor' : 'inherit', 
-                    transition: 'color 0.2s' 
+                <Typography
+                  className="Sidebar-label"
+                  sx={{
+                    fontWeight: 700,
+                    whiteSpace: 'nowrap',
+                    opacity: open || isMobile ? 1 : 0,
+                    transition: 'color 0.2s, opacity 0.2s ease-out',
+                    color: selected
+                      ? (mode === 'dark' ? 'neutral.100' : 'neutral.900')
+                      : 'neutral.plainColor',
                   }}
                 >
                   {label}
@@ -100,6 +102,7 @@ export default function Sidebar() {
       display: 'flex',
       flexDirection: 'column',
       bgcolor: 'background.level1',
+      transition: 'width 0.2s ease-in-out, flex-basis 0.2s ease-in-out',
     },
   };
 
@@ -141,7 +144,7 @@ export default function Sidebar() {
     <Box
       sx={{
         width: open ? 220 : 64,
-        transition: 'width 0.2s',
+        transition: 'width 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-right 0.3s ease-in-out',
         bgcolor: 'background.level1',
         height: '100vh',
         position: 'fixed',
@@ -157,7 +160,7 @@ export default function Sidebar() {
     >
       <Box sx={{ display: 'flex', alignItems: 'center', p: 2, pb: 1 }}>
         {!isMobile && (
-          <IconButton onClick={() => setOpen((o) => !o)} variant="plain" color="neutral" sx={{ mr: open ? 1 : 0 }}>
+          <IconButton onClick={() => setOpen((o) => !o)} variant="plain" color="neutral" sx={{ mr: open ? 1 : 0, transition: 'margin-right 0.2s' }}>
             {open ? <ChevronLeft size={22} /> : <MenuIcon size={22} />}
           </IconButton>
         )}

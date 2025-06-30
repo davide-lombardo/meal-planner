@@ -24,7 +24,7 @@ export default function Header() {
           fontWeight: 900,
           letterSpacing: 1,
           transition: 'color 0.2s',
-          fontSize: { xs: '1.3rem', sm: '2rem', md: '2.5rem' },
+          fontSize: { xs: '1rem', sm: '1.3rem', md: '1.5rem' },
           flex: 1,
           textAlign: 'center',
         }}

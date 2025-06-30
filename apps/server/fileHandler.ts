@@ -1,8 +1,6 @@
-// Utility for reading/writing JSON data files for recipes, history, and config
 import * as fs from 'fs/promises';
 import upath from 'upath';
 
-// Always use the Nx workspace root to resolve the data directory
 const DATA_DIR = upath.resolve(process.cwd(), 'apps/server/src/data');
 
 export async function readJson(filename: string) {

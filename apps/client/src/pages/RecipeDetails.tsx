@@ -1,9 +1,22 @@
 import * as React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Card, CardContent, IconButton, Sheet, Divider, Snackbar, Alert } from '@mui/joy';
-import { ArrowLeft, Pencil, Trash2, Soup } from 'lucide-react';
+import {
+  Box,
+  Typography,
+  Button,
+  Card,
+  CardContent,
+  IconButton,
+  Sheet,
+  Divider,
+  Snackbar,
+  Alert,
+  CircularProgress,
+} from '@mui/joy';
+import { ArrowLeft, Pencil, Trash2, Soup, ExternalLink } from 'lucide-react';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { CONFIG } from '../utils/constants';
+
 
 interface Recipe {
   id: string;
@@ -27,19 +40,25 @@ export default function RecipeDetails() {
   React.useEffect(() => {
     setLoading(true);
     fetch(`${CONFIG.API_BASE_URL}/recipes`)
-      .then(res => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return res.json();
+      })
       .then((data: Recipe[]) => {
         const found = data.find((r) => r.id === id);
         setRecipe(found || null);
         setLoading(false);
       })
-      .catch(() => {
-        setError('Failed to load recipe.');
+      .catch((err) => {
+        console.error("Failed to fetch recipe:", err);
+        setError('Failed to load recipe. Please try again.');
         setLoading(false);
       });
   }, [id]);
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     setConfirmOpen(true);
   };
 
@@ -47,11 +66,14 @@ export default function RecipeDetails() {
     setConfirmOpen(false);
     try {
       const res = await fetch(`${CONFIG.API_BASE_URL}/recipes/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete');
-      setShowSuccess('Recipe deleted');
+      if (!res.ok) {
+        throw new Error('Failed to delete');
+      }
+      setShowSuccess('Recipe deleted successfully!');
       setTimeout(() => navigate('/'), 1200);
-    } catch {
-      setShowError('Failed to delete recipe');
+    } catch (err) {
+      console.error("Failed to delete recipe:", err);
+      setShowError('Failed to delete recipe. Please try again.');
     }
   };
 
@@ -59,26 +81,66 @@ export default function RecipeDetails() {
     navigate('/', { state: { editRecipe: recipe } });
   };
 
-  if (loading) return <Box sx={{ p: 4 }}>Loading...</Box>;
-  if (error || !recipe) return <Box sx={{ p: 4, color: 'danger.solidBg' }}>{error || 'Recipe not found.'}</Box>;
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+          bgcolor: 'background.body',
+        }}
+      >
+        <CircularProgress size="lg" variant="soft" />
+        <Typography level="body-lg" sx={{ ml: 2, color: 'text.secondary' }}>
+          Loading recipe...
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (error || !recipe) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+          p: 4,
+          bgcolor: 'background.body',
+        }}
+      >
+        <Typography level="h3" color="danger" sx={{ mb: 2 }}>
+          {error || 'Recipe not found.'}
+        </Typography>
+        <Button
+          startDecorator={<ArrowLeft />}
+          onClick={() => navigate('/')}
+          variant="soft"
+          color="neutral"
+        >
+          Back to Recipes
+        </Button>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.body', pb: 6 }}>
-      {/* Back Button */}
-      <Button startDecorator={<ArrowLeft />} variant="soft" color="primary" onClick={() => navigate(-1)} sx={{ mt: 3, ml: { xs: 1, md: 4 }, mb: 2, position: 'relative', zIndex: 10, fontWeight: 700, borderRadius: 8, boxShadow: 'sm' }}>
-        Back
-      </Button>
       {/* Hero Section */}
       <Sheet
         sx={{
           width: '100%',
-          minHeight: 180,
+          minHeight: 200,
           bgcolor: 'primary.solidBg',
           color: '#fff',
           display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
+          flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'flex-start',
+          justifyContent: 'center',
           px: { xs: 2, md: 8 },
           py: { xs: 4, md: 6 },
           borderRadius: 0,
@@ -86,76 +148,207 @@ export default function RecipeDetails() {
           mb: 0,
           position: 'relative',
           overflow: 'hidden',
+          background: 'linear-gradient(45deg, var(--joy-palette-primary-solidBg) 30%, var(--joy-palette-primary-softActiveBg) 90%)',
         }}
       >
-        <Soup size={48} style={{ marginRight: 24, opacity: 0.9 }} />
-        <Box>
-          <Typography level="h1" sx={{ fontWeight: 900, fontSize: { xs: 28, md: 40 }, mb: 1, color: '#fff', letterSpacing: 1 }}>
-            {recipe.nome}
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap', mb: 1 }}>
-            {recipe.categoria && (
-              <Box sx={{ px: 1.5, py: 0.5, bgcolor: 'secondary.solidBg', color: '#fff', borderRadius: 12, fontSize: 13, fontWeight: 700, display: 'inline-block', letterSpacing: 0.5 }}>
-                {recipe.categoria}
-              </Box>
-            )}
-            {recipe.tipo && (
-              <Box sx={{ px: 1.2, py: 0.5, bgcolor: 'warning.solidBg', color: recipe.tipo.toLowerCase() === 'pranzo' || recipe.tipo.toLowerCase() === 'cena' ? '#b88600' : '#7a5c00', borderRadius: 12, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, ml: 0 }}>
-                {recipe.tipo}
-              </Box>
-            )}
+        <Box sx={{ position: 'absolute', top: 16, left: 16 }}>
+          <IconButton
+            onClick={() => navigate('/')}
+            variant="soft"
+            color="primary"
+            sx={{
+              bgcolor: 'rgba(255, 255, 255, 0.2)',
+              '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.3)' },
+              color: '#fff',
+            }}
+            aria-label="Back to recipes"
+          >
+            <ArrowLeft />
+          </IconButton>
+        </Box>
+
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            alignItems: 'center',
+            gap: { xs: 2, md: 4 },
+            textAlign: { xs: 'center', md: 'left' },
+            mb: 2,
+          }}
+        >
+          <Soup size={56} style={{ opacity: 0.9, flexShrink: 0 }} />
+          <Box>
+            <Typography
+              level="h1"
+              sx={{
+                fontWeight: 900,
+                fontSize: { xs: 32, md: 48 },
+                mb: 1,
+                color: '#fff',
+                letterSpacing: 1,
+                textShadow: '0 2px 4px rgba(0,0,0,0.2)',
+              }}
+            >
+              {recipe.nome}
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-start' } }}>
+              {recipe.categoria && (
+                <Box
+                  sx={{
+                    px: 2,
+                    py: 0.8,
+                    bgcolor: 'secondary.solidBg',
+                    color: '#fff',
+                    borderRadius: 20,
+                    fontSize: 14,
+                    fontWeight: 700,
+                    display: 'inline-block',
+                    letterSpacing: 0.5,
+                  }}
+                >
+                  {recipe.categoria}
+                </Box>
+              )}
+              {recipe.tipo && (
+                <Box
+                  sx={{
+                    px: 1.8,
+                    py: 0.8,
+                    bgcolor: 'warning.solidBg',
+                    color:
+                      recipe.tipo.toLowerCase() === 'pranzo' || recipe.tipo.toLowerCase() === 'cena'
+                        ? 'warning.dark'
+                        : 'warning.dark',
+                    borderRadius: 20,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                  }}
+                >
+                  {recipe.tipo}
+                </Box>
+              )}
+            </Box>
           </Box>
         </Box>
+
+        {/* Action Buttons in Hero Section */}
+        <Box sx={{ display: 'flex', gap: 2, mt: { xs: 3, md: 4 } }}>
+          <Button
+            startDecorator={<Pencil />}
+            variant="soft"
+            color="primary"
+            onClick={handleEdit}
+            sx={{ fontWeight: 700, borderRadius: 8, px: 3, py: 1.2 }}
+            aria-label="Edit Recipe"
+          >
+            Edit
+          </Button>
+          <Button
+            startDecorator={<Trash2 />}
+            variant="soft"
+            color="danger"
+            onClick={handleDelete}
+            sx={{ fontWeight: 700, borderRadius: 8, px: 3, py: 1.2 }}
+            aria-label="Delete Recipe"
+          >
+            Delete
+          </Button>
+        </Box>
       </Sheet>
+
       <Box sx={{ maxWidth: 700, mx: 'auto', mt: -6, position: 'relative', zIndex: 2 }}>
-        <Card sx={{ maxWidth: 700, mx: 'auto', p: { xs: 2, md: 4 }, borderRadius: 12, boxShadow: 'lg', bgcolor: 'background.level1', border: '1.5px solid', borderColor: 'divider', mt: 4 }}>
+        <Card
+          sx={{
+            maxWidth: 700,
+            mx: 'auto',
+            p: { xs: 2, md: 4 },
+            borderRadius: 16, 
+            boxShadow: 'xl',
+            bgcolor: 'background.level1',
+            border: '1px solid',
+            borderColor: 'divider',
+            mt: 4,
+          }}
+        >
           <CardContent>
-            <Typography level="h3" sx={{ fontWeight: 800, mb: 2, color: 'text.primary', letterSpacing: 0.5 }}>
-              Ingredienti
+            <Typography
+              level="h3"
+              sx={{ fontWeight: 800, mb: 2, color: 'text.primary', letterSpacing: 0.5 }}
+            >
+              Ingredients
             </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <ul style={{ margin: 0, paddingLeft: 18, color: 'inherit', fontSize: 16, lineHeight: 1.8 }}>
+            <Divider sx={{ mb: 3 }} />
+            <ul
+              style={{
+                margin: 0,
+                paddingLeft: 24,
+                color: 'inherit',
+                fontSize: 17,
+                lineHeight: 2,
+              }}
+            >
               {recipe.ingredienti.map((ing: string, idx: number) => (
-                <li key={idx} style={{ color: 'inherit', marginBottom: 2 }}>{ing}</li>
+                <li key={idx} style={{ color: 'inherit', marginBottom: 4 }}>
+                  {ing}
+                </li>
               ))}
             </ul>
           </CardContent>
           {recipe.link && (
-            <Box sx={{ mt: 2, mb: 1 }}>
-              <Typography level="body-md" sx={{ fontWeight: 600, mb: 0.5 }}>Link alla ricetta:</Typography>
-              <a href={recipe.link} target="_blank" rel="noopener noreferrer" style={{ color: '#1976d2', wordBreak: 'break-all', textDecoration: 'underline' }}>
-                {recipe.link}
+            <Box sx={{ mt: 3, mb: 1, px: { xs: 2, md: 4 } }}>
+              <a
+                href={recipe.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: 'primary.solidBg',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontWeight: 600,
+                }}
+              >
+                View full recipe <ExternalLink size={18} />
               </a>
             </Box>
           )}
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2 }}>
-            <Button startDecorator={<ArrowLeft />} variant="outlined" color="primary" onClick={() => navigate('/')} sx={{ fontWeight: 700, borderRadius: 8, boxShadow: 'sm' }}>
-              Back
-            </Button>
-            <Button startDecorator={<Pencil />} variant="soft" color="primary" onClick={handleEdit} sx={{ fontWeight: 700, borderRadius: 8 }} aria-label="Edit Recipe">
-              Edit
-            </Button>
-            <Button startDecorator={<Trash2 />} variant="soft" color="danger" onClick={handleDelete} sx={{ fontWeight: 700, borderRadius: 8 }} aria-label="Delete Recipe">
-              Delete
-            </Button>
-          </Box>
-          <ConfirmDialog
-            open={confirmOpen}
-            onClose={() => setConfirmOpen(false)}
-            onConfirm={handleConfirmDelete}
-            message={`Are you sure you want to delete the recipe "${recipe.nome}"? This action cannot be undone.`}
-          />
         </Card>
-        <Snackbar open={!!showSuccess} autoHideDuration={2000} onClose={() => setShowSuccess('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-          <Alert color="success" variant="solid">{showSuccess}</Alert>
+        {/* Snackbars for feedback */}
+        <Snackbar
+          open={!!showSuccess}
+          autoHideDuration={3000}
+          onClose={() => setShowSuccess('')}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          variant="solid"
+          color="success"
+        >
+          <Alert color="success" variant="solid">
+            {showSuccess}
+          </Alert>
         </Snackbar>
-        <Snackbar open={!!showError} autoHideDuration={2000} onClose={() => setShowError('')} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
-          <Alert color="danger" variant="solid">{showError}</Alert>
+        <Snackbar
+          open={!!showError}
+          autoHideDuration={3000}
+          onClose={() => setShowError('')}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          variant="solid"
+          color="danger"
+        >
+          <Alert color="danger" variant="solid">
+            {showError}
+          </Alert>
         </Snackbar>
-        <Button startDecorator={<ArrowLeft />} variant="plain" color="neutral" onClick={() => navigate(-1)} sx={{ mt: 4, mb: 2, display: { xs: 'flex', md: 'none' } }}>
-          Back
-        </Button>
       </Box>
+      <ConfirmDialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={handleConfirmDelete}
+        message={`Are you sure you want to delete "${recipe.nome}"? This action cannot be undone.`}
+      />
     </Box>
   );
 }
