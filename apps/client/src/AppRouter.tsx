@@ -5,6 +5,7 @@ import HowItWorks from './pages/HowItWorks';
 import Header from './Header';
 import ConfigPage from './pages/ConfigPage';
 import NotFound from './pages/NotFound';
+import FindRecipes from './pages/FindRecipes';
 
 export default function AppRouter() {
   return (
@@ -15,6 +16,7 @@ export default function AppRouter() {
         <Route path="/recipe/:id" element={<RecipeDetails />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/config" element={<ConfigPage />} />
+        <Route path="/find-recipes" element={<FindRecipes />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

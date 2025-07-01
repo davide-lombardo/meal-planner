@@ -17,8 +17,8 @@ export type Recipe = {
 
 interface RecipeCardProps {
   recipe: Recipe;
-  onEdit: (recipe: Recipe) => void;
-  onDelete: (recipe: Recipe) => void;
+  onEdit?: (recipe: Recipe) => void;  
+  onDelete?: (recipe: Recipe) => void;
 }
 
 const categoryMap = {
@@ -66,13 +66,13 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
   const onEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     handleMenuClose();
-    onEdit(recipe);
+    onEdit?.(recipe);
   };
 
   const onDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     handleMenuClose();
-    onDelete(recipe);
+    onDelete?.(recipe);
   };
 
   return (

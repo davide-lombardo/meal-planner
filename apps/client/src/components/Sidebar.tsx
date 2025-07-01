@@ -7,6 +7,7 @@ const navItems = [
   { label: 'Home', icon: <Home size={20} />, path: '/' },
   { label: 'Config', icon: <Settings size={20} />, path: '/config' },
   { label: 'How it works', icon: <Info size={20} />, path: '/how-it-works' },
+  { label: 'Find recipes', icon: <Info size={20} />, path: '/find-recipes' },
 ];
 
 export default function Sidebar() {
