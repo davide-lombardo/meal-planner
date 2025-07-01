@@ -4,6 +4,8 @@ export type Recipe = {
   tipo?: string;
   categoria?: string;
   ingredienti: string[];
+  stagioni?: Array<'spring' | 'summer' | 'autumn' | 'winter'>;
+  timestamp?: number;
 };
 
 export type Menu = {
@@ -11,13 +13,22 @@ export type Menu = {
   cena: (Recipe | null)[];
 };
 
-export type Config = {
-  menuOptions: {
-    maxRepetitionWeeks: number;
-    useQuotas: boolean;
-    mealTypeQuotas: Record<string, number>;
-  };
-};
+interface MenuOptions {
+  maxRepetitionWeeks?: number;
+  useWeightedSelection?: boolean;
+  enableIngredientPlanning?: boolean;
+  availableIngredients?: string[];
+  useQuotas?: boolean;
+  mealTypeQuotas?: Record<string, number>;
+  preferredRecipes?: string[];
+  avoidedRecipes?: string[];
+  enableSeasonalFiltering?: boolean;
+  currentSeason?: 'spring' | 'summer' | 'autumn' | 'winter';
+}
+
+interface Config {
+  menuOptions: MenuOptions;
+}
 
 export type ParsedIngredient = {
   name: string;
@@ -30,52 +41,63 @@ export type ParsedIngredient = {
 // Simplified keyword-based categorization
 const INGREDIENT_KEYWORDS: Record<string, string> = {
   // Frutta e Verdura
-  'pomodoro': 'Frutta e Verdura',
-  'cipolla': 'Frutta e Verdura',
-  'aglio': 'Frutta e Verdura',
-  'basilico': 'Frutta e Verdura',
-  'prezzemolo': 'Frutta e Verdura',
-  'limone': 'Frutta e Verdura',
-  'patata': 'Frutta e Verdura',
-  'carota': 'Frutta e Verdura',
-  'zucchina': 'Frutta e Verdura',
-  'melanzana': 'Frutta e Verdura',
-  'peperone': 'Frutta e Verdura',
-  'insalata': 'Frutta e Verdura',
-  'spinaci': 'Frutta e Verdura',
+  pomodoro: 'Frutta e Verdura',
+  cipolla: 'Frutta e Verdura',
+  aglio: 'Frutta e Verdura',
+  basilico: 'Frutta e Verdura',
+  prezzemolo: 'Frutta e Verdura',
+  limone: 'Frutta e Verdura',
+  patata: 'Frutta e Verdura',
+  carota: 'Frutta e Verdura',
+  zucchina: 'Frutta e Verdura',
+  melanzana: 'Frutta e Verdura',
+  peperone: 'Frutta e Verdura',
+  insalata: 'Frutta e Verdura',
+  spinaci: 'Frutta e Verdura',
 
   // Carne e Pesce
-  'pollo': 'Carne e Pesce',
-  'manzo': 'Carne e Pesce',
-  'maiale': 'Carne e Pesce',
-  'salmone': 'Carne e Pesce',
-  'tonno': 'Carne e Pesce',
-  'gamber': 'Carne e Pesce',
-  'prosciutto': 'Carne e Pesce',
-  'pancetta': 'Carne e Pesce',
+  pollo: 'Carne e Pesce',
+  manzo: 'Carne e Pesce',
+  maiale: 'Carne e Pesce',
+  salmone: 'Carne e Pesce',
+  tonno: 'Carne e Pesce',
+  gamber: 'Carne e Pesce',
+  prosciutto: 'Carne e Pesce',
+  pancetta: 'Carne e Pesce',
 
   // Latticini
-  'latte': 'Latticini',
-  'burro': 'Latticini',
-  'parmigiano': 'Latticini',
-  'mozzarella': 'Latticini',
-  'ricotta': 'Latticini',
-  'yogurt': 'Latticini',
-  'uovo': 'Latticini',
+  latte: 'Latticini',
+  burro: 'Latticini',
+  parmigiano: 'Latticini',
+  mozzarella: 'Latticini',
+  ricotta: 'Latticini',
+  yogurt: 'Latticini',
+  uovo: 'Latticini',
 
   // Dispensa
-  'pasta': 'Dispensa',
-  'riso': 'Dispensa',
-  'farina': 'Dispensa',
-  'olio': 'Dispensa',
-  'aceto': 'Dispensa',
-  'sale': 'Dispensa',
-  'pepe': 'Dispensa',
-  'zucchero': 'Dispensa',
-  'passata': 'Dispensa',
-  'conserva': 'Dispensa',
-  'legumi': 'Dispensa',
-  'pane': 'Dispensa',
+  pasta: 'Dispensa',
+  riso: 'Dispensa',
+  farina: 'Dispensa',
+  olio: 'Dispensa',
+  aceto: 'Dispensa',
+  sale: 'Dispensa',
+  pepe: 'Dispensa',
+  zucchero: 'Dispensa',
+  passata: 'Dispensa',
+  conserva: 'Dispensa',
+  legumi: 'Dispensa',
+  pane: 'Dispensa',
+};
+
+// Helper function to get current season
+const getCurrentSeason = (): 'spring' | 'summer' | 'autumn' | 'winter' => {
+  const now = new Date();
+  const month = now.getMonth() + 1; // getMonth() returns 0-11
+
+  if (month >= 3 && month <= 5) return 'spring';
+  if (month >= 6 && month <= 8) return 'summer';
+  if (month >= 9 && month <= 11) return 'autumn';
+  return 'winter';
 };
 
 /**
@@ -94,7 +116,13 @@ function getIngredientCategory(ingredient: string): string {
 }
 // Common pantry items that most people have
 const PANTRY_STAPLES = new Set([
-  'sale', 'pepe', 'pepe nero', 'olio extravergine', 'olio', 'aceto', 'zucchero'
+  'sale',
+  'pepe',
+  'pepe nero',
+  'olio extravergine',
+  'olio',
+  'aceto',
+  'zucchero',
 ]);
 
 /**
@@ -103,7 +131,7 @@ const PANTRY_STAPLES = new Set([
  */
 function parseIngredient(ingredient: string): ParsedIngredient {
   const normalized = ingredient.toLowerCase().trim();
-  
+
   // Regex to match quantity and unit patterns
   const patterns = [
     /^(\d+(?:[.,]\d+)?)\s*(g|gr|grammi?|kg|chilogram[mi]?)\s+(.+)$/,
@@ -111,31 +139,31 @@ function parseIngredient(ingredient: string): ParsedIngredient {
     /^(\d+)\s*(pezzi?|pz|n°|numero)\s+(.+)$/,
     /^(\d+)\s+(.+)$/,
   ];
-  
+
   for (const pattern of patterns) {
     const match = normalized.match(pattern);
     if (match) {
       const quantity = parseFloat(match[1].replace(',', '.'));
       const unit = match[2] || 'pz';
       const name = match[3] || match[2];
-      
+
       return {
         name: name.trim(),
         quantity,
         unit: normalizeUnit(unit),
         originalText: ingredient,
-        category: getIngredientCategory(name.trim())
+        category: getIngredientCategory(name.trim()),
       };
     }
   }
-  
+
   // No quantity found, treat as single item
   return {
     name: normalized,
     quantity: 1,
     unit: 'pz',
     originalText: ingredient,
-    category: getIngredientCategory(normalized)
+    category: getIngredientCategory(normalized),
   };
 }
 
@@ -144,12 +172,23 @@ function parseIngredient(ingredient: string): ParsedIngredient {
  */
 function normalizeUnit(unit: string): string {
   const unitMap: Record<string, string> = {
-    'g': 'g', 'gr': 'g', 'grammi': 'g', 'grammo': 'g',
-    'kg': 'kg', 'chilogrammi': 'kg', 'chilogrammo': 'kg',
-    'ml': 'ml', 'l': 'l', 'litri': 'l', 'litro': 'l',
-    'pezzi': 'pz', 'pezzo': 'pz', 'n°': 'pz', 'numero': 'pz'
+    g: 'g',
+    gr: 'g',
+    grammi: 'g',
+    grammo: 'g',
+    kg: 'kg',
+    chilogrammi: 'kg',
+    chilogrammo: 'kg',
+    ml: 'ml',
+    l: 'l',
+    litri: 'l',
+    litro: 'l',
+    pezzi: 'pz',
+    pezzo: 'pz',
+    'n°': 'pz',
+    numero: 'pz',
   };
-  
+
   return unitMap[unit.toLowerCase()] || unit;
 }
 
@@ -167,66 +206,85 @@ function combineIngredients(a: ParsedIngredient, b: ParsedIngredient): ParsedIng
   return {
     ...a,
     quantity: a.quantity + b.quantity,
-    originalText: `${a.originalText}, ${b.originalText}`
+    originalText: `${a.originalText}, ${b.originalText}`,
   };
 }
 
 /**
  * Format ingredient for display
  */
-function formatIngredient(ingredient: ParsedIngredient, includePantryNote: boolean = false): string {
+function formatIngredient(
+  ingredient: ParsedIngredient,
+  includePantryNote: boolean = false,
+): string {
   const isPantryStaple = PANTRY_STAPLES.has(ingredient.name);
-  
+
   let formatted = '';
   if (ingredient.quantity === 1 && ingredient.unit === 'pz') {
     formatted = ingredient.name;
   } else {
     formatted = `${ingredient.quantity}${ingredient.unit} ${ingredient.name}`;
   }
-  
+
   if (includePantryNote && isPantryStaple) {
     formatted += ' (probabilmente già in casa)';
   }
-  
+
   return formatted;
 }
 
 /**
  * HOW MEAL SELECTION WORKS
- * 
+ *
  * Think of this like a smart chef who remembers what you've eaten recently and tries to give you variety.
- * 
+ *
  * The algorithm follows these rules in order:
- * 
+ *
  * 1. AVOID REPETITION: Won't pick recipes you've had in the last X weeks (configurable)
  * 2. AVOID DUPLICATES: Won't use the same recipe twice in the same week
  * 3. RESPECT MEAL TYPES: If a recipe is marked for "pranzo" or "cena", it only goes in that slot
  * 4. FOLLOW QUOTAS: If quotas are enabled, limits how many times each category appears per week
  * 5. SPECIAL RULES: Friday dinner = Pizza, Saturday dinner = Free choice
- * 
+ *
  * WHY THIS APPROACH:
  * - Prevents boring repetition (you won't get pasta 5 days in a row)
  * - Ensures balanced nutrition through category quotas
  * - Respects Italian meal traditions (lighter lunch, substantial dinner)
  * - Adds randomness so menus feel fresh each week
- * 
+ *
  * FALLBACK STRATEGY:
  * If the algorithm can't find recipes that meet all criteria, it relaxes rules step by step:
  * 1. First ignores quotas
  * 2. Then ignores recent history
  * 3. Finally just picks any compatible recipe
- * 
+ *
  * This ensures you always get a complete menu, even with limited recipes.
  */
 export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Config): Menu {
   const menu: Menu = { pranzo: [], cena: [] };
   const maxWeeks = config.menuOptions.maxRepetitionWeeks || 2;
   const useQuotas = config.menuOptions.useQuotas !== false;
+  const enableSeasonalFiltering = config.menuOptions.enableSeasonalFiltering || false;
+  const currentSeason = config.menuOptions.currentSeason || getCurrentSeason();
   const weeklyQuotas = useQuotas ? { ...config.menuOptions.mealTypeQuotas } : undefined;
   const usedThisWeek = new Set<string>();
   const recentlyUsed = new Set(
-    history.slice(-maxWeeks).flatMap((menu) => [...menu.pranzo, ...menu.cena].filter(r => r && r.id).map(r => r!.id))
+    history
+      .slice(-maxWeeks)
+      .flatMap((menu) => [...menu.pranzo, ...menu.cena].filter((r) => r && r.id).map((r) => r!.id)),
   );
+
+  const getSeasonalRecipes = (allRecipes: Recipe[]): Recipe[] => {
+    if (!enableSeasonalFiltering) return allRecipes;
+
+    return allRecipes.filter((recipe) => {
+      // If recipe has no seasons defined, include it (backwards compatibility)
+      if (!recipe.stagioni || recipe.stagioni.length === 0) return true;
+
+      // Check if current season is in the recipe's allowed seasons
+      return recipe.stagioni.includes(currentSeason);
+    });
+  };
 
   const canUseRecipe = (recipe: Recipe, mealType: string) => {
     if (!recipe || usedThisWeek.has(recipe.id) || recentlyUsed.has(recipe.id)) return false;
@@ -236,10 +294,32 @@ export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Co
   };
 
   const getAvailableRecipes = (mealType: string, ignoreQuotas = false) => {
-    return recipes.filter(recipe => {
+    // First apply seasonal filtering
+    let filteredRecipes = getSeasonalRecipes(recipes);
+
+    return filteredRecipes.filter((recipe) => {
       if (!ignoreQuotas) return canUseRecipe(recipe, mealType);
-      return recipe && !usedThisWeek.has(recipe.id) && !recentlyUsed.has(recipe.id) && (!recipe.tipo || recipe.tipo === mealType);
+      return (
+        recipe &&
+        !usedThisWeek.has(recipe.id) &&
+        !recentlyUsed.has(recipe.id) &&
+        (!recipe.tipo || recipe.tipo === mealType)
+      );
     });
+  };
+
+  const getFallbackRecipes = (mealType: string) => {
+    // Fallback options when seasonal filtering is too restrictive
+    let fallbackRecipes = recipes.filter(
+      (r) => (!r.tipo || r.tipo === mealType) && !recentlyUsed.has(r.id),
+    );
+
+    // If we still have no options, ignore recent usage too
+    if (fallbackRecipes.length === 0) {
+      fallbackRecipes = recipes.filter((r) => !r.tipo || r.tipo === mealType);
+    }
+
+    return fallbackRecipes;
   };
 
   const selectMeal = (mealType: string, dayIndex: number): Recipe | null => {
@@ -248,17 +328,35 @@ export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Co
       if (dayIndex === 5) return { id: 'pizza', nome: 'Pizza', tipo: 'cena', ingredienti: [] };
       if (dayIndex === 6) return { id: 'libero', nome: 'Libero', tipo: 'cena', ingredienti: [] };
     }
-    
-    // Try to find recipes following all rules
+
+    // Try to find recipes following all rules (including seasonal)
     let available = getAvailableRecipes(mealType);
-    if (available.length === 0) available = getAvailableRecipes(mealType, true);
-    if (available.length === 0) available = recipes.filter(r => (!r.tipo || r.tipo === mealType) && !recentlyUsed.has(r.id));
-    if (available.length === 0) available = recipes.filter(r => !r.tipo || r.tipo === mealType);
+
+    // Fallback 1: Ignore quotas but keep seasonal filtering
+    if (available.length === 0) {
+      available = getAvailableRecipes(mealType, true);
+    }
+
+    // Fallback 2: If seasonal filtering is too restrictive, expand to all recipes
+    if (available.length === 0 && enableSeasonalFiltering) {
+      console.warn(`No seasonal recipes available for ${mealType}, falling back to all recipes`);
+      available = getFallbackRecipes(mealType);
+    }
+
+    // Fallback 3: Final fallback
+    if (available.length === 0) {
+      available = recipes.filter((r) => !r.tipo || r.tipo === mealType);
+    }
+
     if (available.length === 0) return null;
-    
+
     const selected = available[Math.floor(Math.random() * available.length)];
     usedThisWeek.add(selected.id);
-    if (useQuotas && weeklyQuotas && selected.categoria && weeklyQuotas[selected.categoria]) weeklyQuotas[selected.categoria]--;
+
+    if (useQuotas && weeklyQuotas && selected.categoria && weeklyQuotas[selected.categoria]) {
+      weeklyQuotas[selected.categoria]--;
+    }
+
     return selected;
   };
 
@@ -268,24 +366,24 @@ export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Co
     allMealSlots.push({ type: 'pranzo', day: i });
     allMealSlots.push({ type: 'cena', day: i });
   }
-  
+
   // Fisher-Yates shuffle for random assignment order
   for (let i = allMealSlots.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [allMealSlots[i], allMealSlots[j]] = [allMealSlots[j], allMealSlots[i]];
   }
-  
-  allMealSlots.forEach(slot => {
+
+  allMealSlots.forEach((slot) => {
     const meal = selectMeal(slot.type, slot.day);
     if (slot.type === 'pranzo') menu.pranzo[slot.day] = meal;
     else menu.cena[slot.day] = meal;
   });
-  
+
   return menu;
 }
 
 export function formatMenu(menu: Menu): string {
-  const daysOfWeek = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
+  const daysOfWeek = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
   let formattedMenu = 'Menù settimanale:\n\n';
   for (let i = 0; i < 7; i++) {
     formattedMenu += `${daysOfWeek[i]}:\n`;
@@ -301,10 +399,13 @@ export function formatMenu(menu: Menu): string {
  * - Groups by store sections
  * - Marks pantry staples
  */
-export function generateShoppingList(menu: Menu, recipes: Recipe[]): Map<string, ParsedIngredient[]> {
+export function generateShoppingList(
+  menu: Menu,
+  recipes: Recipe[],
+): Map<string, ParsedIngredient[]> {
   const ingredientMap = new Map<string, ParsedIngredient>();
   const allMeals = [...menu.pranzo, ...menu.cena];
-  
+
   // Parse and collect all ingredients
   allMeals.forEach((meal) => {
     if (meal && meal.id) {
@@ -313,7 +414,7 @@ export function generateShoppingList(menu: Menu, recipes: Recipe[]): Map<string,
         recipe.ingredienti.forEach((ingredientText) => {
           const parsed = parseIngredient(ingredientText);
           const key = `${parsed.name}-${parsed.unit}`;
-          
+
           if (ingredientMap.has(key)) {
             const existing = ingredientMap.get(key)!;
             ingredientMap.set(key, combineIngredients(existing, parsed));
@@ -324,10 +425,10 @@ export function generateShoppingList(menu: Menu, recipes: Recipe[]): Map<string,
       }
     }
   });
-  
+
   // Group by categories
   const categorizedList = new Map<string, ParsedIngredient[]>();
-  
+
   for (const ingredient of ingredientMap.values()) {
     const category = ingredient.category;
     if (!categorizedList.has(category)) {
@@ -335,12 +436,12 @@ export function generateShoppingList(menu: Menu, recipes: Recipe[]): Map<string,
     }
     categorizedList.get(category)!.push(ingredient);
   }
-  
+
   // Sort ingredients within each category
   for (const [category, ingredients] of categorizedList.entries()) {
     ingredients.sort((a, b) => a.name.localeCompare(b.name));
   }
-  
+
   return categorizedList;
 }
 
@@ -348,53 +449,58 @@ export function generateShoppingList(menu: Menu, recipes: Recipe[]): Map<string,
  * Generate improved HTML email with organized shopping list
  */
 export function generateHtmlEmail(menu: Menu, recipes: Recipe[]): string {
-  const daysOfWeek = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
-  
-  const menuHtml = daysOfWeek.map((day, i) => `
+  const daysOfWeek = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+
+  const menuHtml = daysOfWeek
+    .map(
+      (day, i) => `
     <div class="menu-day">
       <strong>${day}</strong>
-      <div class="meal"><span class="meal-type">Pranzo:</span> ${menu.pranzo[i]?.nome || 'Non disponibile'}</div>
-      <div class="meal"><span class="meal-type">Cena:</span> ${menu.cena[i]?.nome || 'Non disponibile'}</div>
+      <div class="meal"><span class="meal-type">Pranzo:</span> ${
+        menu.pranzo[i]?.nome || 'Non disponibile'
+      }</div>
+      <div class="meal"><span class="meal-type">Cena:</span> ${
+        menu.cena[i]?.nome || 'Non disponibile'
+      }</div>
     </div>
-  `).join('');
-  
+  `,
+    )
+    .join('');
+
   const categorizedShoppingList = generateShoppingList(menu, recipes);
-  
+
   // Category order for better shopping flow
-  const categoryOrder = [
-    'Frutta e Verdura',
-    'Carne e Pesce', 
-    'Latticini',
-    'Dispensa',
-    'Altro'
-  ];
-  
+  const categoryOrder = ['Frutta e Verdura', 'Carne e Pesce', 'Latticini', 'Dispensa', 'Altro'];
+
   const categoryIcons: Record<string, string> = {
     'Frutta e Verdura': '🥬',
     'Carne e Pesce': '🍖',
-    'Latticini': '🥛',
-    'Dispensa': '🏪',
-    'Altro': '📦'
+    Latticini: '🥛',
+    Dispensa: '🏪',
+    Altro: '📦',
   };
-  
+
   const shoppingListHtml = categoryOrder
-    .filter(category => categorizedShoppingList.has(category))
-    .map(category => {
+    .filter((category) => categorizedShoppingList.has(category))
+    .map((category) => {
       const ingredients = categorizedShoppingList.get(category)!;
-      const itemsHtml = ingredients.map(ingredient => {
-        const isPantryStaple = PANTRY_STAPLES.has(ingredient.name);
-        const itemClass = isPantryStaple ? 'shopping-item pantry-staple' : 'shopping-item';
-        return `<li class="${itemClass}">${formatIngredient(ingredient, true)}</li>`;
-      }).join('');
-      
+      const itemsHtml = ingredients
+        .map((ingredient) => {
+          const isPantryStaple = PANTRY_STAPLES.has(ingredient.name);
+          const itemClass = isPantryStaple ? 'shopping-item pantry-staple' : 'shopping-item';
+          return `<li class="${itemClass}">${formatIngredient(ingredient, true)}</li>`;
+        })
+        .join('');
+
       return `
         <div class="category-section">
           <h3 class="category-title">${categoryIcons[category]} ${category}</h3>
           <ul class="category-items">${itemsHtml}</ul>
         </div>
       `;
-    }).join('');
-  
+    })
+    .join('');
+
   return `
     <!DOCTYPE html>
     <html lang="it">

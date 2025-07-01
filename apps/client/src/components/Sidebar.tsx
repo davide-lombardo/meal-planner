@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Box, IconButton, List, ListItem, ListItemButton, ListItemDecorator, Typography, Drawer, useColorScheme } from '@mui/joy';
-import { Home, Settings, Info, Menu as MenuIcon, ChevronLeft } from 'lucide-react';
+import { Home, Settings, Info, Menu as MenuIcon, ChevronLeft, Refrigerator } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const navItems = [
   { label: 'Home', icon: <Home size={20} />, path: '/' },
   { label: 'Config', icon: <Settings size={20} />, path: '/config' },
   { label: 'How it works', icon: <Info size={20} />, path: '/how-it-works' },
-  { label: 'Find recipes', icon: <Info size={20} />, path: '/find-recipes' },
+  { label: 'Find recipes', icon: <Refrigerator size={20} />, path: '/find-recipes' },
 ];
 
 export default function Sidebar() {

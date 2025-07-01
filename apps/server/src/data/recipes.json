@@ -4,6 +4,10 @@
     "nome": "Pasta alla carbonara",
     "tipo": "pranzo",
     "categoria": "uova",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "pasta",
       "guanciale",
@@ -18,6 +22,12 @@
     "nome": "Frittata di cipolle",
     "tipo": "cena",
     "categoria": "uova",
+    "stagioni": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "uova",
       "cipolle",
@@ -30,6 +40,10 @@
     "nome": "Pollo al curry con riso",
     "tipo": "cena",
     "categoria": "carne",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "pollo",
       "curry",
@@ -44,6 +58,10 @@
     "nome": "Pasta al pesto",
     "tipo": "pranzo",
     "categoria": "formaggio",
+    "stagioni": [
+      "spring",
+      "summer"
+    ],
     "ingredienti": [
       "pasta",
       "basilico",
@@ -57,6 +75,10 @@
     "nome": "Pasta e ceci",
     "tipo": "pranzo",
     "categoria": "legumi",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "pasta",
       "ceci",
@@ -70,6 +92,10 @@
     "nome": "Petto di pollo all paprika",
     "tipo": "cena",
     "categoria": "carne",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "petto di pollo",
       "zucca",
@@ -85,6 +111,10 @@
     "nome": "Mondeghili",
     "tipo": "cena",
     "categoria": "carne",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "macinato di suino",
       "zucca",
@@ -100,6 +130,10 @@
     "nome": "Risotto alla zucca e gorgonzola",
     "tipo": "pranzo",
     "categoria": "formaggio",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "gorgonzola",
       "zucca",
@@ -115,6 +149,10 @@
     "nome": "Couscous perlato al maiale sfilacciato",
     "tipo": "cena",
     "categoria": "carne",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "pulled pork",
       "verza",
@@ -131,6 +169,10 @@
     "nome": "Bocconcini di lonza di maiale al lime",
     "tipo": "cena",
     "categoria": "carne",
+    "stagioni": [
+      "spring",
+      "summer"
+    ],
     "ingredienti": [
       "lonza di maiale",
       "lime",
@@ -145,7 +187,7 @@
   },
   {
     "id": "r031",
-    "nome": "Mazzancolle in crema di currry e cocco",
+    "nome": "Mazzancolle in crema di curry e cocco",
     "tipo": "cena",
     "categoria": "pesce",
     "ingredienti": [
@@ -159,14 +201,17 @@
       "zucchina",
       "zenzero",
       "carota"
-    ],
-    "timestamp": 1724880000011
+    ]
   },
   {
     "id": "r032",
     "nome": "Nasi goreng",
     "tipo": "pranzo",
     "categoria": "pesce",
+    "stagioni": [
+      "spring",
+      "summer"
+    ],
     "ingredienti": [
       "mazzancolle tropicali",
       "porro",
@@ -183,6 +228,10 @@
     "nome": "Spaghetti alle vongole",
     "tipo": "pranzo",
     "categoria": "pesce",
+    "stagioni": [
+      "spring",
+      "summer"
+    ],
     "ingredienti": [
       "spaghetti",
       "vongole",
@@ -197,6 +246,10 @@
     "nome": "Orecchiette e lenticchie in crema di bufala",
     "tipo": "pranzo",
     "categoria": "formaggio",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "orecchiette",
       "pomodori datterini",
@@ -215,6 +268,12 @@
     "nome": "Tacos al ragù bianco di suino",
     "tipo": "cena",
     "categoria": "carne",
+    "stagioni": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "torillias",
       "pasta di miso",
@@ -231,6 +290,10 @@
     "nome": "Gnocchetti alle mazzancolle e burrata",
     "tipo": "pranzo",
     "categoria": "pesce",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "zucca",
       "scalogno",
@@ -248,6 +311,10 @@
     "nome": "Strozzapreti al pesto rosso di ricotta",
     "tipo": "pranzo",
     "categoria": "formaggio",
+    "stagioni": [
+      "spring",
+      "summer"
+    ],
     "ingredienti": [
       "strozzapreti",
       "basilico",
@@ -260,47 +327,14 @@
     "timestamp": 1724880000017
   },
   {
-    "id": "r045",
-    "nome": "Merluzzo in pastella al sesamo nero",
-    "categoria": "pesce",
-    "tipo": "cena",
-    "ingredienti": [
-      "merluzzo",
-      "semi di sesamo",
-      "pasta di miso",
-      "finoccio",
-      "miele",
-      "aglio",
-      "zenzero",
-      "carota",
-      "porro"
-    ]
-  },
-  {
-    "id": "r046",
-    "nome": "Kaeng Kari mu - maiale al curry giallo",
-    "tipo": "cena",
-    "categoria": "carne",
-    "ingredienti": [
-      "lonza di maiale",
-      "latte di cocco",
-      "arachidi",
-      "riso jasmine",
-      "lime",
-      "zucchina",
-      "cipolla",
-      "curry",
-      "carota",
-      "brodo granulare",
-      "zenzero"
-    ],
-    "timestamp": 1724880000019
-  },
-  {
     "id": "r1751123578303",
     "nome": "Lonza di maiale alle mele",
     "categoria": "carne",
     "tipo": "cena",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "lonza di maiale",
       "mele gialle",
@@ -314,26 +348,14 @@
     "link": "https://blog.giallozafferano.it/cucinadisabrina/ricetta-lonza-con-le-mele-in-padella/"
   },
   {
-    "id": "r047",
-    "nome": "Zuppa di lenticchie rosse con curcuma e zenzero",
-    "tipo": "pranzo",
-    "categoria": "legumi",
-    "ingredienti": [
-      "lenticchie rosse",
-      "curcuma",
-      "zenzero",
-      "carote",
-      "cipolla",
-      "brodo vegetale",
-      "coriandolo"
-    ],
-    "timestamp": 1724880000020
-  },
-  {
     "id": "r049",
     "nome": "Risotto ai funghi porcini",
     "tipo": "pranzo",
     "categoria": "carne",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "riso Arborio",
       "funghi porcini secchi",
@@ -350,6 +372,10 @@
     "nome": "Involtini di verza ripieni",
     "tipo": "cena",
     "categoria": "carne",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "verza",
       "carne macinata",
@@ -366,6 +392,10 @@
     "nome": "Gnocchi di patate al ragù",
     "tipo": "pranzo",
     "categoria": "carne",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "patate",
       "farina",
@@ -383,6 +413,12 @@
     "nome": "Cotolette di pollo alla milanese",
     "tipo": "cena",
     "categoria": "carne",
+    "stagioni": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "petto di pollo",
       "uova",
@@ -398,6 +434,10 @@
     "nome": "Polpette al sugo",
     "tipo": "cena",
     "categoria": "carne",
+    "stagioni": [
+      "autumn",
+      "winter"
+    ],
     "ingredienti": [
       "carne macinata",
       "pane raffermo",
@@ -410,11 +450,14 @@
     ],
     "timestamp": 1724880000029
   },
-    {
+  {
     "id": "r058",
     "nome": "Panzanella",
     "tipo": "pranzo",
     "categoria": "formaggio",
+    "stagioni": [
+      "summer"
+    ],
     "ingredienti": [
       "pane raffermo",
       "pomodori",
@@ -424,5 +467,41 @@
       "aceto di vino rosso"
     ],
     "timestamp": 1724966400001
+  },
+  {
+    "id": "r1751402128906",
+    "nome": "Pasta alla gricia",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "stagioni": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter"
+    ],
+    "ingredienti": [
+      "pasta",
+      "guanciale",
+      "pecorino",
+      "pepe nero"
+    ]
+  },
+  {
+    "id": "r1751402644235",
+    "nome": "Riso alla cantonese",
+    "tipo": "pranzo",
+    "categoria": "carne",
+    "stagioni": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter"
+    ],
+    "ingredienti": [
+      "riso basmati",
+      "uova",
+      "piselli",
+      "prosciutto cotto"
+    ]
   }
 ]

@@ -17,13 +17,13 @@ import { ArrowLeft, Pencil, Trash2, Soup, ExternalLink } from 'lucide-react';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { CONFIG } from '../utils/constants';
 
-
 interface Recipe {
   id: string;
   nome: string;
   categoria?: string;
   tipo?: string;
   ingredienti: string[];
+  stagioni?: string[];
   link?: string;
 }
 
@@ -52,7 +52,7 @@ export default function RecipeDetails() {
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Failed to fetch recipe:", err);
+        console.error('Failed to fetch recipe:', err);
         setError('Failed to load recipe. Please try again.');
         setLoading(false);
       });
@@ -72,7 +72,7 @@ export default function RecipeDetails() {
       setShowSuccess('Recipe deleted successfully!');
       setTimeout(() => navigate('/'), 1200);
     } catch (err) {
-      console.error("Failed to delete recipe:", err);
+      console.error('Failed to delete recipe:', err);
       setShowError('Failed to delete recipe. Please try again.');
     }
   };
@@ -148,7 +148,8 @@ export default function RecipeDetails() {
           mb: 0,
           position: 'relative',
           overflow: 'hidden',
-          background: 'linear-gradient(45deg, var(--joy-palette-primary-solidBg) 30%, var(--joy-palette-primary-softActiveBg) 90%)',
+          background:
+            'linear-gradient(45deg, var(--joy-palette-primary-solidBg) 30%, var(--joy-palette-primary-softActiveBg) 90%)',
         }}
       >
         <Box sx={{ position: 'absolute', top: 16, left: 16 }}>
@@ -192,7 +193,7 @@ export default function RecipeDetails() {
             >
               {recipe.nome}
             </Typography>
-             <Box
+            <Box
               sx={{
                 display: 'flex',
                 gap: 2,
@@ -223,6 +224,18 @@ export default function RecipeDetails() {
                   }}
                 >
                   Type: {recipe.tipo}
+                </Typography>
+              )}
+              {recipe.stagioni && recipe.stagioni.length > 0 && (
+                <Typography
+                  level="body-md"
+                  sx={{
+                    color: '#fff',
+                    fontWeight: 500,
+                    fontSize: 16,
+                  }}
+                >
+                  Seasons: {recipe.stagioni.join(', ')}
                 </Typography>
               )}
             </Box>
@@ -260,7 +273,7 @@ export default function RecipeDetails() {
             maxWidth: 700,
             mx: 'auto',
             p: { xs: 2, md: 4 },
-            borderRadius: 16, 
+            borderRadius: 16,
             boxShadow: 'xl',
             bgcolor: 'background.level1',
             border: '1px solid',
