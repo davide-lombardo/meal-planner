@@ -3,6 +3,9 @@
     "maxRepetitionWeeks": 4,
     "mealTypeQuotas": {},
     "useQuotas": false,
-    "useWeightedSelection": false
+    "useWeightedSelection": false,
+    "enableIngredientPlanning": false,
+    "enableSeasonalFiltering": true,
+    "currentSeason": "summer"
   }
 }

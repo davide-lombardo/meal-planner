@@ -2,18 +2,7 @@ import { Card, CardContent, Typography, Box, IconButton, Menu, MenuItem } from '
 import { Drumstick, Milk, Egg, Fish, Pencil, Trash2, EllipsisVertical } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import * as React from 'react';
-
-export type Category = 'pesce' | 'carne' | 'formaggio' | 'uova';
-export type RecipeType = 'pranzo' | 'cena';
-
-export type Recipe = {
-  id: string;
-  nome: string;
-  categoria: Category;
-  tipo: RecipeType;
-  ingredienti: string[];
-  link?: string; // Optional website link
-};
+import { Category, Recipe, RecipeType } from '../models/recipeModel';
 
 interface RecipeCardProps {
   recipe: Recipe;

@@ -9,28 +9,78 @@ import logger from './logger.js';
 import { z } from 'zod';
 
 // Zod schemas
-const RecipeSchema = z.object({
-  id: z.string(),
-  nome: z.string(),
-  tipo: z.string().optional(),
-  categoria: z.string().optional(),
-  ingredienti: z.array(z.string()),
+// Season enum schema
+export const SeasonSchema = z.enum(['spring', 'summer', 'autumn', 'winter']);
+
+// Category and RecipeType schemas
+export const CategorySchema = z.enum(['pesce', 'carne', 'formaggio', 'uova']);
+export const RecipeTypeSchema = z.enum(['pranzo', 'cena']);
+
+
+// Recipe schema with seasonal support
+export const RecipeSchema = z.object({
+  id: z.string().min(1, "Recipe ID is required"),
+  nome: z.string().min(1, "Recipe name is required"),
+  tipo: RecipeTypeSchema.optional(),
+  categoria: CategorySchema.optional(),
+  ingredienti: z.array(z.string().min(1, "Ingredient cannot be empty")).min(1, "At least one ingredient is required"),
+  link: z.string().url("Invalid URL format").optional().or(z.literal('')),
+  stagioni: z.array(SeasonSchema).optional(),
 });
-const HistoryEntrySchema = z.record(z.string(), z.any()); // Accepts any object for now
-const ConfigSchema = z.object({
+
+// History entry schema - more flexible for now but can be made stricter
+export const HistoryEntrySchema = z.record(z.string(), z.any());
+
+// Menu options schema with all current features
+export const MenuOptionsSchema = z.object({
+  maxRepetitionWeeks: z.number().int().min(0).optional(),
+  mealTypeQuotas: z.record(z.string(), z.number().int().min(0)).optional(),
+  useQuotas: z.boolean().optional(),
+  useWeightedSelection: z.boolean().optional(),
+  enableIngredientPlanning: z.boolean().optional(),
+  lockedMeals: z.record(z.string(), z.string()).optional(),
+  availableIngredients: z.array(z.string()).optional(),
+  preferredRecipes: z.array(z.string()).optional(),
+  avoidedRecipes: z.array(z.string()).optional(),
+  enableSeasonalFiltering: z.boolean().optional(),
+  currentSeason: SeasonSchema.optional(),
+});
+
+// Main config schema
+export const ConfigSchema = z.object({
   useHistory: z.boolean().optional(),
-  menuOptions: z.object({
-    maxRepetitionWeeks: z.number(),
-    mealTypeQuotas: z.record(z.string(), z.number()),
-    useQuotas: z.boolean(),
-    useWeightedSelection: z.boolean().optional(),
-    enableIngredientPlanning: z.boolean().optional(),
-    lockedMeals: z.record(z.string(), z.string()).optional(),
-    availableIngredients: z.array(z.string()).optional(),
-    preferredRecipes: z.array(z.string()).optional(),
-    avoidedRecipes: z.array(z.string()).optional(),
-  }),
+  menuOptions: MenuOptionsSchema,
 });
+
+export type Season = z.infer<typeof SeasonSchema>;
+export type Category = z.infer<typeof CategorySchema>;
+export type RecipeType = z.infer<typeof RecipeTypeSchema>;
+export type Recipe = z.infer<typeof RecipeSchema>;
+export type HistoryEntry = z.infer<typeof HistoryEntrySchema>;
+export type MenuOptions = z.infer<typeof MenuOptionsSchema>;
+export type Config = z.infer<typeof ConfigSchema>;
+
+export const validateRecipe = (data: unknown): Recipe => {
+  return RecipeSchema.parse(data);
+};
+
+export const validateConfig = (data: unknown): Config => {
+  return ConfigSchema.parse(data);
+};
+
+export const validateMenuOptions = (data: unknown): MenuOptions => {
+  return MenuOptionsSchema.parse(data);
+};
+
+// Validation helper for partial updates
+export const PartialRecipeSchema = RecipeSchema.partial().extend({
+  id: z.string().optional(), // Allow optional ID for new recipes
+});
+
+export const PartialConfigSchema = ConfigSchema.partial();
+
+export type PartialRecipe = z.infer<typeof PartialRecipeSchema>;
+export type PartialConfig = z.infer<typeof PartialConfigSchema>;
 
 dotenv.config({ path: '../.env' });
 

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Modal, ModalDialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, FormLabel, Input, Textarea, Typography, Select, Option } from '@mui/joy';
-import type { Recipe, Category, RecipeType } from './RecipeCard';
+import { Modal, ModalDialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, FormLabel, Input, Textarea, Typography, Select, Option, Chip, Box } from '@mui/joy';
+import { CloudRain, Leaf, Snowflake, Sun } from 'lucide-react';
+import { Category, Recipe, RecipeType, Season } from '../models/recipeModel';
 
 interface RecipeDialogProps {
   open: boolean;
@@ -9,12 +10,27 @@ interface RecipeDialogProps {
   initialRecipe?: Recipe | null;
 }
 
+const seasonIcons = {
+  spring: <Leaf size={16} />,
+  summer: <Sun size={16} />,
+  autumn: <CloudRain size={16} />,
+  winter: <Snowflake size={16} />,
+};
+
+const seasonLabels = {
+  spring: 'Primavera',
+  summer: 'Estate',
+  autumn: 'Autunno',
+  winter: 'Inverno',
+};
+
 export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: RecipeDialogProps) {
   const [nome, setNome] = React.useState(initialRecipe?.nome || '');
   const [ingredienti, setIngredienti] = React.useState(initialRecipe?.ingredienti?.join('\n') || '');
   const [categoria, setCategoria] = React.useState<Category | ''>(initialRecipe?.categoria || '');
   const [tipo, setTipo] = React.useState<RecipeType | ''>(initialRecipe?.tipo || '');
   const [link, setLink] = React.useState(initialRecipe?.link || '');
+  const [stagioni, setStagioni] = React.useState<Season[]>(initialRecipe?.stagioni || []);
   const [error, setError] = React.useState('');
 
   React.useEffect(() => {
@@ -23,15 +39,43 @@ export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: R
     setCategoria(initialRecipe?.categoria || '');
     setTipo(initialRecipe?.tipo || '');
     setLink(initialRecipe?.link || '');
+    setStagioni(initialRecipe?.stagioni || []);
+    setError('');
   }, [initialRecipe, open]);
 
   const validCategories: Category[] = ['pesce', 'carne', 'formaggio', 'uova'];
   const validTypes: RecipeType[] = ['pranzo', 'cena'];
+  const allSeasons: Season[] = ['spring', 'summer', 'autumn', 'winter'];
+
+  const toggleSeason = (season: Season) => {
+    setStagioni(prev => {
+      if (prev.includes(season)) {
+        return prev.filter(s => s !== season);
+      } else {
+        return [...prev, season];
+      }
+    });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nome.trim() || !ingredienti.trim() || !categoria || !tipo) {
-      setError('Please fill in all fields.');
+    setError('');
+
+    // Validation
+    if (!nome.trim()) {
+      setError('Nome ricetta è obbligatorio.');
+      return;
+    }
+    if (!ingredienti.trim()) {
+      setError('Ingredienti sono obbligatori.');
+      return;
+    }
+    if (!categoria) {
+      setError('Categoria è obbligatoria.');
+      return;
+    }
+    if (!tipo) {
+      setError('Tipo è obbligatorio.');
       return;
     }
     if (!validCategories.includes(categoria as Category)) {
@@ -42,16 +86,28 @@ export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: R
       setError('Tipo non valido.');
       return;
     }
+
+    const ingredientiArray = ingredienti
+      .split(/\n|\r|\r\n/)
+      .map(i => i.trim())
+      .filter(Boolean);
+
+    if (ingredientiArray.length === 0) {
+      setError('Devi inserire almeno un ingrediente.');
+      return;
+    }
+
     const recipeToSave: Recipe = {
       id: initialRecipe?.id || '',
-      nome,
+      nome: nome.trim(),
       categoria: categoria as Category,
       tipo: tipo as RecipeType,
-      ingredienti: ingredienti.split(/\n|\r|\r\n/).map(i => i.trim()).filter(Boolean),
+      ingredienti: ingredientiArray,
       link: link.trim() || undefined,
+      stagioni: stagioni.length > 0 ? stagioni : undefined,
     };
+
     onSave(recipeToSave);
-    setError('');
     onClose();
   };
 
@@ -142,6 +198,35 @@ export default function RecipeDialog({ open, onClose, onSave, initialRecipe }: R
                 type="url"
                 sx={{ width: '100%' }}
               />
+            </FormControl>
+            
+            <FormControl sx={{ mb: 2 }}>
+              <FormLabel>Stagioni (opzionale)</FormLabel>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+                {allSeasons.map(season => (
+                  <Chip
+                    key={season}
+                    variant={stagioni.includes(season) ? 'solid' : 'outlined'}
+                    color={stagioni.includes(season) ? 'primary' : 'neutral'}
+                    onClick={() => toggleSeason(season)}
+                    startDecorator={seasonIcons[season]}
+                    sx={{ 
+                      cursor: 'pointer',
+                      userSelect: 'none',
+                      '&:hover': {
+                        opacity: 0.8
+                      }
+                    }}
+                  >
+                    {seasonLabels[season]}
+                  </Chip>
+                ))}
+              </Box>
+              {stagioni.length > 0 && (
+                <Typography level="body-sm" sx={{ mt: 1, color: 'text.secondary' }}>
+                  Stagioni selezionate: {stagioni.map(s => seasonLabels[s]).join(', ')}
+                </Typography>
+              )}
             </FormControl>
             
             {error && (

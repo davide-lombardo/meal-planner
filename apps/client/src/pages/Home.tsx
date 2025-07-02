@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Box, Typography, Button, Stack, Snackbar, Alert, Card, CardContent } from '@mui/joy';
 import { PlusCircle, Mail, Loader2 } from 'lucide-react';
 import RecipeCard from '../components/RecipeCard';
-import type { Recipe } from '../components/RecipeCard';
 import RecipeDialog from '../components/RecipeDialog';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { useLocation } from 'react-router-dom';
@@ -10,6 +9,7 @@ import Skeleton from '@mui/joy/Skeleton';
 import { RecipeSchema } from '../utils/schemas';
 import FilterSection from '../components/FiltersSection';
 import { CONFIG } from '../utils/constants';
+import { Category, Recipe, RecipeType } from '../models/recipeModel';
 
 // Debounce hook
 function useDebouncedValue<T>(value: T, delay: number): T {
@@ -40,8 +40,8 @@ export default function Home() {
   const [search, setSearch] = React.useState('');
   const [actionSuccess, setActionSuccess] = React.useState('');
   const [actionError, setActionError] = React.useState('');
-  const [filterType, setFilterType] = React.useState('');
-  const [filterCategory, setFilterCategory] = React.useState('');
+  const [filterType, setFilterType] = React.useState<RecipeType | ''>('');
+  const [filterCategory, setFilterCategory] = React.useState<Category | ''>('');
   const debouncedSearch = useDebouncedValue(search, 250);
 
   // Fetch recipes from backend
@@ -163,8 +163,12 @@ export default function Home() {
   };
 
   // Get unique types and categories from recipes
-  const types = Array.from(new Set(recipes.map((r) => r.tipo).filter(Boolean)));
-  const categories = Array.from(new Set(recipes.map((r) => r.categoria).filter(Boolean)));
+  const types = Array.from(
+    new Set(recipes.map((r) => r.tipo).filter((t): t is RecipeType => t !== undefined)),
+  );
+  const categories = Array.from(
+    new Set(recipes.map((r) => r.categoria).filter((c): c is Category => c !== undefined)),
+  );
 
   // Filter recipes by search and dropdowns
   const filteredRecipes = recipes.filter((r) => {

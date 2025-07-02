@@ -9,16 +9,18 @@ import {
   Badge
 } from '@mui/joy';
 import { Search, X, Filter, RotateCcw } from 'lucide-react';
+import { Category, RecipeType } from '../models/recipeModel';
+
 
 interface FilterSectionProps {
   search: string;
   onSearchChange: (value: string) => void;
-  filterType: string;
-  onTypeChange: (value: string) => void;
-  filterCategory: string;
-  onCategoryChange: (value: string) => void;
-  types: string[];
-  categories: string[];
+  filterType: RecipeType | '';
+  onTypeChange: (value: RecipeType | '') => void;
+  filterCategory: Category | '';
+  onCategoryChange: (value: Category | '') => void;
+  types: RecipeType[];
+  categories: Category[];
   filteredCount: number;
   totalCount: number;
 }

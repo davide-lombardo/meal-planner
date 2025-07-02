@@ -1,3 +1,0 @@
-Suggest recipes based on what’s left in the fridge/pantry.
-
-Suggest recipes based on seasonality

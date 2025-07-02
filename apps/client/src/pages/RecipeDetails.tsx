@@ -16,16 +16,7 @@ import {
 import { ArrowLeft, Pencil, Trash2, Soup, ExternalLink } from 'lucide-react';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { CONFIG } from '../utils/constants';
-
-interface Recipe {
-  id: string;
-  nome: string;
-  categoria?: string;
-  tipo?: string;
-  ingredienti: string[];
-  stagioni?: string[];
-  link?: string;
-}
+import { Recipe } from '../models/recipeModel';
 
 export default function RecipeDetails() {
   const { id } = useParams();

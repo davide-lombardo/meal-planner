@@ -48,7 +48,7 @@ interface Config {
 const getCurrentSeason = (): 'spring' | 'summer' | 'autumn' | 'winter' => {
   const now = new Date();
   const month = now.getMonth() + 1; // getMonth() returns 0-11
-  
+
   if (month >= 3 && month <= 5) return 'spring';
   if (month >= 6 && month <= 8) return 'summer';
   if (month >= 9 && month <= 11) return 'autumn';
@@ -82,32 +82,59 @@ export default function ConfigPage() {
       .then((res) => res.json())
       .then((data: Config) => {
         try {
-          ConfigSchema.parse(data);
+          // Ensure menuOptions exists
+          if (!data.menuOptions) {
+            data.menuOptions = {};
+          }
+          
           // Set current season if not already set
           if (!data.menuOptions.currentSeason) {
             data.menuOptions.currentSeason = getCurrentSeason();
           }
+          
+          // Validate the complete config
+          ConfigSchema.parse(data);
           setConfig(data);
         } catch (e) {
+          console.error('Config validation error:', e);
           setError(
             'Config validation failed: ' + (e instanceof Error ? e.message : 'Unknown error'),
           );
         }
         setLoading(false);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error('Failed to load config:', err);
         setError('Failed to load configuration');
         setLoading(false);
       });
   }, []);
 
-  const setMenuOption = (key: keyof MenuOptions, value: unknown) => {
+  const setMenuOption = React.useCallback((key: keyof MenuOptions, value: unknown) => {
     setConfig((prev: Config | null) => {
       if (!prev) return prev;
-      setHasUnsavedChanges(true);
-      return { ...prev, menuOptions: { ...prev.menuOptions, [key]: value } };
+      
+      const updatedConfig = {
+        ...prev,
+        menuOptions: {
+          ...prev.menuOptions,
+          [key]: value
+        }
+      };
+      
+      // Validate the change immediately
+      try {
+        ConfigSchema.parse(updatedConfig);
+        setHasUnsavedChanges(true);
+        setError(''); // Clear any validation errors
+        return updatedConfig;
+      } catch (e) {
+        console.warn('Invalid config change:', e);
+        setError('Invalid configuration: ' + (e instanceof Error ? e.message : 'Unknown error'));
+        return prev; // Don't apply invalid changes
+      }
     });
-  };
+  }, []);
 
   const handleSave = async () => {
     setSaving(true);
@@ -117,6 +144,7 @@ export default function ConfigPage() {
     try {
       if (!config) throw new Error('No configuration data available');
 
+      // Final validation before save
       ConfigSchema.parse(config);
 
       const response = await fetch(`${CONFIG.API_BASE_URL}/config`, {
@@ -133,11 +161,21 @@ export default function ConfigPage() {
       setSuccess('Configuration saved successfully!');
       setHasUnsavedChanges(false);
     } catch (e) {
+      console.error('Save error:', e);
       setError(e instanceof Error ? e.message : 'Save operation failed');
     } finally {
       setSaving(false);
     }
   };
+
+  // Handle season change specifically to ensure it's properly tracked
+  const handleSeasonChange = React.useCallback((newSeason: 'spring' | 'summer' | 'autumn' | 'winter') => {
+    setMenuOption('currentSeason', newSeason);
+  }, [setMenuOption]);
+
+  const handleSeasonalFilteringToggle = React.useCallback((enabled: boolean) => {
+    setMenuOption('enableSeasonalFiltering', enabled);
+  }, [setMenuOption]);
 
   if (loading) {
     return (
@@ -344,7 +382,7 @@ export default function ConfigPage() {
                   </Box>
                   <Switch
                     checked={!!mo.enableSeasonalFiltering}
-                    onChange={(e) => setMenuOption('enableSeasonalFiltering', e.target.checked)}
+                    onChange={(e) => handleSeasonalFilteringToggle(e.target.checked)}
                     color={mo.enableSeasonalFiltering ? 'success' : 'primary'}
                   />
                 </Box>
@@ -355,7 +393,11 @@ export default function ConfigPage() {
                 >
                   <Select
                     value={mo.currentSeason || getCurrentSeason()}
-                    onChange={(_, value) => setMenuOption('currentSeason', value)}
+                    onChange={(_, value) => {
+                      if (value) {
+                        handleSeasonChange(value as 'spring' | 'summer' | 'autumn' | 'winter');
+                      }
+                    }}
                     sx={{ maxWidth: 180 }}
                   >
                     {Object.entries(seasonLabels).map(([key, label]) => (
@@ -380,7 +422,8 @@ export default function ConfigPage() {
                     }}
                   >
                     <Typography level="body-xs" sx={{ color: 'text.secondary' }}>
-                      Currently filtering for: <strong>{seasonLabels[mo.currentSeason || 'spring']}</strong>
+                      Currently filtering for:{' '}
+                      <strong>{seasonLabels[mo.currentSeason || 'spring']}</strong>
                       <br />
                       Only recipes marked for this season will be included in menu generation.
                     </Typography>
