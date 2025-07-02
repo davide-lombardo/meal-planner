@@ -11,7 +11,6 @@ import {
 import { Search, X, Filter, RotateCcw } from 'lucide-react';
 import { Category, RecipeType } from '../models/recipeModel';
 
-
 interface FilterSectionProps {
   search: string;
   onSearchChange: (value: string) => void;
@@ -58,7 +57,6 @@ export default function FilterSection({
       borderColor: 'divider',
       boxShadow: 'sm'
     }}>
-      {/* Header with results count and clear all */}
       <Box sx={{ 
         display: 'flex', 
         justifyContent: 'space-between', 

@@ -21,7 +21,6 @@ export default function Sidebar() {
     window.dispatchEvent(new CustomEvent('sidebar-width', { detail: open ? 220 : 64 }));
   }, [open]);
 
-  // Using a more reliable way to check for mobile, although direct window.matchMedia is fine if SSR isn't a concern
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 600;
 
   const handleNav = (path: string) => {
@@ -72,7 +71,7 @@ export default function Sidebar() {
               >
                 {icon}
               </ListItemDecorator>
-              {/* Only render Typography if open or on mobile for smooth animation */}
+   
               {(open || isMobile) && (
                 <Typography
                   className="Sidebar-label"

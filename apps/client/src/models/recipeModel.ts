@@ -1,4 +1,3 @@
-
 interface BaseRecipe {
   id: string;
   nome: string;

@@ -2,9 +2,6 @@ import * as React from 'react';
 import { Box, Typography, Tooltip } from '@mui/joy';
 import { Info as InfoIcon } from 'lucide-react';
 
-/**
- * FormField - a wrapper for form fields with label, tooltip, and consistent spacing.
- */
 export interface FormFieldProps {
   label: string;
   tooltip?: string;

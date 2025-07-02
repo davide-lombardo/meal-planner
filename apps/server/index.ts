@@ -9,15 +9,11 @@ import logger from './logger.js';
 import { z } from 'zod';
 
 // Zod schemas
-// Season enum schema
 export const SeasonSchema = z.enum(['spring', 'summer', 'autumn', 'winter']);
 
-// Category and RecipeType schemas
 export const CategorySchema = z.enum(['pesce', 'carne', 'formaggio', 'uova']);
 export const RecipeTypeSchema = z.enum(['pranzo', 'cena']);
 
-
-// Recipe schema with seasonal support
 export const RecipeSchema = z.object({
   id: z.string().min(1, "Recipe ID is required"),
   nome: z.string().min(1, "Recipe name is required"),
@@ -28,10 +24,8 @@ export const RecipeSchema = z.object({
   stagioni: z.array(SeasonSchema).optional(),
 });
 
-// History entry schema - more flexible for now but can be made stricter
 export const HistoryEntrySchema = z.record(z.string(), z.any());
 
-// Menu options schema with all current features
 export const MenuOptionsSchema = z.object({
   maxRepetitionWeeks: z.number().int().min(0).optional(),
   mealTypeQuotas: z.record(z.string(), z.number().int().min(0)).optional(),
@@ -72,9 +66,8 @@ export const validateMenuOptions = (data: unknown): MenuOptions => {
   return MenuOptionsSchema.parse(data);
 };
 
-// Validation helper for partial updates
 export const PartialRecipeSchema = RecipeSchema.partial().extend({
-  id: z.string().optional(), // Allow optional ID for new recipes
+  id: z.string().optional(),
 });
 
 export const PartialConfigSchema = ConfigSchema.partial();
@@ -158,71 +151,6 @@ app.delete('/api/recipes/:id', async (req, res) => {
   } catch (err) {
     logger.error('Failed to delete recipe: %o', err);
     res.status(500).json({ error: 'Failed to delete recipe' });
-  }
-});
-
-// History CRUD
-app.get('/api/history', async (req, res) => {
-  logger.info('GET /api/history');
-  try {
-    const history = await readJson('history.json');
-    logger.info('Loaded history: %d', history.length);
-    res.json(history);
-  } catch (err) {
-    logger.error('Failed to load history: %o', err);
-    res.status(500).json({ error: 'Failed to load history' });
-  }
-});
-
-app.post('/api/history', async (req, res) => {
-  logger.info('POST /api/history', { body: req.body });
-  try {
-    // Accept any object for now, but could be improved with a stricter schema
-    const parseResult = HistoryEntrySchema.safeParse(req.body);
-    if (!parseResult.success) {
-      logger.warn('Invalid history entry: %o', parseResult.error);
-      return res.status(400).json({ error: 'Invalid history entry', details: parseResult.error.errors });
-    }
-    const history = await readJson('history.json');
-    const newEntry = parseResult.data;
-    history.push(newEntry);
-    await writeJson('history.json', history);
-    logger.info('Added history entry: %o', newEntry);
-    res.status(201).json(newEntry);
-  } catch (err) {
-    logger.error('Failed to add history entry: %o', err);
-    res.status(500).json({ error: 'Failed to add history entry' });
-  }
-});
-
-// Menu generation
-app.post('/api/generate-menu', async (req, res) => {
-  logger.info('POST /api/generate-menu', { body: req.body });
-  try {
-    const recipes = await readJson('recipes.json');
-    const history = await readJson('history.json');
-    const config = await readJson('config.json');
-    const menu = generateMenu(recipes, history, config);
-    logger.info('Generated menu: %o', menu);
-    res.json(menu);
-  } catch (err) {
-    logger.error('Failed to generate menu: %o', err);
-    res.status(500).json({ error: 'Failed to generate menu' });
-  }
-});
-
-// Email endpoint (existing)
-app.post('/api/send-email', async (req, res) => {
-  const { subject, text, html } = req.body;
-  logger.info('POST /api/send-email', { subject });
-  try {
-    await sendEmail(subject, text, html);
-    logger.info('Email sent: %s', subject);
-    res.status(200).json({ message: 'Email sent successfully' });
-  } catch (error) {
-    const errMsg = (error instanceof Error) ? error.message : String(error);
-    logger.error('Failed to send email: %s', errMsg);
-    res.status(500).json({ message: 'Failed to send email', error: errMsg });
   }
 });
 

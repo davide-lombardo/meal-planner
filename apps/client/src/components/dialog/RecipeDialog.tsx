@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Modal, ModalDialog, DialogTitle, DialogContent, DialogActions, Button, FormControl, FormLabel, Input, Textarea, Typography, Select, Option, Chip, Box } from '@mui/joy';
 import { CloudRain, Leaf, Snowflake, Sun } from 'lucide-react';
-import { Category, Recipe, RecipeType, Season } from '../models/recipeModel';
+import { Category, Recipe, RecipeType, Season } from '../../models/recipeModel';
 
 interface RecipeDialogProps {
   open: boolean;

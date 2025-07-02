@@ -29,8 +29,8 @@ export default function RecipeListItem({ recipe, onEdit, onDelete }: RecipeListI
         borderBottom: '1px solid',
         borderColor: 'divider',
         '&:last-child': { borderBottom: 'none' },
-        flexWrap: 'wrap', // Allow content to wrap on smaller screens
-        gap: { xs: 1, sm: 2 }, // Add gap for spacing on small screens
+        flexWrap: 'wrap', 
+        gap: { xs: 1, sm: 2 }, 
       }}
       data-testid={`recipe-list-item-${recipe.id}`}
     >

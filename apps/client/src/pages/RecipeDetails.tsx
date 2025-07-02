@@ -14,7 +14,7 @@ import {
   CircularProgress,
 } from '@mui/joy';
 import { ArrowLeft, Pencil, Trash2, Soup, ExternalLink } from 'lucide-react';
-import ConfirmDialog from '../components/ConfirmDialog';
+import ConfirmDialog from '../components/dialog/ConfirmDialog';
 import { CONFIG } from '../utils/constants';
 import { Recipe } from '../models/recipeModel';
 

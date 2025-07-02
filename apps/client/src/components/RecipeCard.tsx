@@ -2,7 +2,7 @@ import { Card, CardContent, Typography, Box, IconButton, Menu, MenuItem } from '
 import { Drumstick, Milk, Egg, Fish, Pencil, Trash2, EllipsisVertical } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import * as React from 'react';
-import { Category, Recipe, RecipeType } from '../models/recipeModel';
+import { Recipe } from '../models/recipeModel';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -122,7 +122,7 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
           open={open}
           onClose={handleMenuClose}
           placement="bottom-end"
-          onClick={(e) => e.stopPropagation()} // prevent closing card click
+          onClick={(e) => e.stopPropagation()}
         >
           <MenuItem onClick={onEditClick} sx={{ gap: 1 }}>
             <Pencil size={16} /> Edit

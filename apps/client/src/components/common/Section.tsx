@@ -2,9 +2,6 @@ import * as React from 'react';
 import { Box, Typography, Tooltip } from '@mui/joy';
 import { Info as InfoIcon } from 'lucide-react';
 
-/**
- * Section component for grouping related settings with a title and optional description.
- */
 export interface SectionProps {
   title: string;
   description?: string;

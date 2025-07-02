@@ -2,9 +2,6 @@ import * as React from 'react';
 import { Box, Typography, Input, Button, Chip, IconButton, Tooltip } from '@mui/joy';
 import { Plus, Trash2, Info as InfoIcon } from 'lucide-react';
 
-/**
- * EditableArray - a reusable component for editing string arrays
- */
 export interface EditableArrayProps {
   label: string;
   value: string[];

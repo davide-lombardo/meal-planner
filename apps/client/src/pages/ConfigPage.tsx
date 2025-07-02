@@ -25,26 +25,9 @@ import { EditableArray } from '../components/common/EditableArray';
 import { FormField } from '../components/common/FormField';
 import { CONFIG } from '../utils/constants';
 import Layout from '../components/common/Layout';
+import { Config, MenuOptions } from '../models/configModel';
+import { Season } from '../models/recipeModel';
 
-interface MenuOptions {
-  maxRepetitionWeeks?: number;
-  useWeightedSelection?: boolean;
-  enableIngredientPlanning?: boolean;
-  availableIngredients?: string[];
-  useQuotas?: boolean;
-  mealTypeQuotas?: Record<string, number>;
-  preferredRecipes?: string[];
-  avoidedRecipes?: string[];
-  enableSeasonalFiltering?: boolean;
-  currentSeason?: 'spring' | 'summer' | 'autumn' | 'winter';
-}
-
-interface Config {
-  menuOptions: MenuOptions;
-  [key: string]: any;
-}
-
-// Helper function to get current season based on date
 const getCurrentSeason = (): 'spring' | 'summer' | 'autumn' | 'winter' => {
   const now = new Date();
   const month = now.getMonth() + 1; // getMonth() returns 0-11
@@ -82,17 +65,14 @@ export default function ConfigPage() {
       .then((res) => res.json())
       .then((data: Config) => {
         try {
-          // Ensure menuOptions exists
           if (!data.menuOptions) {
             data.menuOptions = {};
           }
           
-          // Set current season if not already set
           if (!data.menuOptions.currentSeason) {
             data.menuOptions.currentSeason = getCurrentSeason();
           }
           
-          // Validate the complete config
           ConfigSchema.parse(data);
           setConfig(data);
         } catch (e) {
@@ -122,11 +102,10 @@ export default function ConfigPage() {
         }
       };
       
-      // Validate the change immediately
       try {
         ConfigSchema.parse(updatedConfig);
         setHasUnsavedChanges(true);
-        setError(''); // Clear any validation errors
+        setError(''); 
         return updatedConfig;
       } catch (e) {
         console.warn('Invalid config change:', e);
@@ -144,7 +123,6 @@ export default function ConfigPage() {
     try {
       if (!config) throw new Error('No configuration data available');
 
-      // Final validation before save
       ConfigSchema.parse(config);
 
       const response = await fetch(`${CONFIG.API_BASE_URL}/config`, {
@@ -168,8 +146,7 @@ export default function ConfigPage() {
     }
   };
 
-  // Handle season change specifically to ensure it's properly tracked
-  const handleSeasonChange = React.useCallback((newSeason: 'spring' | 'summer' | 'autumn' | 'winter') => {
+  const handleSeasonChange = React.useCallback((newSeason: Season) => {
     setMenuOption('currentSeason', newSeason);
   }, [setMenuOption]);
 

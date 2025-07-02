@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Box, Typography, Button, Stack, Snackbar, Alert, Card, CardContent } from '@mui/joy';
 import { PlusCircle, Mail, Loader2 } from 'lucide-react';
 import RecipeCard from '../components/RecipeCard';
-import RecipeDialog from '../components/RecipeDialog';
-import ConfirmDialog from '../components/ConfirmDialog';
+import RecipeDialog from '../components/dialog/RecipeDialog';
+import ConfirmDialog from '../components/dialog/ConfirmDialog';
 import { useLocation } from 'react-router-dom';
 import Skeleton from '@mui/joy/Skeleton';
 import { RecipeSchema } from '../utils/schemas';
@@ -44,7 +44,6 @@ export default function Home() {
   const [filterCategory, setFilterCategory] = React.useState<Category | ''>('');
   const debouncedSearch = useDebouncedValue(search, 250);
 
-  // Fetch recipes from backend
   React.useEffect(() => {
     setLoading(true);
     setError('');
@@ -98,7 +97,6 @@ export default function Home() {
     }
   };
 
-  // Save (add or edit) recipe via backend
   const handleSaveRecipe = async (recipe: Recipe) => {
     setLoading(true);
     setError('');

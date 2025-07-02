@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/joy';
-import { ColorSchemeToggle } from './ThemeProvider';
+import { ColorSchemeToggle } from '../../ThemeProvider';
 
 export default function Header() {
   return (
