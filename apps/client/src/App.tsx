@@ -2,7 +2,7 @@ import * as React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import ThemeProvider from './ThemeProvider';
 import AppRouter from './AppRouter';
-import Sidebar from './components/Sidebar';
+import Sidebar from './components/common/Sidebar';
 
 export default function App() {
   const [sidebarWidth, setSidebarWidth] = React.useState(220);

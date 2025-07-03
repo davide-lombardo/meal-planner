@@ -10,6 +10,7 @@ import { RecipeSchema } from '../utils/schemas';
 import FilterSection from '../components/FiltersSection';
 import { CONFIG } from '../utils/constants';
 import { Category, Recipe, RecipeType } from '../models/recipeModel';
+import ErrorAlert from '../components/ErrorAlert';
 
 // Debounce hook
 function useDebouncedValue<T>(value: T, delay: number): T {
@@ -267,9 +268,7 @@ export default function Home() {
           totalCount={recipes.length}
         />
         {error && (
-          <Alert color="danger" variant="solid" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
+          <ErrorAlert message={error} />
         )}
         {loading ? (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, minHeight: 200 }}>

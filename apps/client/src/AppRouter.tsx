@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import RecipeDetails from './pages/RecipeDetails';
 import HowItWorks from './pages/HowItWorks';
-import Header from './Header';
+import Header from './components/common/Header';
 import ConfigPage from './pages/ConfigPage';
 import NotFound from './pages/NotFound';
 import FindRecipes from './pages/FindRecipes';

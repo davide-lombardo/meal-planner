@@ -8,7 +8,6 @@ import {
   Button,
   Snackbar,
   Alert,
-  Switch,
   Chip,
   List,
   ListItem,
@@ -27,6 +26,7 @@ import { CONFIG } from '../utils/constants';
 import Layout from '../components/common/Layout';
 import { Config, MenuOptions } from '../models/configModel';
 import { Season } from '../models/recipeModel';
+import CustomSwitch from '../components/CustomSwitch';
 
 const getCurrentSeason = (): 'spring' | 'summer' | 'autumn' | 'winter' => {
   const now = new Date();
@@ -231,19 +231,28 @@ export default function ConfigPage() {
         </Button>
       </Box>
 
-      <Grid container spacing={4}>
+      <Grid container spacing={4} sx={{
+        width: '100%',
+        margin: 0,
+        maxWidth: 1200,
+        mx: 'auto',
+        alignItems: 'stretch',
+      }}>
         {/* General Settings */}
-        <Grid xs={12} lg={6}>
+        <Grid xs={12} lg={6} sx={{ display: 'flex' }}>
           <Card
             variant="outlined"
             sx={{
-              height: 'fit-content',
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
               borderRadius: 3,
               border: '1px solid',
               borderColor: 'divider',
             }}
           >
-            <CardContent sx={{ p: 4 }}>
+            <CardContent sx={{ p: 4, flex: 1, display: 'flex', flexDirection: 'column' }}>
               <Typography
                 level="h3"
                 sx={{
@@ -295,10 +304,9 @@ export default function ConfigPage() {
                         Prioritize less-used recipes
                       </Typography>
                     </Box>
-                    <Switch
+                    <CustomSwitch
                       checked={!!mo.useWeightedSelection}
                       onChange={(e) => setMenuOption('useWeightedSelection', e.target.checked)}
-                      color={mo.useWeightedSelection ? 'success' : 'primary'}
                     />
                   </Box>
                 </Box>
@@ -308,17 +316,20 @@ export default function ConfigPage() {
         </Grid>
 
         {/* Seasonal Settings */}
-        <Grid xs={12} lg={6}>
+        <Grid xs={12} lg={6} sx={{ display: 'flex' }}>
           <Card
             variant="outlined"
             sx={{
-              height: 'fit-content',
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
               borderRadius: 3,
               border: '1px solid',
               borderColor: 'divider',
             }}
           >
-            <CardContent sx={{ p: 4 }}>
+            <CardContent sx={{ p: 4, flex: 1, display: 'flex', flexDirection: 'column' }}>
               <Typography
                 level="h3"
                 sx={{
@@ -357,10 +368,9 @@ export default function ConfigPage() {
                       Only show recipes for the current season
                     </Typography>
                   </Box>
-                  <Switch
+                  <CustomSwitch
                     checked={!!mo.enableSeasonalFiltering}
                     onChange={(e) => handleSeasonalFilteringToggle(e.target.checked)}
-                    color={mo.enableSeasonalFiltering ? 'success' : 'primary'}
                   />
                 </Box>
 
@@ -411,85 +421,21 @@ export default function ConfigPage() {
           </Card>
         </Grid>
 
-        {/* Ingredient Planning */}
-        <Grid xs={12} lg={6}>
-          <Card
-            variant="outlined"
-            sx={{
-              height: 'fit-content',
-              borderRadius: 3,
-              border: '1px solid',
-              borderColor: 'divider',
-            }}
-          >
-            <CardContent sx={{ p: 4 }}>
-              <Typography
-                level="h3"
-                sx={{
-                  fontWeight: 700,
-                  mb: 1,
-                }}
-              >
-                Ingredient Planning
-              </Typography>
-              <Typography level="body-sm" sx={{ color: 'text.secondary', mb: 3 }}>
-                Optimize menus based on available ingredients
-              </Typography>
-
-              <Stack spacing={3}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    p: 2,
-                    borderRadius: 2,
-                    bgcolor: 'background.level1',
-                    border: '1px solid',
-                    borderColor: 'divider',
-                  }}
-                >
-                  <Box>
-                    <Typography level="body-sm" sx={{ fontWeight: 600, mb: 0.5 }}>
-                      Enable ingredient planning
-                    </Typography>
-                    <Typography level="body-xs" sx={{ color: 'text.secondary' }}>
-                      Prefer recipes using your ingredients
-                    </Typography>
-                  </Box>
-                  <Switch
-                    checked={!!mo.enableIngredientPlanning}
-                    onChange={(e) => setMenuOption('enableIngredientPlanning', e.target.checked)}
-                    color={mo.enableIngredientPlanning ? 'success' : 'primary'}
-                  />
-                </Box>
-
-                <Box sx={{ opacity: mo.enableIngredientPlanning ? 1 : 0.5 }}>
-                  <EditableArray
-                    label="Available ingredients"
-                    value={mo.availableIngredients || []}
-                    onChange={(arr) => setMenuOption('availableIngredients', arr)}
-                    placeholder="Add ingredient"
-                    tooltip="Ingredients you have at home"
-                    disabled={!mo.enableIngredientPlanning}
-                  />
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
-
         {/* Quotas & Preferences */}
-        <Grid xs={12}>
+        <Grid xs={12} sx={{ display: 'flex' }}>
           <Card
             variant="outlined"
             sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
               borderRadius: 3,
               border: '1px solid',
               borderColor: 'divider',
             }}
           >
-            <CardContent sx={{ p: 4 }}>
+            <CardContent sx={{ p: 4, flex: 1, display: 'flex', flexDirection: 'column' }}>
               <Typography
                 level="h3"
                 sx={{
@@ -527,10 +473,9 @@ export default function ConfigPage() {
                           Limit meal types per week
                         </Typography>
                       </Box>
-                      <Switch
+                      <CustomSwitch
                         checked={!!mo.useQuotas}
                         onChange={(e) => setMenuOption('useQuotas', e.target.checked)}
-                        color={mo.useQuotas ? 'success' : 'primary'}
                       />
                     </Box>
 
@@ -656,6 +601,76 @@ export default function ConfigPage() {
                   </Stack>
                 </Grid>
               </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Ingredient Planning */}
+        <Grid xs={12} lg={6} sx={{ display: 'flex' }}>
+          <Card
+            variant="outlined"
+            sx={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              borderRadius: 3,
+              border: '1px solid',
+              borderColor: 'divider',
+            }}
+          >
+            <CardContent sx={{ p: 4, flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <Typography
+                level="h3"
+                sx={{
+                  fontWeight: 700,
+                  mb: 1,
+                }}
+              >
+                Ingredient Planning
+              </Typography>
+              <Typography level="body-sm" sx={{ color: 'text.secondary', mb: 3 }}>
+                Optimize menus based on available ingredients
+              </Typography>
+
+              <Stack spacing={3}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    p: 2,
+                    borderRadius: 2,
+                    bgcolor: 'background.level1',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Box>
+                    <Typography level="body-sm" sx={{ fontWeight: 600, mb: 0.5 }}>
+                      Enable ingredient planning
+                    </Typography>
+                    <Typography level="body-xs" sx={{ color: 'text.secondary' }}>
+                      Prefer recipes using your ingredients
+                    </Typography>
+                  </Box>
+                  <CustomSwitch
+                    checked={!!mo.enableIngredientPlanning}
+                    onChange={(e) => setMenuOption('enableIngredientPlanning', e.target.checked)}
+                  />
+                </Box>
+
+                <Box sx={{ opacity: mo.enableIngredientPlanning ? 1 : 0.5 }}>
+                  <EditableArray
+                    label="Available ingredients"
+                    value={mo.availableIngredients || []}
+                    onChange={(arr) => setMenuOption('availableIngredients', arr)}
+                    placeholder="Add ingredient"
+                    tooltip="Ingredients you have at home"
+                    disabled={!mo.enableIngredientPlanning}
+                  />
+                </Box>
+              </Stack>
             </CardContent>
           </Card>
         </Grid>

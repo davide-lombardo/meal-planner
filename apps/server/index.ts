@@ -154,6 +154,29 @@ app.delete('/api/recipes/:id', async (req, res) => {
   }
 });
 
+// Find recipes by ingredients
+app.post('/api/recipes/by-ingredients', async (req, res) => {
+  logger.info('POST /api/recipes/by-ingredients', { body: req.body });
+  try {
+    const { ingredients } = req.body;
+    if (!Array.isArray(ingredients) || ingredients.length === 0) {
+      return res.status(400).json({ error: 'Ingredients array is required.' });
+    }
+    const recipes = await readJson('recipes.json');
+    // Filter recipes that include ALL the provided ingredients
+    const matchingRecipes = (recipes as Array<{ ingredienti: string[] }>).filter((recipe) =>
+      Array.isArray(recipe.ingredienti) &&
+      ingredients.every((ing: string) =>
+        recipe.ingredienti.some((rIng: string) => rIng.trim().toLowerCase() === ing.trim().toLowerCase())
+      )
+    );
+    res.json(matchingRecipes);
+  } catch (err) {
+    logger.error('Failed to find recipes by ingredients: %o', err);
+    res.status(500).json({ error: 'Failed to find recipes by ingredients' });
+  }
+});
+
 // Send meal plan as HTML email (auto-generates menu and groceries)
 app.post('/api/send-meal-plan-html', async (req, res) => {
   logger.info('POST /api/send-meal-plan-html');
