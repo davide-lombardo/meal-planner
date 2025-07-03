@@ -32,6 +32,13 @@ const theme = extendTheme({
           secondary: '#666',
         },
         divider: '#e0e0e0',
+        category: {
+          pesce: '#87CEEB', // Sky Blue
+          carne: '#FA8072', // Salmon
+          formaggio: '#DAA520', // Goldenrod
+          uova: '#228B22', // Forest Green
+          legumi: '#8B5CF6', // Violet
+        },
       },
     },
     dark: {
@@ -61,6 +68,13 @@ const theme = extendTheme({
           secondary: '#aaa',
         },
         divider: '#333',
+        category: {
+          pesce: '#87CEEB', // Sky Blue
+          carne: '#FA8072', // Salmon
+          formaggio: '#DAA520', // Goldenrod
+          uova: '#228B22', // Forest Green
+          legumi: '#8B5CF6', // Violet
+        },
       },
     },
   },

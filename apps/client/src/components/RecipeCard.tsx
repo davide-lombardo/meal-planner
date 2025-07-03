@@ -3,6 +3,7 @@ import { Drumstick, Milk, Egg, Fish, Pencil, Trash2, EllipsisVertical, Leaf } fr
 import { useNavigate } from 'react-router-dom';
 import * as React from 'react';
 import { Recipe } from '@meal-planner/shared';
+import { useTheme } from '@mui/joy';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -10,31 +11,33 @@ interface RecipeCardProps {
   onDelete?: (recipe: Recipe) => void;
 }
 
-const categoryMap = {
-  pesce: {
-    color: '#87CEEB', // Sky Blue
-    icon: <Fish size={16} />,
-  },
-  carne: {
-    color: '#FA8072', // Salmon
-    icon: <Drumstick size={16} />,
-  },
-  formaggio: {
-    color: '#DAA520', // Goldenrod
-    icon: <Milk size={16} />,
-  },
-  uova: {
-    color: '#228B22', // Forest Green
-    icon: <Egg size={16} />,
-  },
-  legumi: {
-    color: '#8B5CF6', // Violet
-    icon: <Leaf size={16} />,
-  },
-};
-
 export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps) {
   const navigate = useNavigate();
+  const theme = useTheme();
+
+  // Map category to theme palette colors
+  const categoryMap = {
+    pesce: {
+      color: theme.palette.category.pesce,
+      icon: <Fish size={16} />,
+    },
+    carne: {
+      color: theme.palette.category.carne,
+      icon: <Drumstick size={16} />,
+    },
+    formaggio: {
+      color: theme.palette.category.formaggio,
+      icon: <Milk size={16} />,
+    },
+    uova: {
+      color: theme.palette.category.uova,
+      icon: <Egg size={16} />,
+    },
+    legumi: {
+      color: theme.palette.category.legumi,
+      icon: <Leaf size={16} />,
+    },
+  };
 
   // Get the category details from the map
   const categoryDetails = recipe.categoria ? categoryMap[recipe.categoria] : null;
@@ -72,8 +75,8 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
     <Card
       variant="soft"
       sx={{
-        bgcolor: 'neutral.solidBg',
-        color: 'text.primary',
+        bgcolor: theme.palette.background.level1,
+        color: theme.palette.text.primary,
         width: 340,
         height: 220,
         mb: 3,
@@ -106,10 +109,10 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
           sx={{
             borderRadius: '50%',
             p: 0.5,
-            color: 'text.primary',
+            color: theme.palette.text.primary,
             '&:hover': {
               bgcolor: 'transparent',
-              color: 'text.primary',
+              color: theme.palette.text.primary,
               boxShadow: 'none',
             },
             '&:focus-visible': {
@@ -199,8 +202,8 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
               sx={{
                 px: 0.6,
                 py: 0.2,
-                border: `1px solid #666`,
-                color: '#444',
+                border: `1px solid ${theme.palette.divider}`,
+                color: theme.palette.text.secondary,
                 borderRadius: 2,
                 fontSize: 10,
                 fontWeight: 500,
