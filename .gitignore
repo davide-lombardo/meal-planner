@@ -51,3 +51,7 @@ dists/
 # Ignore client-side recipes.json (should not exist)
 apps/client/src/data/recipes.json
 tmp/apps/server/serve/
+
+.nx/cache
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md

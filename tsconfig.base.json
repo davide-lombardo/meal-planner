@@ -1,6 +1,9 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@meal-planner/shared": ["shared/src/index.ts"]
+    }
   }
 }

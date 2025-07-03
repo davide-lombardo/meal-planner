@@ -16,7 +16,7 @@ import {
 import { ArrowLeft, Pencil, Trash2, Soup, ExternalLink } from 'lucide-react';
 import ConfirmDialog from '../components/dialog/ConfirmDialog';
 import { CONFIG } from '../utils/constants';
-import { Recipe } from '../models/recipeModel';
+import { Recipe, RecipeSchema } from '@meal-planner/shared';
 
 export default function RecipeDetails() {
   const { id } = useParams();

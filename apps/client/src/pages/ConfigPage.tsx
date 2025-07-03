@@ -19,13 +19,12 @@ import {
   Option,
 } from '@mui/joy';
 import { Plus, Trash2, Save, Snowflake, Sun, Leaf, CloudRain } from 'lucide-react';
-import { ConfigSchema } from '../utils/schemas';
+import { Config, MenuOptions, ConfigSchema, RecipeSchema } from '@meal-planner/shared';
 import { EditableArray } from '../components/common/EditableArray';
 import { FormField } from '../components/common/FormField';
 import { CONFIG } from '../utils/constants';
 import Layout from '../components/common/Layout';
-import { Config, MenuOptions } from '../models/configModel';
-import { Season } from '../models/recipeModel';
+import { Category, Recipe, RecipeType, Season } from '@meal-planner/shared';
 import CustomSwitch from '../components/CustomSwitch';
 
 const getCurrentSeason = (): 'spring' | 'summer' | 'autumn' | 'winter' => {
