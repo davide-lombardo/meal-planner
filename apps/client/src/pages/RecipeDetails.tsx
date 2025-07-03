@@ -12,8 +12,9 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
+  Chip,
 } from '@mui/joy';
-import { ArrowLeft, Pencil, Trash2, Soup, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Pencil, Trash2, Soup, ExternalLink, Drumstick, Milk, Egg, Fish, Leaf, Sun, Cloud, Snowflake, CloudRain } from 'lucide-react';
 import ConfirmDialog from '../components/dialog/ConfirmDialog';
 import { CONFIG } from '../utils/constants';
 import { Recipe, RecipeSchema } from '@meal-planner/shared';
@@ -191,44 +192,81 @@ export default function RecipeDetails() {
                 alignItems: 'center',
                 flexWrap: 'wrap',
                 justifyContent: { xs: 'center', md: 'flex-start' },
+                mt: 1,
               }}
             >
+              {/* Category Chip */}
               {recipe.categoria && (
-                <Typography
-                  level="body-md"
+                <Chip
+                  startDecorator={
+                    recipe.categoria === 'pesce' ? <Fish size={16} /> :
+                    recipe.categoria === 'carne' ? <Drumstick size={16} /> :
+                    recipe.categoria === 'formaggio' ? <Milk size={16} /> :
+                    recipe.categoria === 'uova' ? <Egg size={16} /> :
+                    recipe.categoria === 'legumi' ? <Leaf size={16} /> : null
+                  }
                   sx={{
+                    bgcolor: theme => theme.palette.category[recipe.categoria],
                     color: '#fff',
-                    fontWeight: 500,
-                    fontSize: 16,
+                    fontWeight: 700,
+                    fontSize: 14,
+                    px: 1.5,
+                    py: 0.5,
+                    borderRadius: 8,
+                    letterSpacing: 0.5,
+                    boxShadow: 'sm',
+                    textTransform: 'capitalize',
                   }}
+                  size="md"
                 >
-                  Category: {recipe.categoria}
-                </Typography>
+                  {recipe.categoria}
+                </Chip>
               )}
+              {/* Type Chip */}
               {recipe.tipo && (
-                <Typography
-                  level="body-md"
+                <Chip
+                  variant="soft"
                   sx={{
-                    color: '#fff',
-                    fontWeight: 500,
-                    fontSize: 16,
+                    bgcolor: 'background.level2',
+                    color: 'text.primary',
+                    fontWeight: 600,
+                    fontSize: 13,
+                    px: 1.2,
+                    py: 0.4,
+                    borderRadius: 8,
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.8,
                   }}
+                  size="md"
                 >
-                  Type: {recipe.tipo}
-                </Typography>
+                  {recipe.tipo}
+                </Chip>
               )}
-              {recipe.stagioni && recipe.stagioni.length > 0 && (
-                <Typography
-                  level="body-md"
+              {/* Seasons Chips */}
+              {recipe.stagioni && recipe.stagioni.length > 0 && recipe.stagioni.map((season, idx) => (
+                <Chip
+                  key={season + idx}
+                  startDecorator={
+                    season === 'spring' ? <CloudRain size={15} /> :
+                    season === 'summer' ? <Sun size={15} /> :
+                    season === 'autumn' ? <Cloud size={15} /> :
+                    season === 'winter' ? <Snowflake size={15} /> : null
+                  }
                   sx={{
-                    color: '#fff',
+                    bgcolor: 'background.level2',
+                    color: 'text.secondary',
                     fontWeight: 500,
-                    fontSize: 16,
+                    fontSize: 13,
+                    px: 1.1,
+                    py: 0.3,
+                    borderRadius: 8,
+                    textTransform: 'capitalize',
                   }}
+                  size="md"
                 >
-                  Seasons: {recipe.stagioni.join(', ')}
-                </Typography>
-              )}
+                  {season}
+                </Chip>
+              ))}
             </Box>
           </Box>
         </Box>
