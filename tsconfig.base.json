@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@meal-planner/shared": ["shared/src/index.ts"]
+      "@meal-planner/shared": ["libs/shared/src/index.ts"]
     }
   }
 }

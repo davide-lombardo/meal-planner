@@ -1,5 +1,5 @@
 import { Card, CardContent, Typography, Box, IconButton, Menu, MenuItem } from '@mui/joy';
-import { Drumstick, Milk, Egg, Fish, Pencil, Trash2, EllipsisVertical } from 'lucide-react';
+import { Drumstick, Milk, Egg, Fish, Pencil, Trash2, EllipsisVertical, Leaf } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import * as React from 'react';
 import { Recipe } from '@meal-planner/shared';
@@ -26,6 +26,10 @@ const categoryMap = {
   uova: {
     color: '#228B22', // Forest Green
     icon: <Egg size={16} />,
+  },
+  legumi: {
+    color: '#8B5CF6', // Violet
+    icon: <Leaf size={16} />,
   },
 };
 

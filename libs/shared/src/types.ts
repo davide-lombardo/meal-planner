@@ -1,1 +1,3 @@
-// Placeholder for Nx generator. Will be replaced after proper Nx lib generation.
+// All types are now inferred from Zod schemas in schemas.ts. No redundant interfaces.
+
+export {};
