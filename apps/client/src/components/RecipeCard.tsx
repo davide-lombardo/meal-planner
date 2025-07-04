@@ -40,7 +40,7 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
   };
 
   // Get the category details from the map
-  const categoryDetails = recipe.categoria ? categoryMap[recipe.categoria] : null;
+  const categoryDetails = recipe.categoria && categoryMap[recipe.categoria] ? categoryMap[recipe.categoria] : null;
 
   // Menu state and handlers
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -177,8 +177,8 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
                 px: 1.2,
                 py: 0.3,
                 border: '1.5px solid',
-                borderColor: categoryDetails.color,
-                color: categoryDetails.color,
+                borderColor: categoryDetails?.color,
+                color: categoryDetails?.color,
                 bgcolor: 'transparent',
                 borderRadius: 10,
                 fontSize: 12,
@@ -193,7 +193,7 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
                 gap: 0.5,
               }}
             >
-              {categoryDetails.icon}
+              {categoryDetails?.icon}
               {recipe.categoria}
             </Box>
           )}

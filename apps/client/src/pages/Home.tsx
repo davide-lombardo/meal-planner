@@ -64,7 +64,7 @@ export default function Home() {
           }
           return true;
         });
-        setRecipes(validRecipes.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)));
+        setRecipes(validRecipes.sort((a: Recipe, b: Recipe) => (b.timestamp || 0) - (a.timestamp || 0)));
         setLoading(false);
       })
       .catch(() => setError('Failed to load recipes.'))
@@ -123,7 +123,7 @@ export default function Home() {
       if (!response.ok) throw new Error('Failed to save recipe');
       // Refetch recipes
       const recipesRes = await fetch(API_URL);
-      setRecipes((await recipesRes.json()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)));
+      setRecipes((await recipesRes.json()).sort((a: Recipe, b: Recipe) => (b.timestamp || 0) - (a.timestamp || 0)));
       setDialogOpen(false);
       setActionSuccess(recipe.id ? 'Recipe updated!' : 'Recipe added!');
     } catch {

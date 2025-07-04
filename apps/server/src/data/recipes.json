@@ -503,5 +503,21 @@
       "piselli",
       "prosciutto cotto"
     ]
+  },
+  {
+    "id": "r1751657068572",
+    "nome": "Pasta fredda pomodorini e mozzarella",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "ingredienti": [
+      "pasta",
+      "pomodorini",
+      "mozzarella",
+      "basilico"
+    ],
+    "stagioni": [
+      "summer",
+      "spring"
+    ]
   }
 ]

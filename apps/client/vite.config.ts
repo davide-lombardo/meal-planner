@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 
 export default defineConfig(() => ({
+  root: __dirname, // Ensure Vite uses the project root for index.html
   publicDir: 'public',
   cacheDir: '../../node_modules/.vite/client',
   server: {

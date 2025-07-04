@@ -89,7 +89,8 @@ app.get('/api/recipes', async (req, res) => {
   try {
     const recipes = await readJson('recipes.json');
     logger.info('Loaded recipes: %d', recipes.length);
-    res.json(recipes);
+    // Sort by timestamp descending (latest first)
+    res.json(recipes.sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0)));
   } catch (err) {
     logger.error('Failed to load recipes: %o', err);
     res.status(500).json({ error: 'Failed to load recipes' });
