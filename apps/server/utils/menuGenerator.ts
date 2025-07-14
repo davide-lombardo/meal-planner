@@ -1,34 +1,4 @@
-export type Recipe = {
-  id: string;
-  nome: string;
-  tipo?: string;
-  categoria?: string;
-  ingredienti: string[];
-  stagioni?: Array<'spring' | 'summer' | 'autumn' | 'winter'>;
-  timestamp?: number;
-};
-
-export type Menu = {
-  pranzo: (Recipe | null)[];
-  cena: (Recipe | null)[];
-};
-
-interface MenuOptions {
-  maxRepetitionWeeks?: number;
-  useWeightedSelection?: boolean;
-  enableIngredientPlanning?: boolean;
-  availableIngredients?: string[];
-  useQuotas?: boolean;
-  mealTypeQuotas?: Record<string, number>;
-  preferredRecipes?: string[];
-  avoidedRecipes?: string[];
-  enableSeasonalFiltering?: boolean;
-  currentSeason?: 'spring' | 'summer' | 'autumn' | 'winter';
-}
-
-interface Config {
-  menuOptions: MenuOptions;
-}
+import { Recipe, Menu, MenuOptions, Config } from '@meal-planner/shared/schemas';
 
 export type ParsedIngredient = {
   name: string;
@@ -411,7 +381,7 @@ export function generateShoppingList(
     if (meal && meal.id) {
       const recipe = recipes.find((r) => r.id === meal.id);
       if (recipe && recipe.ingredienti) {
-        recipe.ingredienti.forEach((ingredientText) => {
+        recipe.ingredienti.forEach((ingredientText: string) => {
           const parsed = parseIngredient(ingredientText);
           const key = `${parsed.name}-${parsed.unit}`;
 

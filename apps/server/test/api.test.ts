@@ -5,7 +5,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { readJson, writeJson } from '../fileHandler';
 import { z } from 'zod';
-import { RecipeSchema } from '../index';
+import { RecipeSchema } from '@meal-planner/shared/schemas';
+import { Recipe, Menu, Config } from '@meal-planner/shared';
+import { generateMenu } from '../utils/menuGenerator';
 
 // Minimal mock app for API endpoint tests
 const app = express();

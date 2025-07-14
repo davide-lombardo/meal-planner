@@ -2,8 +2,9 @@
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": ".",
+    "moduleResolution": "node",
     "paths": {
-      "@meal-planner/shared": ["libs/shared/src/index.ts"]
+      "@meal-planner/shared/*": ["libs/shared/src/*"],
     }
   }
 }

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { generateMenu, formatMenu, generateHtmlEmail, generateShoppingList, Recipe, Menu, Config } from '@meal-planner/shared';
+import { generateMenu, formatMenu, generateHtmlEmail, generateShoppingList } from '../utils/menuGenerator';
+import { Recipe, Menu, Config } from '@meal-planner/shared/schemas';
 
 describe('menuGenerator', () => {
   const recipes: Recipe[] = [

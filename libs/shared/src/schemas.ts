@@ -40,3 +40,8 @@ export type RecipeType = z.infer<typeof RecipeTypeSchema>;
 export type Recipe = z.infer<typeof RecipeSchema>;
 export type MenuOptions = z.infer<typeof MenuOptionsSchema>;
 export type Config = z.infer<typeof ConfigSchema>;
+
+export type Menu = {
+  pranzo: (Recipe | null)[];
+  cena: (Recipe | null)[];
+};

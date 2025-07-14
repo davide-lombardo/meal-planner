@@ -13,7 +13,8 @@
         "assets": [
           "apps/server/src/**/*.json"
         ]
-      }
+      },
+      "dependsOn": ["shared:build"]
     },
     "serve": {
       "executor": "@nx/js:node",
