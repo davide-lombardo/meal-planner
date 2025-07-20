@@ -1,7 +1,14 @@
 import * as fs from 'fs/promises';
 import upath from 'upath';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-const DATA_DIR = upath.resolve(process.cwd(), 'apps/server/src/data');
+// Get the directory path for the current module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Set the data directory relative to the current file
+const DATA_DIR = upath.resolve(__dirname, 'src/data');
 
 export async function readJson(filename: string) {
   const filePath = upath.join(DATA_DIR, filename);

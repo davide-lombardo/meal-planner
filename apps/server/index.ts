@@ -1,10 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { sendEmail } from './email.js';
+import { sendEmail } from './email';
 import dotenv from 'dotenv';
-import { readJson, writeJson } from './fileHandler.js';
-import { generateMenu, formatMenu, generateHtmlEmail } from './utils/menuGenerator.js';
+import { readJson, writeJson } from './fileHandler';
+import { generateMenu, formatMenu, generateHtmlEmail } from './utils/menuGenerator';
 import logger from './logger.js';
 import {
   SeasonSchema,
@@ -20,7 +20,7 @@ import {
   type MenuOptions,
   type Config,
   type Menu
-} from '@meal-planner/shared/schemas';
+} from 'shared/schemas';
 
 dotenv.config({ path: '../.env' });
 

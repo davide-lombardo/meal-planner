@@ -6,10 +6,10 @@ import RecipeDialog from '../components/dialog/RecipeDialog';
 import ConfirmDialog from '../components/dialog/ConfirmDialog';
 import { useLocation } from 'react-router-dom';
 import Skeleton from '@mui/joy/Skeleton';
-import { RecipeSchema } from '@meal-planner/shared';
+import { RecipeSchema } from 'shared';
 import FilterSection from '../components/FiltersSection';
 import { CONFIG } from '../utils/constants';
-import { Recipe, Category, RecipeType } from '@meal-planner/shared';
+import { Recipe, Category, RecipeType } from 'shared';
 import ErrorAlert from '../components/ErrorAlert';
 
 // Debounce hook

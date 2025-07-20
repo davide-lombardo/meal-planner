@@ -17,7 +17,7 @@ import {
 import { ArrowLeft, Pencil, Trash2, Soup, ExternalLink, Drumstick, Milk, Egg, Fish, Leaf, Sun, Cloud, Snowflake, CloudRain } from 'lucide-react';
 import ConfirmDialog from '../components/dialog/ConfirmDialog';
 import { CONFIG } from '../utils/constants';
-import { Recipe } from '@meal-planner/shared';
+import { Recipe } from 'shared';
 
 export default function RecipeDetails() {
   const { id } = useParams();

@@ -1,4 +1,4 @@
-import { Recipe, Menu, MenuOptions, Config } from '@meal-planner/shared/schemas';
+import { Recipe, Menu, MenuOptions, Config } from 'shared/schemas';
 
 export type ParsedIngredient = {
   name: string;

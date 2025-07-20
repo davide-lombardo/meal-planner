@@ -1,9 +1,9 @@
 /// <reference types='vitest' />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import { resolve } from 'path';
 
-export default defineConfig(() => ({
+export default defineConfig({
   root: __dirname, // Ensure Vite uses the project root for index.html
   publicDir: 'public',
   cacheDir: '../../node_modules/.vite/client',
@@ -15,12 +15,18 @@ export default defineConfig(() => ({
     port: 4200,
     host: 'localhost',
   },
-  plugins: [react(), nxViteTsPaths()],
+  plugins: [react()],
+  resolve: {
+    alias: {
+      'shared': resolve(__dirname, '../../libs/shared/src')
+    }
+  },
   build: {
     emptyOutDir: true,
     reportCompressedSize: true,
     commonjsOptions: {
       transformMixedEsModules: true,
     },
+    outDir: '../../dist/apps/client',
   },
-}));
+});

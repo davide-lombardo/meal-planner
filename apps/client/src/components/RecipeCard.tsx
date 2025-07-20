@@ -2,7 +2,7 @@ import { Card, CardContent, Typography, Box, IconButton, Menu, MenuItem } from '
 import { Drumstick, Milk, Egg, Fish, Pencil, Trash2, EllipsisVertical, Leaf } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import * as React from 'react';
-import { Recipe } from '@meal-planner/shared';
+import { Recipe } from 'shared';
 import { useTheme } from '@mui/joy';
 
 interface RecipeCardProps {

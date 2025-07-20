@@ -9,7 +9,7 @@ import {
   Badge
 } from '@mui/joy';
 import { Search, X, Filter, RotateCcw } from 'lucide-react';
-import { Category, RecipeType } from '@meal-planner/shared';
+import { Category, RecipeType } from 'shared';
 
 interface FilterSectionProps {
   search: string;

@@ -1,7 +1,6 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc/client",
+    "outDir": "../../dist/apps/client",
     "module": "esnext",
     "moduleResolution": "node",
     "target": "es2017",
@@ -17,8 +16,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "shared/*": ["../../libs/shared/src/*"]
+    }
   },
-  "include": ["src/**/*", "../../libs/shared/src/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.*", "**/*.spec.*"]
 }

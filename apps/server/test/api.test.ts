@@ -5,8 +5,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { readJson, writeJson } from '../fileHandler';
 import { z } from 'zod';
-import { RecipeSchema } from '@meal-planner/shared/schemas';
-import { Recipe, Menu, Config } from '@meal-planner/shared';
+import { RecipeSchema } from 'shared/schemas.js';
+import { Recipe, Menu, Config } from 'shared/schemas.js';
 import { generateMenu } from '../utils/menuGenerator';
 
 // Minimal mock app for API endpoint tests
