@@ -3,6 +3,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import { sendEmail } from './email';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { readJson, writeJson } from './fileHandler';
 import { generateMenu, formatMenu, generateHtmlEmail } from './utils/menuGenerator';
 import logger from './logger.js';
@@ -22,7 +24,10 @@ import {
   type Menu
 } from 'shared/schemas';
 
-dotenv.config({ path: '../.env' });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const envPath = path.resolve(__dirname, '../../.env');
+dotenv.config({ path: envPath });
 
 const app = express();
 const PORT = process.env.PORT || 4000;
