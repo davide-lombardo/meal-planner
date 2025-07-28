@@ -5,7 +5,7 @@
     "useQuotas": false,
     "useWeightedSelection": false,
     "enableIngredientPlanning": false,
-    "enableSeasonalFiltering": true,
+    "enableSeasonalFiltering": false,
     "currentSeason": "summer"
   }
 }
