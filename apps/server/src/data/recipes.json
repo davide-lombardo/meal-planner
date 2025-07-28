@@ -18,24 +18,6 @@
     "timestamp": 1724880000000
   },
   {
-    "id": "r005",
-    "nome": "Frittata di cipolle",
-    "tipo": "cena",
-    "categoria": "uova",
-    "stagioni": [
-      "spring",
-      "summer",
-      "autumn",
-      "winter"
-    ],
-    "ingredienti": [
-      "uova",
-      "cipolle",
-      "sale"
-    ],
-    "timestamp": 1724880000001
-  },
-  {
     "id": "r007",
     "nome": "Pollo al curry con riso",
     "tipo": "cena",
@@ -202,44 +184,6 @@
       "zenzero",
       "carota"
     ]
-  },
-  {
-    "id": "r032",
-    "nome": "Nasi goreng",
-    "tipo": "pranzo",
-    "categoria": "pesce",
-    "stagioni": [
-      "spring",
-      "summer"
-    ],
-    "ingredienti": [
-      "mazzancolle tropicali",
-      "porro",
-      "salsa di soia",
-      "brodo granulare",
-      "marinatura stile asia",
-      "lime",
-      "carota"
-    ],
-    "timestamp": 1724880000012
-  },
-  {
-    "id": "r040",
-    "nome": "Spaghetti alle vongole",
-    "tipo": "pranzo",
-    "categoria": "pesce",
-    "stagioni": [
-      "spring",
-      "summer"
-    ],
-    "ingredienti": [
-      "spaghetti",
-      "vongole",
-      "aglio",
-      "prezzemolo",
-      "vino bianco"
-    ],
-    "timestamp": 1724880000013
   },
   {
     "id": "r041",
@@ -519,5 +463,85 @@
       "summer",
       "spring"
     ]
+  },
+  {
+    "id": "r1753728471547",
+    "nome": "Pasta melanzane e ricotta affumicata",
+    "tipo": "pranzo",
+    "categoria": "formaggio",
+    "ingredienti": [
+      "pasta",
+      "melenzane",
+      "sugo",
+      "ricotta affumicata"
+    ],
+    "timestamp": 1753728471547
+  },
+  {
+    "id": "r1753728628970",
+    "nome": "Straccetti di manzo rucola e grana",
+    "tipo": "cena",
+    "categoria": "carne",
+    "ingredienti": [
+      "carne di vitello a fette",
+      "rucola",
+      "grana",
+      "farina"
+    ],
+    "timestamp": 1753728628970
+  },
+  {
+    "id": "r1753728786933",
+    "nome": "Insalata di pollo e avocado",
+    "tipo": "cena",
+    "categoria": "carne",
+    "ingredienti": [
+      "petto di pollo",
+      "rucola",
+      "limone",
+      "avocado",
+      "ceci"
+    ],
+    "timestamp": 1753728786933
+  },
+  {
+    "id": "r1753729256159",
+    "nome": "Piadina rucola stracchino e crudo",
+    "tipo": "cena",
+    "categoria": "carne",
+    "ingredienti": [
+      "piadina",
+      "rucola",
+      "stracchino",
+      "prosciutto crudo"
+    ],
+    "timestamp": 1753729256159
+  },
+  {
+    "id": "r1753729457640",
+    "nome": "Piadina con mortadella, stracchino e scorza di limone",
+    "tipo": "cena",
+    "categoria": "carne",
+    "ingredienti": [
+      "piadina",
+      "mortadella",
+      "stracchino",
+      "limone"
+    ],
+    "timestamp": 1753729457640
+  },
+  {
+    "id": "r1753729521727",
+    "nome": "Cheeseburger",
+    "tipo": "cena",
+    "categoria": "carne",
+    "ingredienti": [
+      "carne bovina",
+      "doppio cheddar",
+      "senape",
+      "pomodoro",
+      "lattuga"
+    ],
+    "timestamp": 1753729521727
   }
 ]
