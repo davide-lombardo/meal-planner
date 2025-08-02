@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box, Typography, Button, Stack, Snackbar, Alert, Card, CardContent } from '@mui/joy';
-import { PlusCircle, Mail, Loader2 } from 'lucide-react';
+import { PlusCircle, Mail, Loader2, Send } from 'lucide-react';
 import RecipeCard from '../components/RecipeCard';
 import RecipeDialog from '../components/dialog/RecipeDialog';
 import ConfirmDialog from '../components/dialog/ConfirmDialog';
@@ -98,6 +98,42 @@ export default function Home() {
     }
   };
 
+  const [telegramSending, setTelegramSending] = React.useState(false);
+  const [telegramSuccess, setTelegramSuccess] = React.useState('');
+  const [telegramError, setTelegramError] = React.useState('');
+  const [config, setConfig] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    fetch(`${CONFIG.API_BASE_URL}/config`)
+      .then((res) => res.json())
+      .then((data) => setConfig(data))
+      .catch(() => setConfig(null));
+  }, []);
+
+  const handleSendTelegram = async () => {
+    setTelegramSending(true);
+    setTelegramError('');
+    setTelegramSuccess('');
+    try {
+      let chatId = undefined;
+      if (config && config.menuOptions && config.menuOptions.telegramChatId) {
+        chatId = config.menuOptions.telegramChatId;
+      }
+      const body = chatId ? { chatId } : {};
+      const response = await fetch(`${CONFIG.API_BASE_URL}/send-telegram-message`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) throw new Error('Failed to send Telegram message');
+      setTelegramSuccess('Messaggio Telegram inviato!');
+    } catch (e) {
+      setTelegramError('Errore invio messaggio Telegram.');
+    } finally {
+      setTelegramSending(false);
+    }
+  };
+
   const handleSaveRecipe = async (recipe: Recipe) => {
     setLoading(true);
     setError('');
@@ -176,7 +212,7 @@ export default function Home() {
       r.nome.toLowerCase().includes(q) ||
       (r.categoria && r.categoria.toLowerCase().includes(q)) ||
       (r.tipo && r.tipo.toLowerCase().includes(q)) ||
-      r.ingredienti.some((i) => i.toLowerCase().includes(q));
+      r.ingredienti.some((i: any) => i.toLowerCase().includes(q));
     const matchesType = !filterType || r.tipo === filterType;
     const matchesCategory = !filterCategory || r.categoria === filterCategory;
     return matchesSearch && matchesType && matchesCategory;
@@ -238,12 +274,45 @@ export default function Home() {
             size="lg"
             color="primary"
             variant="soft"
-            sx={{ fontWeight: 700, borderRadius: 8 }}
+            sx={{ fontWeight: 700, borderRadius: 8, mr: 2 }}
             onClick={handleSendMealPlan}
             disabled={sending}
           >
             {sending ? <Loader2 className="spin" size={18} /> : 'Send Meal Plan'}
           </Button>
+          <Button
+            data-testid="send-telegram-btn"
+            startDecorator={<Send />}
+            size="lg"
+            color="success"
+            variant="soft"
+            sx={{ fontWeight: 700, borderRadius: 8 }}
+            onClick={handleSendTelegram}
+            disabled={telegramSending}
+          >
+            {telegramSending ? <Loader2 className="spin" size={18} /> : 'Invia su Telegram'}
+          </Button>
+      {/* Telegram Snackbar */}
+      <Snackbar
+        open={!!telegramSuccess}
+        autoHideDuration={3000}
+        onClose={() => setTelegramSuccess('')}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert color="success" variant="solid">
+          {telegramSuccess}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={!!telegramError}
+        autoHideDuration={3000}
+        onClose={() => setTelegramError('')}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert color="danger" variant="solid">
+          {telegramError}
+        </Alert>
+      </Snackbar>
         </Box>
         <Box sx={{ display: { xs: 'none', md: 'block' }, zIndex: 1 }}>
           <img src="/illustrations/chef.svg" alt="Chef Illustration" style={{ height: 180 }} />

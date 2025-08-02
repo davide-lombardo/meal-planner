@@ -6,8 +6,9 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { readJson, writeJson } from './fileHandler';
-import { generateMenu, formatMenu, generateHtmlEmail } from './utils/menuGenerator';
+import { generateMenu, formatMenu, generateHtmlEmail, generateShoppingList } from './utils/menuGenerator';
 import logger from './logger.js';
+import { sendTelegramMessage } from './telegramBot';
 import {
   SeasonSchema,
   CategorySchema,
@@ -156,6 +157,11 @@ app.get('/api/config', async (req, res) => {
   logger.info('GET /api/config');
   try {
     const config: Config = await readJson('config.json');
+    // If telegramChatId is not set in config, use env default
+    if (!config.menuOptions) config.menuOptions = {};
+    if (!config.menuOptions.telegramChatId && process.env.TELEGRAM_CHAT_ID) {
+      config.menuOptions.telegramChatId = process.env.TELEGRAM_CHAT_ID;
+    }
     res.json(config);
   } catch (err) {
     logger.error('Failed to load config: %o', err);
@@ -177,6 +183,69 @@ app.put('/api/config', async (req, res) => {
   } catch (err) {
     logger.error('Failed to update config: %o', err);
     res.status(500).json({ error: 'Failed to update config' });
+  }
+});
+
+// Send a message to Telegram
+app.post('/api/send-telegram-message', async (req, res) => {
+  logger.info('POST /api/send-telegram-message', { body: req.body });
+  try {
+    // If a custom message is provided, use it. Otherwise, send menu and grocery list.
+    const { message, chatId } = req.body;
+    let chatIds: string[] = [];
+    // Load config for chat IDs
+    const config: Config = await readJson('config.json');
+    const menuOptions = config.menuOptions || {};
+    // Collect all chat IDs: default, additional, and request
+    if (chatId) chatIds.push(chatId);
+    if (menuOptions.telegramChatId && !chatIds.includes(menuOptions.telegramChatId)) chatIds.push(menuOptions.telegramChatId);
+    if (Array.isArray(menuOptions.telegramChatIds)) {
+      for (const id of menuOptions.telegramChatIds) {
+        if (id && !chatIds.includes(id)) chatIds.push(id);
+      }
+    }
+    // Fallback to env if nothing else
+    if (chatIds.length === 0 && process.env.TELEGRAM_CHAT_ID) chatIds.push(process.env.TELEGRAM_CHAT_ID);
+
+    if (message) {
+      for (const id of chatIds) {
+        await sendTelegramMessage(message, id);
+      }
+      logger.info('Telegram message sent (custom)');
+      return res.status(200).json({ message: 'Telegram message sent successfully' });
+    }
+
+    // Otherwise, generate menu and grocery list
+    const recipes = await readJson('recipes.json');
+    const history = await readJson('history.json');
+    const menu = generateMenu(recipes, history, config);
+    const menuText = formatMenu(menu);
+
+    // Generate grocery list as plain text
+    const categorizedList = generateShoppingList(menu, recipes);
+    const categoryOrder = ['Frutta e Verdura', 'Carne e Pesce', 'Latticini', 'Dispensa', 'Altro'];
+    let groceryText = 'Lista della spesa:\n';
+    for (const category of categoryOrder) {
+      if (categorizedList.has(category)) {
+        groceryText += `\n${category}:\n`;
+        for (const ing of categorizedList.get(category)!) {
+          groceryText += `- ${ing.name}`;
+          if (ing.quantity) groceryText += ` (${ing.quantity}${ing.unit})`;
+          groceryText += '\n';
+        }
+      }
+    }
+
+    const fullMessage = `Ciao! Il tuo menu settimanale è pronto su Meal Planner.\n\n${menuText}\n${groceryText}`;
+    for (const id of chatIds) {
+      await sendTelegramMessage(fullMessage, id);
+    }
+    logger.info('Telegram message sent (menu + grocery list)');
+    res.status(200).json({ message: 'Telegram message sent successfully' });
+  } catch (error) {
+    const errMsg = (error instanceof Error) ? error.message : String(error);
+    logger.error('Failed to send Telegram message: %s', errMsg);
+    res.status(500).json({ message: 'Failed to send Telegram message', error: errMsg });
   }
 });
 

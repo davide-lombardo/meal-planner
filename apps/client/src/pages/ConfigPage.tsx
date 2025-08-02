@@ -199,36 +199,40 @@ export default function ConfigPage() {
   return (
     <Layout title="Planner Settings" subtitle="Customize how your weekly menus are generated">
       {/* Save Button Section */}
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-          gap: 2,
-          mb: 4,
-        }}
-      >
-        {hasUnsavedChanges && (
-          <Chip variant="soft" color="warning" size="sm">
-            Unsaved changes
-          </Chip>
-        )}
-        <Button
-          variant="solid"
-          color="primary"
-          startDecorator={<Save size={18} />}
-          onClick={handleSave}
-          loading={saving}
-          disabled={!hasUnsavedChanges}
-          sx={{
-            fontWeight: 600,
-            borderRadius: 2,
-            px: 4,
-          }}
-        >
-          {saving ? 'Saving...' : 'Save Changes'}
-        </Button>
-      </Box>
+  <Box
+    sx={{
+      display: 'flex',
+      flexDirection: { xs: 'column', sm: 'row' },
+      justifyContent: { xs: 'stretch', sm: 'flex-end' },
+      alignItems: { xs: 'stretch', sm: 'center' },
+      gap: { xs: 1.5, sm: 2 },
+      mb: 4,
+      width: '100%',
+    }}
+  >
+    {hasUnsavedChanges && (
+      <Chip variant="soft" color="warning" size="sm" sx={{ alignSelf: { xs: 'flex-start', sm: 'center' } }}>
+        Unsaved changes
+      </Chip>
+    )}
+    <Button
+      variant="soft"
+      color="primary"
+      startDecorator={<Save size={18} />}
+      onClick={handleSave}
+      loading={saving}
+      disabled={!hasUnsavedChanges}
+      sx={{
+        fontWeight: 700,
+        borderRadius: 2,
+        px: 4,
+        minWidth: 180,
+        alignSelf: { xs: 'stretch', sm: 'center' },
+      }}
+    >
+      {saving ? 'Saving...' : 'Save Changes'}
+    </Button>
+  </Box>
 
       <Grid container spacing={4} sx={{
         width: '100%',
@@ -269,6 +273,78 @@ export default function ConfigPage() {
               </Typography>
 
               <Stack spacing={3}>
+
+                <FormField
+                  label="Default Telegram Chat ID"
+                  tooltip="ID della chat Telegram predefinita dove inviare il menu (usata se non specificato altro)"
+                >
+                  <Input
+                    type="text"
+                    value={mo.telegramChatId ?? ''}
+                    onChange={e => setMenuOption('telegramChatId', e.target.value)}
+                    placeholder="es. 123456789"
+                    sx={{ maxWidth: 240, mb: 1 }}
+                  />
+                </FormField>
+
+                <FormField
+                  label="Additional Telegram Chat IDs"
+                  tooltip="Altri chat ID Telegram dove inviare il menu (uno o più, oltre al predefinito)"
+                >
+                  <Stack spacing={1} sx={{ maxWidth: 340 }}>
+                    <List sx={{ '--List-gap': '8px', mb: 1 }}>
+                      {(mo.telegramChatIds || []).map((id: string, idx: number) => (
+                        <ListItem key={id} sx={{ px: 0, py: 0.5, alignItems: 'center' }}>
+                          <Input
+                            type="text"
+                            value={id}
+                            onChange={e => {
+                              const arr = [...(mo.telegramChatIds || [])];
+                              arr[idx] = e.target.value;
+                              setMenuOption('telegramChatIds', arr);
+                            }}
+                            sx={{ maxWidth: 200, mr: 1 }}
+                          />
+                          <IconButton
+                            size="sm"
+                            color="danger"
+                            variant="soft"
+                            onClick={() => {
+                              const arr = [...(mo.telegramChatIds || [])];
+                              arr.splice(idx, 1);
+                              setMenuOption('telegramChatIds', arr);
+                            }}
+                          >
+                            <Trash2 size={14} />
+                          </IconButton>
+                        </ListItem>
+                      ))}
+                    </List>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Input
+                        type="text"
+                        placeholder="Aggiungi nuovo chat ID"
+                        sx={{ maxWidth: 200 }}
+                        id="new-telegram-chat-id"
+                      />
+                      <IconButton
+                        size="sm"
+                        color="primary"
+                        onClick={() => {
+                          const input = document.getElementById('new-telegram-chat-id') as HTMLInputElement;
+                          const val = input?.value.trim();
+                          if (val) {
+                            setMenuOption('telegramChatIds', [...(mo.telegramChatIds || []), val]);
+                            input.value = '';
+                          }
+                        }}
+                      >
+                        <Plus size={14} />
+                      </IconButton>
+                    </Box>
+                  </Stack>
+                </FormField>
+
                 <FormField
                   label="Maximum repetition weeks"
                   tooltip="Avoid repeating recipes for this many weeks"

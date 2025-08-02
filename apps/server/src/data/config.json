@@ -6,6 +6,10 @@
     "useWeightedSelection": false,
     "enableIngredientPlanning": false,
     "enableSeasonalFiltering": false,
-    "currentSeason": "summer"
+    "currentSeason": "summer",
+    "telegramChatId": "1253446317",
+    "telegramChatIds": [
+      "1044793239"
+    ]
   }
 }
