@@ -278,19 +278,19 @@ export default function Home() {
             onClick={handleSendMealPlan}
             disabled={sending}
           >
-            {sending ? <Loader2 className="spin" size={18} /> : 'Send Meal Plan'}
+            {sending ? <Loader2 className="spin" size={18} /> : 'Send plan via Email'}
           </Button>
           <Button
             data-testid="send-telegram-btn"
             startDecorator={<Send />}
             size="lg"
-            color="success"
+            color="primary"
             variant="soft"
             sx={{ fontWeight: 700, borderRadius: 8 }}
             onClick={handleSendTelegram}
             disabled={telegramSending}
           >
-            {telegramSending ? <Loader2 className="spin" size={18} /> : 'Invia su Telegram'}
+            {telegramSending ? <Loader2 className="spin" size={18} /> : 'Send plan via Telegram'}
           </Button>
       {/* Telegram Snackbar */}
       <Snackbar
