@@ -70,25 +70,6 @@
     "timestamp": 1724880000004
   },
   {
-    "id": "r026",
-    "nome": "Petto di pollo all paprika",
-    "tipo": "cena",
-    "categoria": "carne",
-    "stagioni": [
-      "autumn",
-      "winter"
-    ],
-    "ingredienti": [
-      "petto di pollo",
-      "zucca",
-      "cipolla",
-      "salsa aioli",
-      "origano",
-      "paprika"
-    ],
-    "timestamp": 1724880000006
-  },
-  {
     "id": "r027",
     "nome": "Mondeghili",
     "tipo": "cena",
@@ -543,5 +524,53 @@
       "lattuga"
     ],
     "timestamp": 1753729521727
+  },
+  {
+    "id": "r1754755670639",
+    "nome": "Petto di pollo alla paprika",
+    "tipo": "cena",
+    "categoria": "carne",
+    "ingredienti": [
+      "petto di pollo",
+      "cipolla rossa",
+      "origano",
+      "paprika",
+      "patate dolci"
+    ],
+    "timestamp": 1754755670639
+  },
+  {
+    "id": "r1754756043473",
+    "nome": "Noodles con gamberi e verdure",
+    "tipo": "cena",
+    "categoria": "pesce",
+    "ingredienti": [
+      "gamberoni",
+      "carote",
+      "zenzero",
+      "noodles",
+      "olio per friggere",
+      "salsa di soia"
+    ],
+    "link": "https://www.kikkoman.it/ricette/detail/noodles-saltati-in-padella-con-gamberi-e-verdure",
+    "timestamp": 1754756043473
+  },
+  {
+    "id": "r1754756417731",
+    "nome": "Peperoni ripieni",
+    "tipo": "cena",
+    "categoria": "carne",
+    "ingredienti": [
+      "peperone rosso",
+      "peperone giallo",
+      "parmigiano grattugiato",
+      "manzo macinato",
+      "paprika",
+      "uovo",
+      "formaggio cremoso",
+      "pangrattato",
+      "mozzarella"
+    ],
+    "timestamp": 1754756417731
   }
 ]
