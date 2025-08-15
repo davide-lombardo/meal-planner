@@ -21,5 +21,10 @@ export async function sendTelegramMessage(message: string, chatId?: string) {
   if (!chatId && !TELEGRAM_CHAT_ID) {
     throw new Error('No chatId provided and TELEGRAM_CHAT_ID is not set');
   }
-  return bot.sendMessage(chatId || TELEGRAM_CHAT_ID!, message, { parse_mode: 'HTML' });
+  try {
+    return await bot.sendMessage(chatId || TELEGRAM_CHAT_ID!, message, { parse_mode: 'HTML' });
+  } catch (err: any) {
+    console.error('Telegram API error:', err?.response?.body || err);
+    throw err;
+  }
 }

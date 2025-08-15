@@ -117,10 +117,17 @@ export default function Home() {
     try {
       let chatId = undefined;
       if (config && config.menuOptions && config.menuOptions.telegramChatId) {
-        chatId = config.menuOptions.telegramChatId;
+        chatId = Number(config.menuOptions.telegramChatId);
       }
-      const body = chatId ? { chatId } : {};
-      const response = await fetch(`${CONFIG.API_BASE_URL}/send-telegram-message`, {
+      if (!chatId || isNaN(chatId)) {
+        setTelegramError('Telegram chatId non configurato o non valido.');
+        setTelegramSending(false);
+        return;
+      }
+      // Compose the text to send (example: meal plan summary)
+      const text = 'Ecco il tuo piano pasti!'; // Replace with actual meal plan text if available
+      const body = { chatId, text };
+      const response = await fetch(`${CONFIG.API_BASE_URL}/telegram/send-message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -274,7 +281,7 @@ export default function Home() {
             size="lg"
             color="primary"
             variant="soft"
-            sx={{ fontWeight: 700, borderRadius: 8, mr: 2 }}
+            sx={{ fontWeight: 700, borderRadius: 8, mr: 2, mb: { xs: 1.5, md: 0 } }}
             onClick={handleSendMealPlan}
             disabled={sending}
           >
