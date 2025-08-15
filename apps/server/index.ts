@@ -359,29 +359,169 @@ app.put('/api/config', async (req, res) => {
   }
 });
 
-// Send a message to Telegram
+// OLD version
+// app.post('/api/send-telegram-message', async (req, res) => {
+//   logger.info('POST /api/send-telegram-message', { body: req.body });
+//   try {
+//     // If a custom message is provided, use it. Otherwise, send menu and grocery list.
+//     const { message, chatId } = req.body;
+//     let chatIds: string[] = [];
+//     // Load config for chat IDs
+//     const config: Config = await readJson('config.json');
+//     const menuOptions = config.menuOptions || {};
+//     // Collect all chat IDs: default, additional, and request
+//     if (chatId) chatIds.push(chatId);
+//     if (menuOptions.telegramChatId && !chatIds.includes(menuOptions.telegramChatId)) chatIds.push(menuOptions.telegramChatId);
+//     if (Array.isArray(menuOptions.telegramChatIds)) {
+//       for (const id of menuOptions.telegramChatIds) {
+//         if (id && !chatIds.includes(id)) chatIds.push(id);
+//       }
+//     }
+//     // Fallback to env if nothing else
+//     if (chatIds.length === 0 && process.env.TELEGRAM_CHAT_ID) chatIds.push(process.env.TELEGRAM_CHAT_ID);
+
+//     if (message) {
+//       for (const id of chatIds) {
+//         await sendTelegramMessage(message, id);
+//       }
+//       logger.info('Telegram message sent (custom)');
+//       return res.status(200).json({ message: 'Telegram message sent successfully' });
+//     }
+
+//     // Otherwise, generate menu and grocery list
+//     const recipes = await readJson('recipes.json');
+//     const history = await readJson('history.json');
+//     const menu = generateMenu(recipes, history, config);
+//     const menuText = formatMenu(menu);
+
+//     // Generate grocery list as plain text
+//     const categorizedList = generateShoppingList(menu, recipes);
+//     const categoryOrder = ['Frutta e Verdura', 'Carne e Pesce', 'Latticini', 'Dispensa', 'Altro'];
+//     let groceryText = 'Lista della spesa:\n';
+//     for (const category of categoryOrder) {
+//       if (categorizedList.has(category)) {
+//         groceryText += `\n${category}:\n`;
+//         for (const ing of categorizedList.get(category)!) {
+//           groceryText += `- ${ing.name}`;
+//           if (ing.quantity) groceryText += ` (${ing.quantity}${ing.unit})`;
+//           groceryText += '\n';
+//         }
+//       }
+//     }
+
+//     const fullMessage = `Ciao! Il tuo menu settimanale è pronto su Meal Planner.\n\n${menuText}\n${groceryText}`;
+//     for (const id of chatIds) {
+//       await sendTelegramMessage(fullMessage, id);
+//     }
+//     logger.info('Telegram message sent (menu + grocery list)');
+//     res.status(200).json({ message: 'Telegram message sent successfully' });
+//   } catch (error) {
+//     const errMsg = (error instanceof Error) ? error.message : String(error);
+//     logger.error('Failed to send Telegram message: %s', errMsg);
+//     res.status(500).json({ message: 'Failed to send Telegram message', error: errMsg });
+//   }
+// });
+
+
+// Send a message to Telegram (restored logic, using SQLite config)
 app.post('/api/telegram/send-message', async (req, res) => {
   logger.info('POST /api/telegram/send-message', { body: req.body });
   try {
     const { chatId, text } = req.body;
-    if (!chatId || !text) {
-      return res.status(400).json({ error: 'chatId and text are required' });
+    // Load config from SQLite
+    const SQL = await initSqlJs();
+    const dbPath = path.join(__dirname, 'data.db');
+    let db;
+    if (fs.existsSync(dbPath)) {
+      const fileBuffer = fs.readFileSync(dbPath);
+      db = new SQL.Database(fileBuffer);
+    } else {
+      db = new SQL.Database();
     }
-    // If chatId is not a number, return 400
-    if (typeof chatId !== 'number') {
-      return res.status(400).json({ error: 'chatId must be a number' });
+    let config: Config = { menuOptions: {} };
+    const configResult = db.exec('SELECT menuOptions FROM config WHERE id = 1');
+    if (configResult.length > 0 && configResult[0].values.length > 0) {
+      const menuOptionsValue = configResult[0].values[0][0];
+      config.menuOptions = typeof menuOptionsValue === 'string' ? JSON.parse(menuOptionsValue) : {};
     }
-    // If text is not a string, return 400
-    if (typeof text !== 'string') {
-      return res.status(400).json({ error: 'Text must be a string' });
+    // Collect all chat IDs: request, config, env
+    let chatIds: string[] = [];
+    if (chatId) chatIds.push(String(chatId));
+    if (config.menuOptions.telegramChatId && !chatIds.includes(String(config.menuOptions.telegramChatId))) chatIds.push(String(config.menuOptions.telegramChatId));
+    if (Array.isArray(config.menuOptions.telegramChatIds)) {
+      for (const id of config.menuOptions.telegramChatIds) {
+        if (id && !chatIds.includes(String(id))) chatIds.push(String(id));
+      }
     }
-    // Send message via Telegram bot
-    await sendTelegramMessage(chatId.toString(), text);
-    logger.info('Telegram message sent to %d', chatId);
-    res.status(200).json({ message: 'Message sent' });
-  } catch (err) {
-    logger.error('Failed to send Telegram message: %o', err);
-    res.status(500).json({ error: 'Failed to send Telegram message' });
+    if (chatIds.length === 0 && process.env.TELEGRAM_CHAT_ID) chatIds.push(String(process.env.TELEGRAM_CHAT_ID));
+    if (chatIds.length === 0) {
+      return res.status(400).json({ error: 'No valid Telegram chatId found in request, config, or environment.' });
+    }
+    // If a custom message is provided, use it. Otherwise, send menu and grocery list.
+    if (text && typeof text === 'string') {
+      for (const id of chatIds) {
+        await sendTelegramMessage(text, id);
+      }
+      logger.info('Telegram message sent (custom)');
+      return res.status(200).json({ message: 'Telegram message sent successfully' });
+    }
+    // Otherwise, generate menu and grocery list from SQLite
+    // Recipes
+    let recipes: Recipe[] = [];
+    const recipesResult = db.exec('SELECT * FROM recipes');
+    if (recipesResult.length > 0) {
+      const columns = recipesResult[0].columns;
+      recipes = recipesResult[0].values.map(row => {
+        const obj: any = {};
+        columns.forEach((col, idx) => {
+          if (col === 'ingredienti' || col === 'stagioni') {
+            obj[col] = row[idx] ? JSON.parse(row[idx] as string) : [];
+          } else {
+            obj[col] = row[idx];
+          }
+        });
+        return obj as Recipe;
+      });
+    }
+    // History
+    let history: Menu[] = [];
+    const historyResult = db.exec('SELECT * FROM history');
+    if (historyResult.length > 0) {
+      const columns = historyResult[0].columns;
+      history = historyResult[0].values.map(row => {
+        const obj: any = {};
+        columns.forEach((col, idx) => {
+          obj[col] = row[idx];
+        });
+        return obj as Menu;
+      });
+    }
+    // Generate menu and grocery list
+    const menu = generateMenu(recipes, history, config);
+    const menuText = formatMenu(menu);
+    const categorizedList = generateShoppingList(menu, recipes);
+    const categoryOrder = ['Frutta e Verdura', 'Carne e Pesce', 'Latticini', 'Dispensa', 'Altro'];
+    let groceryText = 'Lista della spesa:\n';
+    for (const category of categoryOrder) {
+      if (categorizedList.has(category)) {
+        groceryText += `\n${category}:\n`;
+        for (const ing of categorizedList.get(category)!) {
+          groceryText += `- ${ing.name}`;
+          if (ing.quantity) groceryText += ` (${ing.quantity}${ing.unit})`;
+          groceryText += '\n';
+        }
+      }
+    }
+    const fullMessage = `Ciao! Il tuo menu settimanale è pronto su Meal Planner.\n\n${menuText}\n${groceryText}`;
+    for (const id of chatIds) {
+      await sendTelegramMessage(fullMessage, id);
+    }
+    logger.info('Telegram message sent (menu + grocery list)');
+    res.status(200).json({ message: 'Telegram message sent successfully' });
+  } catch (error) {
+    const errMsg = (error instanceof Error) ? error.message : String(error);
+    logger.error('Failed to send Telegram message: %s', errMsg);
+    res.status(500).json({ message: 'Failed to send Telegram message', error: errMsg });
   }
 });
 

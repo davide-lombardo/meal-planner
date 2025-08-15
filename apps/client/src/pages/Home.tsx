@@ -117,16 +117,15 @@ export default function Home() {
     try {
       let chatId = undefined;
       if (config && config.menuOptions && config.menuOptions.telegramChatId) {
-        chatId = Number(config.menuOptions.telegramChatId);
+        chatId = String(config.menuOptions.telegramChatId);
       }
-      if (!chatId || isNaN(chatId)) {
+      if (!chatId || chatId.trim() === '') {
         setTelegramError('Telegram chatId non configurato o non valido.');
         setTelegramSending(false);
         return;
       }
-      // Compose the text to send (example: meal plan summary)
-      const text = 'Ecco il tuo piano pasti!'; // Replace with actual meal plan text if available
-      const body = { chatId, text };
+      // Send empty text so BE generates the meal plan and grocery list
+      const body = { chatId };
       const response = await fetch(`${CONFIG.API_BASE_URL}/telegram/send-message`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
