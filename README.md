@@ -15,6 +15,7 @@ A web application for planning meals, organizing recipes, and generating grocery
 
 - **Frontend**: React with Joy UI (Material UI)
 - **Backend**: Express.js with TypeScript
+- **Database**: SQLite (all data stored in `data.db`, no JSON files)
 - **Validation**: Zod schema validation
 - **Email**: Nodemailer for sending emails
 - **Package Management**: PNPM workspace monorepo
@@ -22,7 +23,7 @@ A web application for planning meals, organizing recipes, and generating grocery
 ## Project Structure
 
 - `apps/client`: React frontend application
-- `apps/server`: Express.js backend API
+- `apps/server`: Express.js backend API (uses SQLite for all data)
 - `libs/shared`: Shared schemas and utilities
 
 ## Getting Started
@@ -41,6 +42,8 @@ cd meal-planner
 
 # Install dependencies
 pnpm install
+
+# All data is stored in SQLite (data.db). No JSON files required.
 
 # Start development servers
 pnpm dev

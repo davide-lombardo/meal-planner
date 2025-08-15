@@ -27,12 +27,12 @@ import {
   Leaf,
   CloudRain,
 } from "lucide-react";
-import { Config, MenuOptions, ConfigSchema, RecipeSchema } from "shared";
+import { Config, MenuOptions, ConfigSchema, RecipeSchema } from "shared/schemas";
 import { EditableArray } from "../components/common/EditableArray";
 import { FormField } from "../components/common/FormField";
 import { CONFIG } from "../utils/constants";
 import Layout from "../components/common/Layout";
-import { Category, Recipe, RecipeType, Season } from "shared";
+import { Category, Recipe, RecipeType, Season } from "shared/schemas";
 import CustomSwitch from "../components/CustomSwitch";
 
 const getCurrentSeason = (): "spring" | "summer" | "autumn" | "winter" => {

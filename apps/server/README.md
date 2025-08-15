@@ -29,10 +29,13 @@ nx test server
 ## Project Structure
 - `index.ts` - Main entry point
 - `utils/` - Utility modules
-- `data/` - JSON data files (recipes, history, config)
+- `data.db` - SQLite database file (all recipes, history, and config are stored here)
 
 ## Environment Variables
 - See the root `.env` file for email and server configuration.
+
+## Data Storage
+- All data is now stored in SQLite (`data.db`). Legacy JSON files are no longer used or required.
 
 ---
 For more Nx commands and advanced options, see the root `README.md` or [Nx documentation](https://nx.dev).

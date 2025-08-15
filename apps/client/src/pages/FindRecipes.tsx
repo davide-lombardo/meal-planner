@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Box, Typography, Button, Stack, Chip, CircularProgress, Textarea, FormLabel } from '@mui/joy';
 import { Search, Loader2 } from 'lucide-react';
 import RecipeCard from '../components/RecipeCard';;
-import { RecipeSchema } from 'shared';
+import { RecipeSchema } from 'shared/schemas';
 import { CONFIG } from '../utils/constants';
 import Layout from '../components/common/Layout';
-import { Recipe } from 'shared';
+import { Recipe } from 'shared/schemas';
 import ErrorAlert from '../components/ErrorAlert';
 
 const API_URL = `${CONFIG.API_BASE_URL}/recipes/by-ingredients`;

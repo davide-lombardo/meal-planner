@@ -10,9 +10,9 @@ export const RecipeSchema = z.object({
   tipo: RecipeTypeSchema.optional(),
   categoria: CategorySchema.optional(),
   ingredienti: z.array(z.string().min(1, "Ingredient cannot be empty")).min(1, "At least one ingredient is required"),
-  link: z.string().url("Invalid URL format").optional().or(z.literal('')),
+  link: z.union([z.string().url("Invalid URL format"), z.string(), z.literal("")]).optional(),
   stagioni: z.array(SeasonSchema).optional(),
-  timestamp: z.number().optional(),
+  timestamp: z.union([z.number(), z.null()]).optional(),
 });
 
 export const MenuOptionsSchema = z.object({
