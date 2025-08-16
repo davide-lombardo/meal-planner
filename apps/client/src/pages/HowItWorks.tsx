@@ -81,10 +81,10 @@ export default function HowItWorks() {
                   height: 48,
                   borderRadius: 2,
                   bgcolor: 'primary.100',
-                  color: 'primary.600',
+                  color: 'primary.solidBg',
                   flexShrink: 0
                 }}>
-                  <step.icon size={24} />
+                  <step.icon size={24} style={{ color: theme.palette.primary.solidBg }} />
                 </Box>
                 <Box sx={{ flex: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>

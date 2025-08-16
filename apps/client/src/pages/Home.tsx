@@ -319,7 +319,7 @@ export default function Home() {
               borderRadius: 8,
               mr: 2,
               mb: 2,
-              '&:hover': {
+              "&:hover": {
                 bgcolor: theme.palette.primary[700],
                 color: theme.palette.primary[200],
               },

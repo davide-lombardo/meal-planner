@@ -27,7 +27,12 @@ import {
   Leaf,
   CloudRain,
 } from "lucide-react";
-import { Config, MenuOptions, ConfigSchema, RecipeSchema } from "shared/schemas";
+import {
+  Config,
+  MenuOptions,
+  ConfigSchema,
+  RecipeSchema,
+} from "shared/schemas";
 import { EditableArray } from "../components/common/EditableArray";
 import { FormField } from "../components/common/FormField";
 import { CONFIG } from "../utils/constants";
@@ -278,34 +283,47 @@ export default function ConfigPage() {
         }}
       >
         {/* General Settings */}
-        <Grid xs={12} lg={6} sx={{ display: "flex" }}>
+        <Grid xs={12} sx={{ display: "flex" }}>
           <Card
             variant="outlined"
             sx={{
-              flex: 1,
+              flex: 1.5,
               display: "flex",
               flexDirection: "column",
               height: "100%",
               borderRadius: 3,
-              border: "1px solid",
+              border: "2px solid",
               borderColor: "divider",
+              boxShadow: 2,
+              zIndex: 2,
             }}
           >
             <CardContent
-              sx={{ p: 4, flex: 1, display: "flex", flexDirection: "column" }}
+              sx={{ p: 5, flex: 1, display: "flex", flexDirection: "column" }}
             >
               <Typography
                 level="h3"
                 sx={{
-                  fontWeight: 700,
+                  fontWeight: 800,
                   mb: 1,
                   display: "flex",
                   alignItems: "center",
-                  gap: 1,
+                  gap: 1.5,
+                  fontSize: "2rem",
                 }}
               >
+                <Save size={22} style={{ marginRight: 4 }} />
                 General Settings
               </Typography>
+              <Box sx={{ width: "100%", my: 2 }}>
+                <Box
+                  sx={{
+                    borderBottom: "2px solid",
+                    borderColor: "divider",
+                    width: "100%",
+                  }}
+                />
+              </Box>
               <Typography
                 level="body-sm"
                 sx={{ color: "text.secondary", mb: 3 }}
@@ -313,70 +331,97 @@ export default function ConfigPage() {
                 Basic configuration for menu generation
               </Typography>
               <Stack spacing={2}>
-                <FormField
-                  label="Default Telegram Chat ID"
-                  tooltip="ID della chat Telegram predefinita dove inviare il menu (usata se non specificato altro)"
-                >
-                  <Input
-                    type="text"
-                    value={mo.telegramChatId ?? ""}
-                    onChange={(e) =>
-                      setMenuOption("telegramChatId", e.target.value)
-                    }
-                    placeholder="es. 123456789"
-                    sx={{ maxWidth: 240 }}
-                  />
-                </FormField>
-                <FormField
-                  label="Additional Telegram Chat IDs"
-                  tooltip="Altri chat ID Telegram dove inviare il menu (uno o più, oltre al predefinito)"
-                >
-                  <Stack spacing={1} sx={{ maxWidth: 340 }}>
-                    <List sx={{ "--List-gap": "8px", mb: 1 }}>
-                      {(mo.telegramChatIds || []).map(
-                        (id: string, idx: number) => (
-                          <ListItem
-                            key={id}
-                            sx={{ px: 0, py: 0.5, alignItems: "center" }}
-                          >
-                            <Input
-                              size="sm"
-                              value={id}
-                              type="text"
-                              onChange={(e) => {
-                                const arr = [...(mo.telegramChatIds || [])];
-                                arr[idx] = e.target.value;
-                                setMenuOption("telegramChatIds", arr);
-                              }}
-                              sx={{ bgcolor: 'background.level2', color: 'text.primary', maxWidth: 200, mr: 1 }}
-                              aria-label="Telegram Chat ID"
-                            />
-                            <IconButton
-                                size="md"
-                                 sx={{ minWidth: 45 }}
-                              color="danger"
-                              variant="soft"
-                              onClick={() => {
-                                const arr = [...(mo.telegramChatIds || [])];
-                                arr.splice(idx, 1);
-                                setMenuOption("telegramChatIds", arr);
-                              }}
+                <Box>
+                  <FormField
+                    label="Default Telegram Chat ID"
+                    tooltip="Default Telegram chat ID to send the menu (used if not specified elsewhere)"
+                  >
+                    <Input
+                      type="text"
+                      value={mo.telegramChatId ?? ""}
+                      onChange={(e) =>
+                        setMenuOption("telegramChatId", e.target.value)
+                      }
+                      placeholder="es. 123456789"
+                      sx={{ maxWidth: 240 }}
+                    />
+                  </FormField>
+                  <FormField
+                    label="Additional Telegram Chat IDs"
+                    tooltip="Other Telegram chat IDs to send the menu (one or more, in addition to the default)"
+                  >
+                    <Stack spacing={1} sx={{ maxWidth: 340 }}>
+                      <List sx={{ "--List-gap": "8px", mb: 1 }}>
+                        {(mo.telegramChatIds || []).map(
+                          (id: string, idx: number) => (
+                            <ListItem
+                              key={id}
+                              sx={{ px: 0, py: 0.5, alignItems: "center" }}
                             >
-                              <Trash2 size={14} />
-                            </IconButton>
-                          </ListItem>
-                        )
-                      )}
-                    </List>
-                    <Box sx={{ display: "flex", gap: 1 }}>
-                      <Input
-                        size="sm"
-                        placeholder="Aggiungi nuovo chat ID"
-                        sx={{ bgcolor: 'background.level2', color: 'text.primary' }}
-                        id="new-telegram-chat-id"
-                        aria-label="Aggiungi nuovo chat ID"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
+                              <Input
+                                size="sm"
+                                value={id}
+                                type="text"
+                                onChange={(e) => {
+                                  const arr = [...(mo.telegramChatIds || [])];
+                                  arr[idx] = e.target.value;
+                                  setMenuOption("telegramChatIds", arr);
+                                }}
+                                sx={{
+                                  bgcolor: "background.level2",
+                                  color: "text.primary",
+                                  maxWidth: 200,
+                                  mr: 1,
+                                }}
+                                aria-label="Telegram Chat ID"
+                              />
+                              <IconButton
+                                size="md"
+                                sx={{ minWidth: 45 }}
+                                color="danger"
+                                variant="soft"
+                                onClick={() => {
+                                  const arr = [...(mo.telegramChatIds || [])];
+                                  arr.splice(idx, 1);
+                                  setMenuOption("telegramChatIds", arr);
+                                }}
+                              >
+                                <Trash2 size={14} />
+                              </IconButton>
+                            </ListItem>
+                          )
+                        )}
+                      </List>
+                      <Box sx={{ display: "flex", gap: 1 }}>
+                        <Input
+                          size="sm"
+                          placeholder="Add new chat ID"
+                          sx={{
+                            bgcolor: "background.level2",
+                            color: "text.primary",
+                          }}
+                          id="new-telegram-chat-id"
+                          aria-label="Add new chat ID"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              const input = document.getElementById(
+                                "new-telegram-chat-id"
+                              ) as HTMLInputElement;
+                              const val = input?.value.trim();
+                              if (val) {
+                                setMenuOption("telegramChatIds", [
+                                  ...(mo.telegramChatIds || []),
+                                  val,
+                                ]);
+                                input.value = "";
+                              }
+                            }
+                          }}
+                        />
+                        <Button
+                          size="sm"
+                          variant="soft"
+                          onClick={() => {
                             const input = document.getElementById(
                               "new-telegram-chat-id"
                             ) as HTMLInputElement;
@@ -388,32 +433,24 @@ export default function ConfigPage() {
                               ]);
                               input.value = "";
                             }
-                          }
-                        }}
-                      />
-                      <Button
-                        size="sm"
-                        variant="soft"
-                        onClick={() => {
-                          const input = document.getElementById(
-                            "new-telegram-chat-id"
-                          ) as HTMLInputElement;
-                          const val = input?.value.trim();
-                          if (val) {
-                            setMenuOption("telegramChatIds", [
-                              ...(mo.telegramChatIds || []),
-                              val,
-                            ]);
-                            input.value = "";
-                          }
-                        }}
-                        aria-label="Aggiungi nuovo chat ID"
-                      >
-                        <Plus size={18} />
-                      </Button>
-                    </Box>
-                  </Stack>
-                </FormField>
+                          }}
+                          aria-label="Add new chat ID"
+                        >
+                          <Plus size={18} />
+                        </Button>
+                      </Box>
+                    </Stack>
+                  </FormField>
+                  <Box sx={{ width: "100%", my: 3 }}>
+                    <Box
+                      sx={{
+                        borderBottom: "2px solid",
+                        borderColor: "divider",
+                        width: "100%",
+                      }}
+                    />
+                  </Box>
+                </Box>
                 <FormField
                   label="Maximum repetition weeks"
                   tooltip="Avoid repeating recipes for this many weeks"
@@ -431,29 +468,41 @@ export default function ConfigPage() {
                     sx={{ maxWidth: 140 }}
                   />
                 </FormField>
-                <FormField
-                  label="Weighted Selection"
-                  tooltip="Prioritize less-used recipes"
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    p: 2,
+                    borderRadius: 2,
+                    bgcolor: "background.level1",
+                    border: "1px solid",
+                    borderColor: "divider",
+                    mt: 1,
+                    maxWidth: 420,
+                  }}
                 >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      width: "100%",
-                    }}
-                  >
-                    <Typography level="body-sm" sx={{ fontWeight: 600 }}>
-                      Enable
+                  <Box>
+                    <Typography
+                      level="body-sm"
+                      sx={{ fontWeight: 600, mb: 0.5 }}
+                    >
+                      Enable weighted selection
                     </Typography>
-                    <CustomSwitch
-                      checked={!!mo.useWeightedSelection}
-                      onChange={(e) =>
-                        setMenuOption("useWeightedSelection", e.target.checked)
-                      }
-                    />
+                    <Typography
+                      level="body-xs"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      Prioritize less-used recipes
+                    </Typography>
                   </Box>
-                </FormField>
+                  <CustomSwitch
+                    checked={!!mo.useWeightedSelection}
+                    onChange={(e) =>
+                      setMenuOption("useWeightedSelection", e.target.checked)
+                    }
+                  />
+                </Box>
               </Stack>
             </CardContent>
           </Card>
@@ -483,12 +532,21 @@ export default function ConfigPage() {
                   mb: 1,
                   display: "flex",
                   alignItems: "center",
-                  gap: 1,
+                  gap: 1.5,
                 }}
               >
                 {seasonIcons[mo.currentSeason || "spring"]}
                 Seasonal Settings
               </Typography>
+              <Box sx={{ width: "100%", my: 2 }}>
+                <Box
+                  sx={{
+                    borderBottom: "2px solid",
+                    borderColor: "divider",
+                    width: "100%",
+                  }}
+                />
+              </Box>
               <Typography
                 level="body-sm"
                 sx={{ color: "text.secondary", mb: 3 }}
@@ -588,6 +646,107 @@ export default function ConfigPage() {
           </Card>
         </Grid>
 
+        {/* Ingredient Planning */}
+        <Grid xs={12} lg={6} sx={{ display: "flex" }}>
+          <Card
+            variant="outlined"
+            sx={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              borderRadius: 3,
+              border: "1px solid",
+              borderColor: "divider",
+            }}
+          >
+            <CardContent
+              sx={{ p: 4, flex: 1, display: "flex", flexDirection: "column" }}
+            >
+              <Typography
+                level="h3"
+                sx={{
+                  fontWeight: 700,
+                  mb: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                }}
+              >
+                <Leaf size={20} />
+                Ingredient Planning
+              </Typography>
+              <Box sx={{ width: "100%", my: 2 }}>
+                <Box
+                  sx={{
+                    borderBottom: "2px solid",
+                    borderColor: "divider",
+                    width: "100%",
+                  }}
+                />
+              </Box>
+              <Typography
+                level="body-sm"
+                sx={{ color: "text.secondary", mb: 3 }}
+              >
+                Optimize menus based on available ingredients
+              </Typography>
+
+              <Stack spacing={3}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    p: 2,
+                    borderRadius: 2,
+                    bgcolor: "background.level1",
+                    border: "1px solid",
+                    borderColor: "divider",
+                  }}
+                >
+                  <Box>
+                    <Typography
+                      level="body-sm"
+                      sx={{ fontWeight: 600, mb: 0.5 }}
+                    >
+                      Enable ingredient planning
+                    </Typography>
+                    <Typography
+                      level="body-xs"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      Prefer recipes using your ingredients
+                    </Typography>
+                  </Box>
+                  <CustomSwitch
+                    checked={!!mo.enableIngredientPlanning}
+                    onChange={(e) =>
+                      setMenuOption(
+                        "enableIngredientPlanning",
+                        e.target.checked
+                      )
+                    }
+                  />
+                </Box>
+
+                <Box sx={{ opacity: mo.enableIngredientPlanning ? 1 : 0.5 }}>
+                  <EditableArray
+                    label="Available ingredients"
+                    value={mo.availableIngredients || []}
+                    onChange={(arr) =>
+                      setMenuOption("availableIngredients", arr)
+                    }
+                    placeholder="Add ingredient"
+                    tooltip="Ingredients you have at home"
+                    disabled={!mo.enableIngredientPlanning}
+                  />
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+
         {/* Quotas & Preferences */}
         <Grid xs={12} sx={{ display: "flex" }}>
           <Card
@@ -610,10 +769,25 @@ export default function ConfigPage() {
                 sx={{
                   fontWeight: 700,
                   mb: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
                 }}
               >
+                <ListItemDecorator sx={{ minWidth: 0 }}>
+                  <CloudRain size={20} />
+                </ListItemDecorator>
                 Quotas & Preferences
               </Typography>
+              <Box sx={{ width: "100%", my: 2 }}>
+                <Box
+                  sx={{
+                    borderBottom: "2px solid",
+                    borderColor: "divider",
+                    width: "100%",
+                  }}
+                />
+              </Box>
               <Typography
                 level="body-sm"
                 sx={{ color: "text.secondary", mb: 4 }}
@@ -792,94 +966,6 @@ export default function ConfigPage() {
                   </Stack>
                 </Grid>
               </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Ingredient Planning */}
-        <Grid xs={12} lg={6} sx={{ display: "flex" }}>
-          <Card
-            variant="outlined"
-            sx={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              height: "100%",
-              borderRadius: 3,
-              border: "1px solid",
-              borderColor: "divider",
-            }}
-          >
-            <CardContent
-              sx={{ p: 4, flex: 1, display: "flex", flexDirection: "column" }}
-            >
-              <Typography
-                level="h3"
-                sx={{
-                  fontWeight: 700,
-                  mb: 1,
-                }}
-              >
-                Ingredient Planning
-              </Typography>
-              <Typography
-                level="body-sm"
-                sx={{ color: "text.secondary", mb: 3 }}
-              >
-                Optimize menus based on available ingredients
-              </Typography>
-
-              <Stack spacing={3}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    p: 2,
-                    borderRadius: 2,
-                    bgcolor: "background.level1",
-                    border: "1px solid",
-                    borderColor: "divider",
-                  }}
-                >
-                  <Box>
-                    <Typography
-                      level="body-sm"
-                      sx={{ fontWeight: 600, mb: 0.5 }}
-                    >
-                      Enable ingredient planning
-                    </Typography>
-                    <Typography
-                      level="body-xs"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      Prefer recipes using your ingredients
-                    </Typography>
-                  </Box>
-                  <CustomSwitch
-                    checked={!!mo.enableIngredientPlanning}
-                    onChange={(e) =>
-                      setMenuOption(
-                        "enableIngredientPlanning",
-                        e.target.checked
-                      )
-                    }
-                  />
-                </Box>
-
-                <Box sx={{ opacity: mo.enableIngredientPlanning ? 1 : 0.5 }}>
-                  <EditableArray
-                    label="Available ingredients"
-                    value={mo.availableIngredients || []}
-                    onChange={(arr) =>
-                      setMenuOption("availableIngredients", arr)
-                    }
-                    placeholder="Add ingredient"
-                    tooltip="Ingredients you have at home"
-                    disabled={!mo.enableIngredientPlanning}
-                  />
-                </Box>
-              </Stack>
             </CardContent>
           </Card>
         </Grid>

@@ -44,13 +44,20 @@ export default function Sidebar() {
                 justifyContent: open || isMobile ? 'flex-start' : 'center',
                 overflow: 'hidden',
                 transition: 'background-color 0.2s, color 0.2s, padding-left 0.2s, padding-right 0.2s, width 0.2s',
-                '&.Mui-selected, &.Mui-selected:hover': {
-                  bgcolor: theme.palette.primary[theme.palette.mode === 'dark' ? 700 : 100],
-                  color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
-                  '& .Sidebar-icon, & .Sidebar-label': {
+                  '&.Mui-selected, &.Mui-selected:hover': {
+                    bgcolor: theme.palette.primary[theme.palette.mode === 'dark' ? 700 : 100],
                     color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
+                    '& .Sidebar-icon, & .Sidebar-label': {
+                      color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
+                    },
                   },
-                },
+                  '&:hover': {
+                    bgcolor: theme.palette.primary[theme.palette.mode === 'dark' ? 700 : 100],
+                    color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
+                    '& .Sidebar-icon, & .Sidebar-label': {
+                      color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
+                    },
+                  },
                 '&:focus-visible': {
                   outline: 'none',
                   boxShadow: (theme) => `0 0 0 2px ${theme.palette.neutral.outlinedBorder}`,
@@ -63,9 +70,9 @@ export default function Sidebar() {
                   minWidth: 0,
                   mr: open || isMobile ? 2 : 0,
                   ml: 1,
-                  color: selected
-                    ? theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700]
-                    : theme.palette.primary.plainColor,
+                    color: selected
+                      ? theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700]
+                      : theme.palette.neutral[theme.palette.mode === 'dark' ? 100 : 700],
                   transition: 'color 0.2s, margin-right 0.2s',
                 }}
               >
@@ -80,9 +87,9 @@ export default function Sidebar() {
                     whiteSpace: 'nowrap',
                     opacity: open || isMobile ? 1 : 0,
                     transition: 'color 0.2s, opacity 0.2s ease-out',
-                    color: selected
-                      ? theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700]
-                      : theme.palette.primary.plainColor,
+                      color: selected
+                        ? theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700]
+                        : theme.palette.neutral[theme.palette.mode === 'dark' ? 100 : 700],
                   }}
                 >
                   {label}

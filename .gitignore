@@ -18,6 +18,10 @@ functions/dist/
 # Local env files
 *.local
 .env
+# Additional cache, dist, and env files
+*.env
+*.env.*
+!.env.example
 
 # Editor directories and files
 .vscode/
