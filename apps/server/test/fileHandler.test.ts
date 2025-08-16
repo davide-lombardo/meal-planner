@@ -1,4 +1,4 @@
-import { readJson, writeJson } from '../fileHandler';
+import { readJson, writeJson } from '../utils/fileHandler';
 import * as fs from 'fs/promises';
 import upath from 'upath';
 

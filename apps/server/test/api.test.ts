@@ -3,7 +3,7 @@ import request from 'supertest';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import { readJson, writeJson } from '../fileHandler';
+import { readJson, writeJson } from '../utils/fileHandler';
 import { z } from 'zod';
 import { RecipeSchema } from 'shared/schemas.js';
 import { Recipe, Menu, Config } from 'shared/schemas.js';

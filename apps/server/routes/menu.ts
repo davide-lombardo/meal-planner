@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { getDb, parseRecipes, parseHistory, parseConfig } from '../services/dbHelpers';
 import { generateMenu, formatMenu, generateHtmlEmail, generateShoppingList } from '../utils/menuGenerator';
-import { sendEmail } from '../email';
-import { sendTelegramMessage } from '../telegramBot';
-import logger from '../logger.js';
+import { sendEmail } from '../utils/email';
+import { sendTelegramMessage } from '../utils/telegramBot';
+import logger from '../utils/logger.js';
 
 const router = Router();
 

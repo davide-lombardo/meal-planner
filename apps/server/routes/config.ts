@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { ConfigSchema, type Config, type MenuOptions } from 'shared/schemas';
 import { getDb, parseConfig } from '../services/dbHelpers';
-import logger from '../logger';
+import logger from '../utils/logger';
 import fs from 'fs';
 
 const router = Router();

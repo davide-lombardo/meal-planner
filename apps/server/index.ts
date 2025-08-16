@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 import recipesRouter from './routes/recipes';
 import configRouter from './routes/config';
 import menuRouter from './routes/menu';
-import logger from './logger';
+import logger from './utils/logger';
 import { errorHandler } from './middleware/errorHandling';
 
 const __filename = fileURLToPath(import.meta.url);

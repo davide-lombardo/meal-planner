@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import * as nodemailer from 'nodemailer';
-import { sendEmail } from '../email';
+import { sendEmail } from '../utils/email';
 
 describe('sendEmail', () => {
   it('should send an email using nodemailer', async () => {

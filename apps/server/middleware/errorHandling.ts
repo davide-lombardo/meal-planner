@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import logger from '../logger';
+import logger from '../utils/logger';
 
 /**
  * Middleware to handle errors in a consistent way

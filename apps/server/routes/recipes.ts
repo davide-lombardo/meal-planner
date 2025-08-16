@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { RecipeSchema, type Recipe } from 'shared/schemas';
 import fs from 'fs';
 import { getDb, parseRecipes } from '../services/dbHelpers';
-import logger from '../logger';
+import logger from '../utils/logger';
 
 const router = Router();
 
