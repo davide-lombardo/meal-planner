@@ -85,7 +85,7 @@ export default function Home() {
     setSendError('');
     setSendSuccess('');
     try {
-      const response = await fetch(`${CONFIG.API_BASE_URL}/send-meal-plan-html`, {
+  const response = await fetch(`${CONFIG.API_BASE_URL}/menu/email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -126,7 +126,7 @@ export default function Home() {
       }
       // Send empty text so BE generates the meal plan and grocery list
       const body = { chatId };
-      const response = await fetch(`${CONFIG.API_BASE_URL}/telegram/send-message`, {
+  const response = await fetch(`${CONFIG.API_BASE_URL}/menu/telegram`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
