@@ -340,14 +340,16 @@ export default function ConfigPage() {
                             sx={{ px: 0, py: 0.5, alignItems: "center" }}
                           >
                             <Input
-                              type="text"
+                              size="sm"
                               value={id}
+                              type="text"
                               onChange={(e) => {
                                 const arr = [...(mo.telegramChatIds || [])];
                                 arr[idx] = e.target.value;
                                 setMenuOption("telegramChatIds", arr);
                               }}
-                              sx={{ maxWidth: 200, mr: 1 }}
+                              sx={{ bgcolor: 'background.level2', color: 'text.primary', maxWidth: 200, mr: 1 }}
+                              aria-label="Telegram Chat ID"
                             />
                             <IconButton
                               size="sm"
@@ -367,14 +369,30 @@ export default function ConfigPage() {
                     </List>
                     <Box sx={{ display: "flex", gap: 1 }}>
                       <Input
-                        type="text"
-                        placeholder="Aggiungi nuovo chat ID"
-                        sx={{ maxWidth: 200 }}
-                        id="new-telegram-chat-id"
-                      />
-                      <IconButton
                         size="sm"
-                        color="primary"
+                        placeholder="Aggiungi nuovo chat ID"
+                        sx={{ bgcolor: 'background.level2', color: 'text.primary' }}
+                        id="new-telegram-chat-id"
+                        aria-label="Aggiungi nuovo chat ID"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            const input = document.getElementById(
+                              "new-telegram-chat-id"
+                            ) as HTMLInputElement;
+                            const val = input?.value.trim();
+                            if (val) {
+                              setMenuOption("telegramChatIds", [
+                                ...(mo.telegramChatIds || []),
+                                val,
+                              ]);
+                              input.value = "";
+                            }
+                          }
+                        }}
+                      />
+                      <Button
+                        size="sm"
+                        variant="soft"
                         onClick={() => {
                           const input = document.getElementById(
                             "new-telegram-chat-id"
@@ -388,9 +406,10 @@ export default function ConfigPage() {
                             input.value = "";
                           }
                         }}
+                        aria-label="Aggiungi nuovo chat ID"
                       >
-                        <Plus size={14} />
-                      </IconButton>
+                        <Plus size={18} />
+                      </Button>
                     </Box>
                   </Stack>
                 </FormField>

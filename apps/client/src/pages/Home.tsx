@@ -1,16 +1,26 @@
-import * as React from 'react';
-import { Box, Typography, Button, Stack, Snackbar, Alert, Card, CardContent } from '@mui/joy';
-import { PlusCircle, Mail, Loader2, Send } from 'lucide-react';
-import RecipeCard from '../components/RecipeCard';
-import RecipeDialog from '../components/dialog/RecipeDialog';
-import ConfirmDialog from '../components/dialog/ConfirmDialog';
-import { useLocation } from 'react-router-dom';
-import Skeleton from '@mui/joy/Skeleton';
-import { RecipeSchema } from 'shared/schemas';
-import FilterSection from '../components/FiltersSection';
-import { CONFIG } from '../utils/constants';
-import { Recipe, Category, RecipeType } from 'shared/schemas';
-import ErrorAlert from '../components/ErrorAlert';
+import * as React from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  Stack,
+  Snackbar,
+  Alert,
+  Card,
+  CardContent,
+} from "@mui/joy";
+import { useTheme } from "@mui/joy/styles";
+import { PlusCircle, Mail, Loader2, Send } from "lucide-react";
+import RecipeCard from "../components/RecipeCard";
+import RecipeDialog from "../components/dialog/RecipeDialog";
+import ConfirmDialog from "../components/dialog/ConfirmDialog";
+import { useLocation } from "react-router-dom";
+import Skeleton from "@mui/joy/Skeleton";
+import { RecipeSchema } from "shared/schemas";
+import FilterSection from "../components/FiltersSection";
+import { CONFIG } from "../utils/constants";
+import { Recipe, Category, RecipeType } from "shared/schemas";
+import ErrorAlert from "../components/ErrorAlert";
 
 // Debounce hook
 function useDebouncedValue<T>(value: T, delay: number): T {
@@ -25,32 +35,36 @@ function useDebouncedValue<T>(value: T, delay: number): T {
 const API_URL = `${CONFIG.API_BASE_URL}/recipes`;
 
 export default function Home() {
+  const theme = useTheme();
   const location = useLocation();
   const [recipes, setRecipes] = React.useState<Recipe[]>([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editRecipe, setEditRecipe] = React.useState<Recipe | null>(null);
   const [sending, setSending] = React.useState(false);
-  const [sendError, setSendError] = React.useState('');
-  const [sendSuccess, setSendSuccess] = React.useState('');
+  const [sendError, setSendError] = React.useState("");
+  const [sendSuccess, setSendSuccess] = React.useState("");
   const [loading, setLoading] = React.useState(true);
-  const [deleteDialog, setDeleteDialog] = React.useState<{ open: boolean; recipe: Recipe | null }>({
+  const [deleteDialog, setDeleteDialog] = React.useState<{
+    open: boolean;
+    recipe: Recipe | null;
+  }>({
     open: false,
     recipe: null,
   });
-  const [error, setError] = React.useState('');
-  const [search, setSearch] = React.useState('');
-  const [actionSuccess, setActionSuccess] = React.useState('');
-  const [actionError, setActionError] = React.useState('');
-  const [filterType, setFilterType] = React.useState<RecipeType | ''>('');
-  const [filterCategory, setFilterCategory] = React.useState<Category | ''>('');
+  const [error, setError] = React.useState("");
+  const [search, setSearch] = React.useState("");
+  const [actionSuccess, setActionSuccess] = React.useState("");
+  const [actionError, setActionError] = React.useState("");
+  const [filterType, setFilterType] = React.useState<RecipeType | "">("");
+  const [filterCategory, setFilterCategory] = React.useState<Category | "">("");
   const debouncedSearch = useDebouncedValue(search, 250);
 
   React.useEffect(() => {
     setLoading(true);
-    setError('');
+    setError("");
     fetch(API_URL)
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch recipes');
+        if (!res.ok) throw new Error("Failed to fetch recipes");
         return res.json();
       })
       .then((data) => {
@@ -58,16 +72,24 @@ export default function Home() {
         const validRecipes = data.filter((recipe: any) => {
           const result = RecipeSchema.safeParse(recipe);
           if (!result.success) {
-            setError('Some recipes are invalid and were skipped.');
-            console.error('Invalid recipe data:', recipe, result.error.format());
+            setError("Some recipes are invalid and were skipped.");
+            console.error(
+              "Invalid recipe data:",
+              recipe,
+              result.error.format()
+            );
             return false;
           }
           return true;
         });
-        setRecipes(validRecipes.sort((a: Recipe, b: Recipe) => (b.timestamp || 0) - (a.timestamp || 0)));
+        setRecipes(
+          validRecipes.sort(
+            (a: Recipe, b: Recipe) => (b.timestamp || 0) - (a.timestamp || 0)
+          )
+        );
         setLoading(false);
       })
-      .catch(() => setError('Failed to load recipes.'))
+      .catch(() => setError("Failed to load recipes."))
       .finally(() => setLoading(false));
   }, []);
 
@@ -82,25 +104,25 @@ export default function Home() {
 
   const handleSendMealPlan = async () => {
     setSending(true);
-    setSendError('');
-    setSendSuccess('');
+    setSendError("");
+    setSendSuccess("");
     try {
-  const response = await fetch(`${CONFIG.API_BASE_URL}/menu/email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch(`${CONFIG.API_BASE_URL}/menu/email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
       });
-      if (!response.ok) throw new Error('Failed to send meal plan');
-      setSendSuccess('Meal plan sent!');
+      if (!response.ok) throw new Error("Failed to send meal plan");
+      setSendSuccess("Meal plan sent!");
     } catch (e) {
-      setSendError('Failed to send meal plan.');
+      setSendError("Failed to send meal plan.");
     } finally {
       setSending(false);
     }
   };
 
   const [telegramSending, setTelegramSending] = React.useState(false);
-  const [telegramSuccess, setTelegramSuccess] = React.useState('');
-  const [telegramError, setTelegramError] = React.useState('');
+  const [telegramSuccess, setTelegramSuccess] = React.useState("");
+  const [telegramError, setTelegramError] = React.useState("");
   const [config, setConfig] = React.useState<any>(null);
 
   React.useEffect(() => {
@@ -112,29 +134,29 @@ export default function Home() {
 
   const handleSendTelegram = async () => {
     setTelegramSending(true);
-    setTelegramError('');
-    setTelegramSuccess('');
+    setTelegramError("");
+    setTelegramSuccess("");
     try {
       let chatId = undefined;
       if (config && config.menuOptions && config.menuOptions.telegramChatId) {
         chatId = String(config.menuOptions.telegramChatId);
       }
-      if (!chatId || chatId.trim() === '') {
-        setTelegramError('Telegram chatId non configurato o non valido.');
+      if (!chatId || chatId.trim() === "") {
+        setTelegramError("Telegram chatId non configurato o non valido.");
         setTelegramSending(false);
         return;
       }
       // Send empty text so BE generates the meal plan and grocery list
       const body = { chatId };
-  const response = await fetch(`${CONFIG.API_BASE_URL}/menu/telegram`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch(`${CONFIG.API_BASE_URL}/menu/telegram`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      if (!response.ok) throw new Error('Failed to send Telegram message');
-      setTelegramSuccess('Messaggio Telegram inviato!');
+      if (!response.ok) throw new Error("Failed to send Telegram message");
+      setTelegramSuccess("Messaggio Telegram inviato!");
     } catch (e) {
-      setTelegramError('Errore invio messaggio Telegram.');
+      setTelegramError("Errore invio messaggio Telegram.");
     } finally {
       setTelegramSending(false);
     }
@@ -142,7 +164,7 @@ export default function Home() {
 
   const handleSaveRecipe = async (recipe: Recipe) => {
     setLoading(true);
-    setError('');
+    setError("");
     try {
       let response;
       // If recipe.id is empty or undefined, treat as new recipe
@@ -151,26 +173,30 @@ export default function Home() {
         const now = Date.now();
         const newRecipe = { ...recipe, id: `r${now}`, timestamp: now };
         response = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newRecipe),
         });
       } else {
         response = await fetch(`${API_URL}/${recipe.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(recipe),
         });
       }
-      if (!response.ok) throw new Error('Failed to save recipe');
+      if (!response.ok) throw new Error("Failed to save recipe");
       // Refetch recipes
       const recipesRes = await fetch(API_URL);
-      setRecipes((await recipesRes.json()).sort((a: Recipe, b: Recipe) => (b.timestamp || 0) - (a.timestamp || 0)));
+      setRecipes(
+        (await recipesRes.json()).sort(
+          (a: Recipe, b: Recipe) => (b.timestamp || 0) - (a.timestamp || 0)
+        )
+      );
       setDialogOpen(false);
-      setActionSuccess(recipe.id ? 'Recipe updated!' : 'Recipe added!');
+      setActionSuccess(recipe.id ? "Recipe updated!" : "Recipe added!");
     } catch {
-      setError('Failed to save recipe.');
-      setActionError('Failed to save recipe.');
+      setError("Failed to save recipe.");
+      setActionError("Failed to save recipe.");
     } finally {
       setLoading(false);
     }
@@ -180,20 +206,20 @@ export default function Home() {
   const confirmDeleteRecipe = async () => {
     if (!deleteDialog.recipe) return;
     setLoading(true);
-    setError('');
+    setError("");
     try {
       const response = await fetch(`${API_URL}/${deleteDialog.recipe.id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      if (!response.ok) throw new Error('Failed to delete recipe');
+      if (!response.ok) throw new Error("Failed to delete recipe");
       // Refetch recipes
       const recipesRes = await fetch(API_URL);
       setRecipes(await recipesRes.json());
       setDeleteDialog({ open: false, recipe: null });
-      setActionSuccess('Recipe deleted!');
+      setActionSuccess("Recipe deleted!");
     } catch {
-      setError('Failed to delete recipe.');
-      setActionError('Failed to delete recipe.');
+      setError("Failed to delete recipe.");
+      setActionError("Failed to delete recipe.");
     } finally {
       setLoading(false);
     }
@@ -205,10 +231,16 @@ export default function Home() {
 
   // Get unique types and categories from recipes
   const types = Array.from(
-    new Set(recipes.map((r) => r.tipo).filter((t): t is RecipeType => t !== undefined)),
+    new Set(
+      recipes.map((r) => r.tipo).filter((t): t is RecipeType => t !== undefined)
+    )
   );
   const categories = Array.from(
-    new Set(recipes.map((r) => r.categoria).filter((c): c is Category => c !== undefined)),
+    new Set(
+      recipes
+        .map((r) => r.categoria)
+        .filter((c): c is Category => c !== undefined)
+    )
   );
 
   // Filter recipes by search and dropdowns
@@ -225,48 +257,73 @@ export default function Home() {
   });
 
   return (
-    <Box sx={{ bgcolor: 'background.body', minHeight: '100vh', py: 0, color: 'text.primary' }}>
+    <Box
+      sx={{
+        bgcolor: "background.body",
+        minHeight: "100vh",
+        py: 0,
+        color: "text.primary",
+      }}
+    >
       {/* Hero Section */}
       <Box
         sx={{
-          width: '100%',
+          width: "100%",
           minHeight: 260,
-          bgcolor: (theme) =>
-            theme.palette.mode === 'dark' ? 'background.level2' : 'primary.solidBg',
-          color: 'color.white',
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          bgcolor: theme.palette.primary[200],
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          alignItems: "center",
+          justifyContent: "space-between",
           px: { xs: 2, md: 8 },
           py: { xs: 4, md: 6 },
           borderRadius: 0,
-          boxShadow: 'md',
+          boxShadow: "md",
           mb: 4,
-          position: 'relative',
-          overflow: 'hidden',
+          position: "relative",
+          overflow: "hidden",
         }}
       >
         <Box sx={{ zIndex: 2 }}>
           <Typography
             level="h1"
-            sx={{ fontWeight: 900, fontSize: { xs: 32, md: 48 }, mb: 2, color: '#fff' }}
+            sx={{
+              fontWeight: 900,
+              fontSize: { xs: 32, md: 48 },
+              mb: 2,
+              color: theme.palette.text.primary,
+            }}
           >
             Plan Your Week, Eat Better
           </Typography>
           <Typography
             level="body-lg"
-            sx={{ fontSize: { xs: 16, md: 22 }, mb: 3, color: '#fff', maxWidth: 500 }}
+            sx={{
+              fontSize: { xs: 16, md: 22 },
+              mb: 3,
+              color: theme.palette.text.primary,
+              maxWidth: 500,
+            }}
           >
-            Organize your favorite recipes. Generate a weekly menu and shopping list in one click!
+            Organize your favorite recipes. Generate a weekly menu and shopping
+            list in one click!
           </Typography>
           <Button
             data-testid="add-recipe-btn"
             startDecorator={<PlusCircle />}
             size="lg"
-            color="warning"
+            color="primary"
             variant="solid"
-            sx={{ fontWeight: 700, borderRadius: 8, mr: 2, mb: 2, color: '#181c1f' }}
+            sx={{
+              fontWeight: 700,
+              borderRadius: 8,
+              mr: 2,
+              mb: 2,
+              '&:hover': {
+                bgcolor: theme.palette.primary[700],
+                color: theme.palette.primary[200],
+              },
+            }}
             onClick={() => {
               setEditRecipe(null);
               setDialogOpen(true);
@@ -280,11 +337,20 @@ export default function Home() {
             size="lg"
             color="primary"
             variant="soft"
-            sx={{ fontWeight: 700, borderRadius: 8, mr: 2, mb: { xs: 1.5, md: 0 } }}
+            sx={{
+              fontWeight: 700,
+              borderRadius: 8,
+              mr: 2,
+              mb: { xs: 1.5, md: 0 },
+            }}
             onClick={handleSendMealPlan}
             disabled={sending}
           >
-            {sending ? <Loader2 className="spin" size={18} /> : 'Send plan via Email'}
+            {sending ? (
+              <Loader2 className="spin" size={18} />
+            ) : (
+              "Send plan via Email"
+            )}
           </Button>
           <Button
             data-testid="send-telegram-btn"
@@ -296,40 +362,60 @@ export default function Home() {
             onClick={handleSendTelegram}
             disabled={telegramSending}
           >
-            {telegramSending ? <Loader2 className="spin" size={18} /> : 'Send plan via Telegram'}
+            {telegramSending ? (
+              <Loader2 className="spin" size={18} />
+            ) : (
+              "Send plan via Telegram"
+            )}
           </Button>
-      {/* Telegram Snackbar */}
-      <Snackbar
-        open={!!telegramSuccess}
-        autoHideDuration={3000}
-        onClose={() => setTelegramSuccess('')}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert color="success" variant="solid">
-          {telegramSuccess}
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={!!telegramError}
-        autoHideDuration={3000}
-        onClose={() => setTelegramError('')}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert color="danger" variant="solid">
-          {telegramError}
-        </Alert>
-      </Snackbar>
+          {/* Telegram Snackbar */}
+          <Snackbar
+            open={!!telegramSuccess}
+            autoHideDuration={3000}
+            onClose={() => setTelegramSuccess("")}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          >
+            <Alert color="success" variant="solid">
+              {telegramSuccess}
+            </Alert>
+          </Snackbar>
+          <Snackbar
+            open={!!telegramError}
+            autoHideDuration={3000}
+            onClose={() => setTelegramError("")}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          >
+            <Alert color="danger" variant="solid">
+              {telegramError}
+            </Alert>
+          </Snackbar>
         </Box>
-        <Box sx={{ display: { xs: 'none', md: 'block' }, zIndex: 1 }}>
-          <img src="/illustrations/chef.svg" alt="Chef Illustration" style={{ height: 180 }} />
+        <Box sx={{ display: { xs: "none", md: "block" }, zIndex: 1 }}>
+          <img
+            src="/illustrations/chef.svg"
+            alt="Chef Illustration"
+            style={{ height: 180 }}
+          />
         </Box>
-        <Box sx={{ position: 'absolute', right: 0, bottom: 0, opacity: 0.08, zIndex: 0 }}>
-          <img src="/illustrations/chef.svg" alt="Background Chef" style={{ height: 320 }} />
+        <Box
+          sx={{
+            position: "absolute",
+            right: 0,
+            bottom: 0,
+            opacity: 0.08,
+            zIndex: 0,
+          }}
+        >
+          <img
+            src="/illustrations/chef.svg"
+            alt="Background Chef"
+            style={{ height: 320 }}
+          />
         </Box>
       </Box>
 
       {/* Recipes Section */}
-      <Box sx={{ maxWidth: 1100, mx: 'auto', px: 2, py: 2 }}>
+      <Box sx={{ maxWidth: 1100, mx: "auto", px: 2, py: 2 }}>
         <FilterSection
           search={search}
           onSearchChange={setSearch}
@@ -342,26 +428,26 @@ export default function Home() {
           filteredCount={filteredRecipes.length}
           totalCount={recipes.length}
         />
-        {error && (
-          <ErrorAlert message={error} />
-        )}
+        {error && <ErrorAlert message={error} />}
         {loading ? (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, minHeight: 200 }}>
+          <Box
+            sx={{ display: "flex", flexWrap: "wrap", gap: 3, minHeight: 200 }}
+          >
             {[...Array(4)].map((_, i) => (
               <Card
                 key={i}
                 variant="soft"
                 sx={{
-                  bgcolor: 'neutral.solidBg',
+                  bgcolor: "neutral.solidBg",
                   width: 340,
                   height: 220,
                   mb: 3,
                   borderRadius: 12,
-                  boxShadow: 'md',
+                  boxShadow: "md",
                   p: 0,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-start',
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
                 }}
               >
                 <CardContent sx={{ p: 3, pt: 2.5, pb: 1.5 }}>
@@ -371,7 +457,7 @@ export default function Home() {
                     height={32}
                     sx={{ mb: 2, borderRadius: 2 }}
                   />
-                  <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+                  <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
                     <Skeleton
                       variant="rectangular"
                       width={60}
@@ -390,7 +476,7 @@ export default function Home() {
             ))}
           </Box>
         ) : filteredRecipes.length === 0 ? (
-          <Box sx={{ textAlign: 'center', color: 'text.secondary', py: 8 }}>
+          <Box sx={{ textAlign: "center", color: "text.secondary", py: 8 }}>
             <img
               src="/illustrations/empty.svg"
               alt="No Recipes"
@@ -404,7 +490,7 @@ export default function Home() {
             flexWrap="wrap"
             spacing={3}
             useFlexGap
-            sx={{ justifyContent: 'flex-start' }}
+            sx={{ justifyContent: "flex-start" }}
           >
             {filteredRecipes.map((recipe) => (
               <RecipeCard
@@ -437,15 +523,15 @@ export default function Home() {
         message={
           deleteDialog.recipe
             ? `Are you sure you want to delete the recipe "${deleteDialog.recipe.nome}"? This action cannot be undone.`
-            : 'Are you sure you want to delete this recipe? This action cannot be undone.'
+            : "Are you sure you want to delete this recipe? This action cannot be undone."
         }
         data-testid="confirm-dialog"
       />
       <Snackbar
         open={!!sendSuccess}
         autoHideDuration={3000}
-        onClose={() => setSendSuccess('')}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => setSendSuccess("")}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert color="success" variant="solid">
           {sendSuccess}
@@ -454,8 +540,8 @@ export default function Home() {
       <Snackbar
         open={!!sendError}
         autoHideDuration={3000}
-        onClose={() => setSendError('')}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => setSendError("")}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert color="danger" variant="solid">
           {sendError}
@@ -464,8 +550,8 @@ export default function Home() {
       <Snackbar
         open={!!actionSuccess}
         autoHideDuration={2500}
-        onClose={() => setActionSuccess('')}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => setActionSuccess("")}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert color="success" variant="solid">
           {actionSuccess}
@@ -474,8 +560,8 @@ export default function Home() {
       <Snackbar
         open={!!actionError}
         autoHideDuration={2500}
-        onClose={() => setActionError('')}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        onClose={() => setActionError("")}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert color="danger" variant="solid">
           {actionError}
@@ -484,31 +570,31 @@ export default function Home() {
       {/* Footer */}
       <Box
         sx={{
-          width: '100%',
-          bgcolor: 'background.body',
-          color: 'text.secondary',
-          textAlign: 'center',
+          width: "100%",
+          bgcolor: "background.body",
+          color: "text.secondary",
+          textAlign: "center",
           py: 4,
           mt: 8,
-          borderTop: '1px solid',
-          borderColor: 'divider',
+          borderTop: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Typography level="body-md" sx={{ mb: 1 }}>
           <Typography
-            component={'span'}
+            component={"span"}
             sx={{
-              display: 'inline',
+              display: "inline",
               fontWeight: 700,
-              color: 'text.primary',
+              color: "text.primary",
             }}
           >
             Meal Planner
           </Typography>
-          &copy; {new Date().getFullYear()} |{' '}
+          &copy; {new Date().getFullYear()} |{" "}
           <a
             href="https://undraw.co/"
-            style={{ color: 'inherit', textDecoration: 'underline' }}
+            style={{ color: "inherit", textDecoration: "underline" }}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -519,8 +605,8 @@ export default function Home() {
           <a
             href="/how-it-works"
             style={{
-              color: '#ff8500',
-              textDecoration: 'underline',
+              color: theme.palette.primary.solidBg,
+              textDecoration: "underline",
               fontWeight: 600,
               fontSize: 15,
               opacity: 0.9,

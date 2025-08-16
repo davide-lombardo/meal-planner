@@ -42,7 +42,7 @@ export default function Layout({
               onClick={() => navigate(backButtonPath)}
               sx={{ 
                 fontWeight: 600,
-                borderRadius: 2,
+                borderRadius: 8,
                 px: 3
               }}
             >

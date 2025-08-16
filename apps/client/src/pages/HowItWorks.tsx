@@ -1,6 +1,7 @@
 import { Box, Typography, Card, CardContent, Chip } from '@mui/joy';
 import { Database, History, BarChart3, ShoppingCart, Settings, Zap } from 'lucide-react';
 import Layout from '../components/common/Layout';
+import { useTheme } from '@mui/joy/styles';
 
 const steps = [
   {
@@ -45,6 +46,7 @@ const advancedFeatures = [
 ];
 
 export default function HowItWorks() {
+  const theme = useTheme();
   return (
     <Layout 
       title="How It Works"
@@ -63,6 +65,7 @@ export default function HowItWorks() {
               border: '1px solid',
               borderColor: 'divider',
               transition: 'all 0.3s ease',
+              position: 'relative',
               '&:hover': {
                 boxShadow: 'md',
                 transform: 'translateY(-4px)',
@@ -70,6 +73,9 @@ export default function HowItWorks() {
               }
             }}
           >
+            <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+              <Zap size={28} style={{ color: theme.palette.primary.solidBg }} />
+            </Box>
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
                 <Box sx={{ 
@@ -126,7 +132,7 @@ export default function HowItWorks() {
       >
         <CardContent>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-            <Zap size={28} style={{ color: '#ff8500' }} />
+            <Zap size={28} style={{ color: theme.palette.primary.solidBg }} />
             <Typography level="h3" sx={{ fontWeight: 700, color: 'warning.800' }}>
               Advanced Features
             </Typography>

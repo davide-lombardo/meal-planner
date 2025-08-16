@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, IconButton, List, ListItem, ListItemButton, ListItemDecorator, Typography, Drawer, useColorScheme } from '@mui/joy';
+import { Box, IconButton, List, ListItem, ListItemButton, ListItemDecorator, Typography, Drawer, useTheme } from '@mui/joy';
 import { Home, Settings, Info, Menu as MenuIcon, ChevronLeft, Refrigerator } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -15,7 +15,7 @@ export default function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { mode } = useColorScheme();
+  const theme = useTheme();
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent('sidebar-width', { detail: open ? 220 : 64 }));
@@ -45,10 +45,10 @@ export default function Sidebar() {
                 overflow: 'hidden',
                 transition: 'background-color 0.2s, color 0.2s, padding-left 0.2s, padding-right 0.2s, width 0.2s',
                 '&.Mui-selected, &.Mui-selected:hover': {
-                  bgcolor: mode === 'dark' ? 'neutral.700' : 'neutral.300',
-                  color: mode === 'dark' ? 'neutral.100' : 'neutral.900',
+                  bgcolor: theme.palette.primary[theme.palette.mode === 'dark' ? 700 : 100],
+                  color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
                   '& .Sidebar-icon, & .Sidebar-label': {
-                    color: mode === 'dark' ? 'neutral.100' : 'neutral.900',
+                    color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
                   },
                 },
                 '&:focus-visible': {
@@ -64,8 +64,8 @@ export default function Sidebar() {
                   mr: open || isMobile ? 2 : 0,
                   ml: 1,
                   color: selected
-                    ? (mode === 'dark' ? 'neutral.100' : 'neutral.900')
-                    : 'neutral.plainColor',
+                    ? theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700]
+                    : theme.palette.primary.plainColor,
                   transition: 'color 0.2s, margin-right 0.2s',
                 }}
               >
@@ -81,8 +81,8 @@ export default function Sidebar() {
                     opacity: open || isMobile ? 1 : 0,
                     transition: 'color 0.2s, opacity 0.2s ease-out',
                     color: selected
-                      ? (mode === 'dark' ? 'neutral.100' : 'neutral.900')
-                      : 'neutral.plainColor',
+                      ? theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700]
+                      : theme.palette.primary.plainColor,
                   }}
                 >
                   {label}

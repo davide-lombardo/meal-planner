@@ -1,101 +1,23 @@
 import * as React from 'react';
 import { CssBaseline, useColorScheme, IconButton } from '@mui/joy';
 import { extendTheme, CssVarsProvider } from '@mui/joy/styles';
+import { lightTheme, darkTheme } from './theme';
 import { Sun, Moon } from 'lucide-react';
+
+declare module '@mui/joy/styles' {
+  interface Palette {
+    category: typeof lightTheme.category;
+    shadow: typeof lightTheme.shadow;
+  }
+}
 
 const theme = extendTheme({
   colorSchemes: {
-    light: {
-      palette: {
-        background: {
-          body: '#f7f7f7',
-          level1: '#fff',
-          level2: '#f0f0f0',
-        },
-        primary: {
-          solidBg: '#ff8500',
-          solidHoverBg: '#e67300',
-          solidActiveBg: '#cc6600',
-          plainColor: '#ff8500',
-        },
-        warning: {
-          solidBg: '#ffe066',
-          solidHoverBg: '#ffd60a',
-          solidActiveBg: '#ffb300',
-          plainColor: '#ffd60a',
-        },
-        neutral: {
-          solidBg: '#fff',
-        },
-        text: {
-          primary: '#181c1f',
-          secondary: '#666',
-        },
-        divider: '#e0e0e0',
-        category: {
-          pesce: '#87CEEB', // Sky Blue
-          carne: '#FA8072', // Salmon
-          formaggio: '#DAA520', // Goldenrod
-          uova: '#228B22', // Forest Green
-          legumi: '#8B5CF6', // Violet
-        },
-      },
-    },
-    dark: {
-      palette: {
-        background: {
-          body: '#181c1f',
-          level1: '#23272a',
-          level2: '#23272a',
-        },
-        primary: {
-          solidBg: '#ff8500',
-          solidHoverBg: '#e67300',
-          solidActiveBg: '#cc6600',
-          plainColor: '#ff8500',
-        },
-        warning: {
-          solidBg: '#ffe066',
-          solidHoverBg: '#ffd60a',
-          solidActiveBg: '#ffb300',
-          plainColor: '#ffd60a',
-        },
-        neutral: {
-          solidBg: '#23272a',
-        },
-        text: {
-          primary: '#fff',
-          secondary: '#aaa',
-        },
-        divider: '#333',
-        category: {
-          pesce: '#87CEEB', // Sky Blue
-          carne: '#FA8072', // Salmon
-          formaggio: '#DAA520', // Goldenrod
-          uova: '#228B22', // Forest Green
-          legumi: '#8B5CF6', // Violet
-        },
-      },
-    },
-  },
-  radius: {
-    xs: '2px',
-    sm: '4px',
-    md: '8px',
-    lg: '12px',
-    xl: '20px',
-  },
-  shadow: {
-    sm: '0 1px 4px rgba(0,0,0,0.06)',
-    md: '0 2px 8px rgba(0,0,0,0.10)',
-    lg: '0 4px 16px rgba(0,0,0,0.12)',
-  },
-  typography: {
-    h1: { fontWeight: 900, fontSize: '2.125rem', letterSpacing: '0.05em' },
-    h2: { fontWeight: 800, fontSize: '1.375rem' },
-    h3: { fontWeight: 700, fontSize: '1.125rem' },
+    light: { palette: { ...lightTheme } },
+    dark: { palette: { ...darkTheme } },
   },
 });
+// ...existing code...
 
 export function ColorSchemeToggle() {
   const { mode, setMode } = useColorScheme();
