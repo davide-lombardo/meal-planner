@@ -352,7 +352,8 @@ export default function ConfigPage() {
                               aria-label="Telegram Chat ID"
                             />
                             <IconButton
-                              size="sm"
+                                size="md"
+                                 sx={{ minWidth: 45 }}
                               color="danger"
                               variant="soft"
                               onClick={() => {

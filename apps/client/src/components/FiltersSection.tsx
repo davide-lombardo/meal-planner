@@ -224,7 +224,6 @@ export default function FilterSection({
                     ml: 0.5
                   }}
                 >
-                  <X size={12} />
                 </IconButton>
               }
               sx={{ borderRadius: 8 }}
@@ -249,7 +248,6 @@ export default function FilterSection({
                     ml: 0.5
                   }}
                 >
-                  <X size={12} />
                 </IconButton>
               }
               sx={{ borderRadius: 8 }}
@@ -274,7 +272,6 @@ export default function FilterSection({
                     ml: 0.5
                   }}
                 >
-                  <X size={12} />
                 </IconButton>
               }
               sx={{ borderRadius: 8 }}

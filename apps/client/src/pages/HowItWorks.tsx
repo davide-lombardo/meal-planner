@@ -66,11 +66,6 @@ export default function HowItWorks() {
               borderColor: 'divider',
               transition: 'all 0.3s ease',
               position: 'relative',
-              '&:hover': {
-                boxShadow: 'md',
-                transform: 'translateY(-4px)',
-                borderColor: 'primary.300'
-              }
             }}
           >
             <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
