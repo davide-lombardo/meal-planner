@@ -1,0 +1,562 @@
+import * as React from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  Stack,
+  Snackbar,
+  Alert,
+  Card,
+  CardContent,
+  Select,
+  Option,
+} from "@mui/joy";
+import { useTheme } from "@mui/joy/styles";
+import { PlusCircle, Mail, Loader2, Send, ChevronLeft, ChevronRight } from "lucide-react";
+import RecipeCard from "../components/RecipeCard";
+import RecipeDialog from "../components/dialog/RecipeDialog";
+import ConfirmDialog from "../components/dialog/ConfirmDialog";
+import { useLocation } from "react-router-dom";
+import Skeleton from "@mui/joy/Skeleton";
+import { RecipeSchema } from "shared/schemas";
+import FilterSection from "../components/FiltersSection";
+import { CONFIG } from "../utils/constants";
+import { Recipe, Category, RecipeType } from "shared/schemas";
+import ErrorAlert from "../components/ErrorAlert";
+import Footer from "../components/Footer";
+import JoyPagination from "../components/JoyPagination";
+import { useRecipes } from "../hooks/useRecipes";
+
+// Debounce hook
+function useDebouncedValue<T>(value: T, delay: number): T {
+  const [debounced, setDebounced] = React.useState(value);
+  React.useEffect(() => {
+    const handler = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  return debounced;
+}
+
+const API_URL = `${CONFIG.API_BASE_URL}/recipes`;
+
+export default function Home() {
+  const theme = useTheme();
+  const location = useLocation();
+  const {
+    recipes,
+    total,
+    page,
+    pageSize,
+    loading,
+    error,
+    addRecipe,
+    updateRecipe,
+    deleteRecipe,
+    goToPage,
+    changePageSize,
+  } = useRecipes();
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [editRecipe, setEditRecipe] = React.useState<Recipe | null>(null);
+  const [sending, setSending] = React.useState(false);
+  const [sendError, setSendError] = React.useState("");
+  const [sendSuccess, setSendSuccess] = React.useState("");
+  const [deleteDialog, setDeleteDialog] = React.useState<{
+    open: boolean;
+    recipe: Recipe | null;
+  }>({
+    open: false,
+    recipe: null,
+  });
+  const [search, setSearch] = React.useState("");
+  const [actionSuccess, setActionSuccess] = React.useState("");
+  const [actionError, setActionError] = React.useState("");
+  const [filterType, setFilterType] = React.useState<RecipeType | "">("");
+  const [filterCategory, setFilterCategory] = React.useState<Category | "">("");
+  const debouncedSearch = useDebouncedValue(search, 250);
+
+  React.useEffect(() => {
+    if (location.state && location.state.editRecipe) {
+      setEditRecipe(location.state.editRecipe);
+      setDialogOpen(true);
+      // Clean up state so dialog doesn't reopen on next visit
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
+  const handleSendMealPlan = async () => {
+    setSending(true);
+    setSendError("");
+    setSendSuccess("");
+    try {
+      const response = await fetch(`${CONFIG.API_BASE_URL}/menu/email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) throw new Error("Failed to send meal plan");
+      setSendSuccess("Meal plan sent!");
+    } catch (e) {
+      setSendError("Failed to send meal plan.");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const [telegramSending, setTelegramSending] = React.useState(false);
+  const [telegramSuccess, setTelegramSuccess] = React.useState("");
+  const [telegramError, setTelegramError] = React.useState("");
+  const [config, setConfig] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    fetch(`${CONFIG.API_BASE_URL}/config`)
+      .then((res) => res.json())
+      .then((data) => setConfig(data))
+      .catch(() => setConfig(null));
+  }, []);
+
+  const handleSendTelegram = async () => {
+    setTelegramSending(true);
+    setTelegramError("");
+    setTelegramSuccess("");
+    try {
+      let chatId = undefined;
+      if (config && config.menuOptions && config.menuOptions.telegramChatId) {
+        chatId = String(config.menuOptions.telegramChatId);
+      }
+      if (!chatId || chatId.trim() === "") {
+        setTelegramError("Telegram chatId non configurato o non valido.");
+        setTelegramSending(false);
+        return;
+      }
+      // Send empty text so BE generates the meal plan and grocery list
+      const body = { chatId };
+      const response = await fetch(`${CONFIG.API_BASE_URL}/menu/telegram`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!response.ok) throw new Error("Failed to send Telegram message");
+      setTelegramSuccess("Messaggio Telegram inviato!");
+    } catch (e) {
+      setTelegramError("Errore invio messaggio Telegram.");
+    } finally {
+      setTelegramSending(false);
+    }
+  };
+
+  const handleSaveRecipe = async (recipe: Recipe) => {
+    try {
+      if (!recipe.id) {
+        // Generate a unique id and timestamp
+        const now = Date.now();
+        const newRecipe = { ...recipe, id: `r${now}`, timestamp: now };
+        await addRecipe(newRecipe);
+        setActionSuccess("Recipe added!");
+      } else {
+        await updateRecipe(recipe);
+        setActionSuccess("Recipe updated!");
+      }
+      setDialogOpen(false);
+    } catch {
+      setActionError("Failed to save recipe.");
+    }
+  };
+
+  // Delete recipe via backend
+  const confirmDeleteRecipe = async () => {
+    if (!deleteDialog.recipe) return;
+    try {
+      await deleteRecipe(deleteDialog.recipe.id);
+      setDeleteDialog({ open: false, recipe: null });
+      setActionSuccess("Recipe deleted!");
+    } catch {
+      setActionError("Failed to delete recipe.");
+    }
+  };
+
+  const handleDeleteRecipe = (recipe: Recipe) => {
+    setDeleteDialog({ open: true, recipe });
+  };
+
+  // Get unique types and categories from recipes
+  const types = Array.from(
+    new Set(
+      recipes.map((r) => r.tipo).filter((t): t is RecipeType => t !== undefined)
+    )
+  );
+  const categories = Array.from(
+    new Set(
+      recipes
+        .map((r) => r.categoria)
+        .filter((c): c is Category => c !== undefined)
+    )
+  );
+
+  // Filter recipes by search and dropdowns
+  const filteredRecipes = recipes.filter((r) => {
+    const q = debouncedSearch.toLowerCase();
+    const matchesSearch =
+      r.nome.toLowerCase().includes(q) ||
+      (r.categoria && r.categoria.toLowerCase().includes(q)) ||
+      (r.tipo && r.tipo.toLowerCase().includes(q)) ||
+      r.ingredienti.some((i: any) => i.toLowerCase().includes(q));
+    const matchesType = !filterType || r.tipo === filterType;
+    const matchesCategory = !filterCategory || r.categoria === filterCategory;
+    return matchesSearch && matchesType && matchesCategory;
+  });
+
+  return (
+    <Box
+      sx={{
+        bgcolor: "background.body",
+        minHeight: "100vh",
+        py: 0,
+        color: "text.primary",
+      }}
+    >
+      {/* Hero Section */}
+      <Box
+        sx={{
+          width: "100%",
+          minHeight: 260,
+          bgcolor: theme.palette.primary[200],
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          alignItems: "center",
+          justifyContent: "space-between",
+          px: { xs: 2, md: 8 },
+          py: { xs: 4, md: 6 },
+          borderRadius: 0,
+          boxShadow: "md",
+          mb: 4,
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        <Box sx={{ zIndex: 2 }}>
+          <Typography
+            level="h1"
+            sx={{
+              fontWeight: 900,
+              fontSize: { xs: 32, md: 48 },
+              mb: 2,
+              color: theme.palette.text.primary,
+            }}
+          >
+            Plan Your Week, Eat Better
+          </Typography>
+          <Typography
+            level="body-lg"
+            sx={{
+              fontSize: { xs: 16, md: 22 },
+              mb: 3,
+              color: theme.palette.text.primary,
+              maxWidth: 500,
+            }}
+          >
+            Organize your favorite recipes. Generate a weekly menu and shopping
+            list in one click!
+          </Typography>
+          <Button
+            data-testid="add-recipe-btn"
+            startDecorator={<PlusCircle />}
+            size="lg"
+            color="primary"
+            variant="solid"
+            sx={{
+              fontWeight: 700,
+              borderRadius: 8,
+              mr: 2,
+              mb: 2,
+              "&:hover": {
+                bgcolor: theme.palette.primary[700],
+                color: theme.palette.primary[200],
+              },
+            }}
+            onClick={() => {
+              setEditRecipe(null);
+              setDialogOpen(true);
+            }}
+          >
+            Add Recipe
+          </Button>
+          <Button
+            data-testid="send-meal-plan-btn"
+            startDecorator={<Mail />}
+            size="lg"
+            color="primary"
+            variant="soft"
+            sx={{
+              fontWeight: 700,
+              borderRadius: 8,
+              mr: 2,
+              mb: { xs: 1.5, md: 0 },
+            }}
+            onClick={handleSendMealPlan}
+            disabled={sending}
+          >
+            {sending ? (
+              <Loader2 className="spin" size={18} />
+            ) : (
+              "Send plan via Email"
+            )}
+          </Button>
+          <Button
+            data-testid="send-telegram-btn"
+            startDecorator={<Send />}
+            size="lg"
+            color="primary"
+            variant="soft"
+            sx={{ fontWeight: 700, borderRadius: 8 }}
+            onClick={handleSendTelegram}
+            disabled={telegramSending}
+          >
+            {telegramSending ? (
+              <Loader2 className="spin" size={18} />
+            ) : (
+              "Send plan via Telegram"
+            )}
+          </Button>
+          {/* Telegram Snackbar */}
+          <Snackbar
+            open={!!telegramSuccess}
+            autoHideDuration={3000}
+            onClose={() => setTelegramSuccess("")}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          >
+            <Alert color="success" variant="solid">
+              {telegramSuccess}
+            </Alert>
+          </Snackbar>
+          <Snackbar
+            open={!!telegramError}
+            autoHideDuration={3000}
+            onClose={() => setTelegramError("")}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          >
+            <Alert color="danger" variant="solid">
+              {telegramError}
+            </Alert>
+          </Snackbar>
+        </Box>
+        <Box sx={{ display: { xs: "none", md: "block" }, zIndex: 1 }}>
+          <img
+            src="/illustrations/chef.svg"
+            alt="Chef Illustration"
+            style={{ height: 180 }}
+          />
+        </Box>
+        <Box
+          sx={{
+            position: "absolute",
+            right: 0,
+            bottom: 0,
+            opacity: 0.08,
+            zIndex: 0,
+          }}
+        >
+          <img
+            src="/illustrations/chef.svg"
+            alt="Background Chef"
+            style={{ height: 320 }}
+          />
+        </Box>
+      </Box>
+
+      {/* Recipes Section */}
+      <Box sx={{ maxWidth: 1100, mx: "auto", px: 2, py: 2 }}>
+        <FilterSection
+          search={search}
+          onSearchChange={setSearch}
+          filterType={filterType}
+          onTypeChange={setFilterType}
+          filterCategory={filterCategory}
+          onCategoryChange={setFilterCategory}
+          types={types}
+          categories={categories}
+          filteredCount={filteredRecipes.length}
+          totalCount={recipes.length}
+        />
+        {error && <ErrorAlert message={error} />}
+        {loading ? (
+          <Box
+            sx={{ display: "flex", flexWrap: "wrap", gap: 3, minHeight: 200 }}
+          >
+            {[...Array(4)].map((_, i) => (
+              <Card
+                key={i}
+                variant="soft"
+                sx={{
+                  bgcolor: "neutral.solidBg",
+                  width: 340,
+                  height: 220,
+                  mb: 3,
+                  borderRadius: 12,
+                  boxShadow: "md",
+                  p: 0,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                }}
+              >
+                <CardContent sx={{ p: 3, pt: 2.5, pb: 1.5 }}>
+                  <Skeleton
+                    variant="text"
+                    width={180}
+                    height={32}
+                    sx={{ mb: 2, borderRadius: 2 }}
+                  />
+                  <Box sx={{ display: "flex", gap: 1, mb: 1 }}>
+                    <Skeleton
+                      variant="rectangular"
+                      width={60}
+                      height={20}
+                      sx={{ borderRadius: 10 }}
+                    />
+                    <Skeleton
+                      variant="rectangular"
+                      width={40}
+                      height={20}
+                      sx={{ borderRadius: 10 }}
+                    />
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+        ) : filteredRecipes.length === 0 ? (
+          <Box sx={{ textAlign: "center", color: "text.secondary", py: 8 }}>
+            <img
+              src="/illustrations/empty.svg"
+              alt="No Recipes"
+              style={{ height: 120, marginBottom: 16 }}
+            />
+            <Typography level="body-lg">No recipes found.</Typography>
+          </Box>
+        ) : (
+          <>
+            <Stack
+              direction="row"
+              flexWrap="wrap"
+              spacing={3}
+              useFlexGap
+              sx={{ justifyContent: "flex-start" }}
+            >
+              {filteredRecipes.map((recipe) => (
+                <RecipeCard
+                  key={recipe.id}
+                  recipe={recipe}
+                  onEdit={(r) => {
+                    setEditRecipe(r);
+                    setDialogOpen(true);
+                  }}
+                  onDelete={handleDeleteRecipe}
+                  data-testid={`recipe-card-${recipe.id}`}
+                />
+              ))}
+            </Stack>
+            {/* Pagination Controls */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                mt: 4,
+                gap: 2,
+                flexWrap: "wrap",
+              }}
+            >
+              <JoyPagination
+                page={page}
+                total={total}
+                pageSize={pageSize}
+                onPageChange={goToPage}
+              />
+              <Typography level="body-md" sx={{ ml: 2 }}>
+                Recipes per page:
+              </Typography>
+              <Box>
+                <Select
+                  value={pageSize}
+                  onChange={(event, value) =>
+                    value && changePageSize(Number(value))
+                  }
+                  size="md"
+                  color="neutral"
+                  variant="outlined"
+                >
+                  {[5, 10, 20, 50].map((size) => (
+                    <Option key={size} value={size}>
+                      {size}
+                    </Option>
+                  ))}
+                </Select>
+              </Box>
+            </Box>
+          </>
+        )}
+      </Box>
+
+      {/* Dialogs */}
+      <RecipeDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onSave={handleSaveRecipe}
+        initialRecipe={editRecipe}
+        data-testid="recipe-dialog"
+      />
+      <ConfirmDialog
+        open={deleteDialog.open}
+        onClose={() => setDeleteDialog({ open: false, recipe: null })}
+        onConfirm={confirmDeleteRecipe}
+        message={
+          deleteDialog.recipe
+            ? `Are you sure you want to delete the recipe "${deleteDialog.recipe.nome}"? This action cannot be undone.`
+            : "Are you sure you want to delete this recipe? This action cannot be undone."
+        }
+        data-testid="confirm-dialog"
+      />
+      <Snackbar
+        open={!!sendSuccess}
+        autoHideDuration={3000}
+        onClose={() => setSendSuccess("")}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert color="success" variant="solid">
+          {sendSuccess}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={!!sendError}
+        autoHideDuration={3000}
+        onClose={() => setSendError("")}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert color="danger" variant="solid">
+          {sendError}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={!!actionSuccess}
+        autoHideDuration={2500}
+        onClose={() => setActionSuccess("")}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert color="success" variant="solid">
+          {actionSuccess}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={!!actionError}
+        autoHideDuration={2500}
+        onClose={() => setActionError("")}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert color="danger" variant="solid">
+          {actionError}
+        </Alert>
+      </Snackbar>
+      {/* Footer */}
+      <Footer />
+    </Box>
+  );
+}
