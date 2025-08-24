@@ -226,7 +226,7 @@ export default function ConfigPage() {
 
   return (
     <Layout
-      title="Planner Settings"
+      title="Settings"
       subtitle="Customize how your weekly menus are generated"
     >
       {/* Save Button Section */}

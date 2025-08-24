@@ -1,5 +1,6 @@
 import { Card, CardContent, Typography, Box, IconButton, Menu, MenuItem } from '@mui/joy';
 import { Drumstick, Milk, Egg, Fish, Pencil, Trash2, EllipsisVertical, Leaf } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import * as React from 'react';
 import { Recipe } from 'shared/schemas';
@@ -202,19 +203,22 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
               sx={{
                 px: 0.6,
                 py: 0.2,
-                border: `1px solid ${theme.palette.divider}`,
                 color: theme.palette.text.secondary,
                 borderRadius: 2,
                 fontSize: 10,
                 fontWeight: 500,
-                textTransform: 'uppercase',
                 letterSpacing: 0.8,
                 userSelect: 'none',
                 alignSelf: 'center',
                 minWidth: 40,
                 textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
               }}
             >
+              {recipe.tipo === 'pranzo' && <Sun size={14} />}
+              {recipe.tipo === 'cena' && <Moon size={14} />}
               {recipe.tipo}
             </Box>
           )}
