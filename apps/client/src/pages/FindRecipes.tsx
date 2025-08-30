@@ -50,10 +50,12 @@ export default function FindRecipes() {
     }
 
     try {
+      const token = sessionStorage.getItem('kinde_access_token');
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({ ingredients: ingredientsArray }),
       });

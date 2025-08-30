@@ -50,7 +50,14 @@ export default function RecipeDetails() {
 
   React.useEffect(() => {
     setLoading(true);
-    fetch(`${CONFIG.API_BASE_URL}/recipes/${id}`)
+    const token = sessionStorage.getItem('kinde_access_token');
+    fetch(`${CONFIG.API_BASE_URL}/recipes/${id}`,
+      {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      }
+    )
       .then((res) => {
         if (!res.ok) {
           if (res.status === 404) {
@@ -78,8 +85,12 @@ export default function RecipeDetails() {
   const handleConfirmDelete = async () => {
     setConfirmOpen(false);
     try {
+      const token = sessionStorage.getItem('kinde_access_token');
       const res = await fetch(`${CONFIG.API_BASE_URL}/recipes/${id}`, {
         method: "DELETE",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
       if (!res.ok) {
         throw new Error("Failed to delete");

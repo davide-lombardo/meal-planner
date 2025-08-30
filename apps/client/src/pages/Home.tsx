@@ -99,9 +99,13 @@ export default function Home() {
     setSendError("");
     setSendSuccess("");
     try {
+      const token = sessionStorage.getItem('kinde_access_token');
       const response = await fetch(`${CONFIG.API_BASE_URL}/menu/email`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
       if (!response.ok) throw new Error("Failed to send meal plan");
       setSendSuccess("Meal plan sent!");
@@ -118,7 +122,12 @@ export default function Home() {
   const [config, setConfig] = React.useState<any>(null);
 
   React.useEffect(() => {
-    fetch(`${CONFIG.API_BASE_URL}/config`)
+    const token = sessionStorage.getItem('kinde_access_token');
+    fetch(`${CONFIG.API_BASE_URL}/config`, {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    })
       .then((res) => res.json())
       .then((data) => setConfig(data))
       .catch(() => setConfig(null));
@@ -140,9 +149,13 @@ export default function Home() {
       }
       // Send empty text so BE generates the meal plan and grocery list
       const body = { chatId };
+      const token = sessionStorage.getItem('kinde_access_token');
       const response = await fetch(`${CONFIG.API_BASE_URL}/menu/telegram`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify(body),
       });
       if (!response.ok) throw new Error("Failed to send Telegram message");
