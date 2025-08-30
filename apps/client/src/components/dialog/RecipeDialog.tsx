@@ -25,6 +25,7 @@ import {
   Season,
   CategorySchema,
 } from "shared/schemas";
+import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
 
 interface RecipeDialogProps {
   open: boolean;
@@ -53,6 +54,7 @@ export default function RecipeDialog({
   onSave,
   initialRecipe,
 }: RecipeDialogProps) {
+  const { user } = useKindeAuth();
   const [nome, setNome] = React.useState(initialRecipe?.nome || "");
   const [ingredienti, setIngredienti] = React.useState(
     initialRecipe?.ingredienti?.join("\n") || ""
@@ -142,6 +144,7 @@ export default function RecipeDialog({
       ingredienti: ingredientiArray,
       link: link.trim() || undefined,
       stagioni: stagioni.length > 0 ? stagioni : undefined,
+      user_id: user?.id,
     };
 
     onSave(recipeToSave);

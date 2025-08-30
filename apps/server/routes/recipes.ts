@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { RecipeSchema, type Recipe } from 'shared/schemas';
 import fs from 'fs';
 import { getDb, parseRecipes } from '../services/dbHelpers';
+import jwt from 'jsonwebtoken';
 import logger from '../utils/logger';
 
 const router = Router();
@@ -49,6 +50,16 @@ router.post('/by-ingredients', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const { db } = await getDb();
+    // Extract user_id from JWT if present
+    let userId: string | null = null;
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        const token = authHeader.split(' ')[1];
+        const decoded: any = jwt.decode(token);
+        if (decoded && decoded.sub) userId = decoded.sub;
+      } catch {}
+    }
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 10;
     const offset = (page - 1) * pageSize;
@@ -71,6 +82,11 @@ router.get('/', async (req, res) => {
     if (category) {
       whereClauses.push('LOWER(categoria) = ?');
       params.push(category);
+    // User filtering: only show recipes for user or global
+    if (userId) {
+      whereClauses.push('(user_id = ? OR user_id IS NULL)');
+      params.push(userId);
+    }
     }
     const whereSQL = whereClauses.length ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
@@ -96,11 +112,21 @@ router.post('/', async (req, res) => {
     if (!parseResult.success) {
       return res.status(400).json({ error: 'Invalid recipe input', details: parseResult.error.errors });
     }
+    // Extract user_id from JWT if present
+    let userId: string | null = null;
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        const token = authHeader.split(' ')[1];
+        const decoded: any = jwt.decode(token);
+        if (decoded && decoded.sub) userId = decoded.sub;
+      } catch {}
+    }
     const { db, dbPath } = await getDb();
     const r = parseResult.data;
     const timestamp = typeof r.timestamp === 'number' && !isNaN(r.timestamp) ? r.timestamp : Date.now();
     db.run(
-      'INSERT OR REPLACE INTO recipes (id, nome, tipo, categoria, ingredienti, link, stagioni, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT OR REPLACE INTO recipes (id, nome, tipo, categoria, ingredienti, link, stagioni, timestamp, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         r.id,
         r.nome,
@@ -109,7 +135,8 @@ router.post('/', async (req, res) => {
         JSON.stringify(r.ingredienti || []),
         r.link || null,
         JSON.stringify(r.stagioni || []),
-        timestamp
+        timestamp,
+        r.user_id || null
       ]
     );
     fs.writeFileSync(dbPath, Buffer.from(db.export()));
@@ -134,7 +161,7 @@ router.put('/:id', async (req, res) => {
     const r = parseResult.data;
     const timestamp = typeof r.timestamp === 'number' && !isNaN(r.timestamp) ? r.timestamp : Date.now();
     db.run(
-      'UPDATE recipes SET nome = ?, tipo = ?, categoria = ?, ingredienti = ?, link = ?, stagioni = ?, timestamp = ? WHERE id = ?',
+      'UPDATE recipes SET nome = ?, tipo = ?, categoria = ?, ingredienti = ?, link = ?, stagioni = ?, timestamp = ?, user_id = ? WHERE id = ?',
       [
         r.nome,
         r.tipo || null,
@@ -143,6 +170,7 @@ router.put('/:id', async (req, res) => {
         r.link || null,
         JSON.stringify(r.stagioni || []),
         timestamp,
+        r.user_id || null,
         req.params.id
       ]
     );

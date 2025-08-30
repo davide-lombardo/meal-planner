@@ -13,6 +13,7 @@ export const RecipeSchema = z.object({
   link: z.union([z.string().url("Invalid URL format"), z.string(), z.literal("")]).optional(),
   stagioni: z.array(SeasonSchema).optional(),
   timestamp: z.union([z.number(), z.null()]).optional(),
+  user_id: z.string().optional(),
 });
 
 export const MenuOptionsSchema = z.object({

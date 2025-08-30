@@ -10,7 +10,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       domain={import.meta.env.VITE_KINDE_DOMAIN}
       redirectUri={window.location.origin}
       logoutUri={window.location.origin}
-      audience={import.meta.env.VITE_KINDE_AUDIENCE}
+      // audience={import.meta.env.VITE_KINDE_AUDIENCE}
     >
       <App />
     </KindeProvider>

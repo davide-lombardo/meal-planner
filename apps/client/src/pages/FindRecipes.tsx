@@ -16,11 +16,13 @@ import { RecipeSchema } from "shared/schemas";
 import { CONFIG } from "../utils/constants";
 import Layout from "../components/common/Layout";
 import { Recipe } from "shared/schemas";
+// import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
 import ErrorAlert from "../components/ErrorAlert";
 
 const API_URL = `${CONFIG.API_BASE_URL}/recipes/by-ingredients`;
 
 export default function FindRecipes() {
+  // const { user } = useKindeAuth();
   const [ingredientsInput, setIngredientsInput] = React.useState("");
   const [parsedIngredients, setParsedIngredients] = React.useState<string[]>(
     []
@@ -79,7 +81,8 @@ export default function FindRecipes() {
         return true;
       });
 
-      setMatchingRecipes(validRecipes);
+  // Use recipes directly from backend
+  setMatchingRecipes(validRecipes);
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.");
     } finally {

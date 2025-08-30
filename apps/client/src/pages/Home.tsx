@@ -26,6 +26,7 @@ import ErrorAlert from "../components/ErrorAlert";
 import Footer from "../components/Footer";
 import JoyPagination from "../components/JoyPagination";
 import { useRecipes } from "../hooks/useRecipes";
+// import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
 import { useRecipeManagement } from "../hooks/useRecipeManagement";
 
 // Debounce hook
@@ -41,6 +42,7 @@ function useDebouncedValue<T>(value: T, delay: number): T {
 const API_URL = `${CONFIG.API_BASE_URL}/recipes`;
 
 export default function Home() {
+  // const { user } = useKindeAuth();
   const theme = useTheme();
   const location = useLocation();
   const {
@@ -214,6 +216,7 @@ export default function Home() {
   };
 
   // Get unique types and categories from current page (for dropdowns)
+  // Use recipes directly from backend
   const types = Array.from(
     new Set(
       recipes.map((r) => r.tipo).filter((t): t is RecipeType => t !== undefined)

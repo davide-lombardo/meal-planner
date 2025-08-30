@@ -3,7 +3,7 @@ import { Box, Typography, useTheme } from "@mui/joy";
 import { ChefHat } from "lucide-react";
 import { ColorSchemeToggle } from "../../ThemeProvider";
 import { IconButton, Menu, MenuItem, Avatar, ListItemDecorator } from "@mui/joy";
-import { User } from "lucide-react";
+import { User, LogIn, UserPlus, LogOut, Settings } from "lucide-react";
 import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
 
 export default function Header() {
@@ -11,8 +11,10 @@ export default function Header() {
   const { login, logout, register, user, isAuthenticated } = useKindeAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement> | null) => {
+    if (event) {
+      setAnchorEl(event.currentTarget);
+    }
   };
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -83,30 +85,55 @@ export default function Header() {
         }}
       >
         <ColorSchemeToggle />
-        <IconButton onClick={handleMenuOpen} size="md" variant="plain" aria-label="user-menu">
-          <Avatar variant="outlined" size="md">
-            <User size={20} />
-          </Avatar>
+        <IconButton
+          onClick={(event) => {
+            if (open) {
+              handleMenuClose();
+            } else {
+              handleMenuOpen(event);
+            }
+          }}
+          size="md"
+          variant="plain"
+          aria-label="user-menu"
+        >
+          <User size={24} />
         </IconButton>
-        <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose} placement="bottom-end">
+        <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose} placement="bottom-end" sx={{ minWidth: 220, p: 1 }}>
           {isAuthenticated ? (
             <>
-              <MenuItem disabled>
+              <Typography level="body-xs" sx={{ px: 1, pt: 1, pb: 0.5, color: 'text.secondary', fontWeight: 700 }}>
+                Signed in as
+              </Typography>
+              <MenuItem disabled sx={{ mb: 1, bgcolor: 'background.level1', borderRadius: 2 }}>
                 <ListItemDecorator>
                   <User size={18} />
                 </ListItemDecorator>
-                {user?.email || "No email"}
+                <Typography level="body-sm" sx={{ fontWeight: 700, color: 'primary.solidBg' }}>{user?.email || "No email"}</Typography>
               </MenuItem>
-              <MenuItem onClick={() => { handleMenuClose(); logout(); }}>
+              <Typography level="body-xs" sx={{ px: 1, pt: 0.5, pb: 0.5, color: 'text.secondary', fontWeight: 700 }}>
+                Account
+              </Typography>
+              <MenuItem onClick={() => { handleMenuClose(); window.location.href = '/config'; }} sx={{ borderRadius: 2, mb: 1 }}>
+                <ListItemDecorator><Settings size={18} /></ListItemDecorator>
+                Settings
+              </MenuItem>
+              <MenuItem onClick={() => { handleMenuClose(); logout(); }} sx={{ borderRadius: 2 }}>
+                <ListItemDecorator><LogOut size={18} /></ListItemDecorator>
                 Logout
               </MenuItem>
             </>
           ) : (
             <>
-              <MenuItem onClick={() => { handleMenuClose(); login(); }}>
+              <Typography level="body-xs" sx={{ px: 1, pt: 1, pb: 0.5, color: 'text.secondary', fontWeight: 700 }}>
+                Welcome
+              </Typography>
+              <MenuItem onClick={() => { handleMenuClose(); login(); }} sx={{ borderRadius: 2, mb: 1 }}>
+                <ListItemDecorator><LogIn size={18} /></ListItemDecorator>
                 Login
               </MenuItem>
-              <MenuItem onClick={() => { handleMenuClose(); register(); }}>
+              <MenuItem onClick={() => { handleMenuClose(); register(); }} sx={{ borderRadius: 2 }}>
+                <ListItemDecorator><UserPlus size={18} /></ListItemDecorator>
                 Register
               </MenuItem>
             </>
