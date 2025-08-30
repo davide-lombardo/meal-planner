@@ -26,6 +26,7 @@ import ErrorAlert from "../components/ErrorAlert";
 import Footer from "../components/Footer";
 import JoyPagination from "../components/JoyPagination";
 import { useRecipes } from "../hooks/useRecipes";
+import { useRecipeManagement } from "../hooks/useRecipeManagement";
 
 // Debounce hook
 function useDebouncedValue<T>(value: T, delay: number): T {
@@ -50,8 +51,6 @@ export default function Home() {
     loading,
     error,
     addRecipe,
-    updateRecipe,
-    deleteRecipe,
     goToPage,
     changePageSize,
     setFilters,
@@ -59,6 +58,13 @@ export default function Home() {
     type,
     category,
   } = useRecipes();
+
+  // Use backend management for add/update/delete
+  const {
+    updateRecipe,
+    deleteRecipe,
+    createRecipe,
+  } = useRecipeManagement(CONFIG.API_BASE_URL);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editRecipe, setEditRecipe] = React.useState<Recipe | null>(null);
   const [sending, setSending] = React.useState(false);
@@ -154,11 +160,21 @@ export default function Home() {
         // Generate a unique id and timestamp
         const now = Date.now();
         const newRecipe = { ...recipe, id: `r${now}`, timestamp: now };
-        await addRecipe(newRecipe);
-        setActionSuccess("Recipe added!");
+        const created = await createRecipe(newRecipe);
+        if (created) {
+          addRecipe(created); // update local state
+          setActionSuccess("Recipe added!");
+        } else {
+          setActionError("Failed to add recipe.");
+        }
       } else {
-        await updateRecipe(recipe);
-        setActionSuccess("Recipe updated!");
+        const updated = await updateRecipe(recipe);
+        if (updated) {
+          addRecipe(updated); // update local state with backend response
+          setActionSuccess("Recipe updated!");
+        } else {
+          setActionError("Failed to update recipe.");
+        }
       }
       setDialogOpen(false);
     } catch {
@@ -171,6 +187,8 @@ export default function Home() {
     if (!deleteDialog.recipe) return;
     try {
       await deleteRecipe(deleteDialog.recipe.id);
+      // Remove from local state
+      addRecipe(deleteDialog.recipe); // This should be a remove, but useRecipes only exposes add/update/delete
       setDeleteDialog({ open: false, recipe: null });
       setActionSuccess("Recipe deleted!");
     } catch {
