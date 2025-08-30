@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import recipesRouter from './routes/recipes';
 import configRouter from './routes/config';
 import menuRouter from './routes/menu';
+import accountRouter from './routes/account';
 import logger from './utils/logger';
 import { errorHandler } from './middleware/errorHandling';
 import apiLimiter from './middleware/rateLimit';
@@ -30,6 +31,7 @@ app.use(kindeUserSync);
 app.use('/api/recipes', apiLimiter as any, recipesRouter);
 app.use('/api/config', apiLimiter as any, configRouter);
 app.use('/api/menu', apiLimiter as any, menuRouter);
+app.use('/api/account', accountRouter);
 
 // app.get('/api/debug/users', async (req, res) => {
 //   const { db } = await getDb();

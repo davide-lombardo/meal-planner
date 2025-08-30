@@ -64,6 +64,9 @@ const seasonLabels = {
 };
 
 export default function ConfigPage() {
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [deleteLoading, setDeleteLoading] = React.useState(false);
+  const [deleteError, setDeleteError] = React.useState("");
   const [config, setConfig] = React.useState<Config | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
@@ -982,7 +985,64 @@ export default function ConfigPage() {
         </Grid>
       </Grid>
 
-      {/* Notifications */}
+      {/* Account Delete Section */}
+      <Box sx={{ mt: 4, mb: 2, textAlign: 'center' }}>
+        <Button color="danger" variant="soft" onClick={() => setDeleteDialogOpen(true)}>
+          Delete Account
+        </Button>
+      </Box>
+
+      {/* Delete Confirmation Dialog */}
+      <Snackbar open={deleteDialogOpen} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+        <Alert
+          variant="solid"
+          color="danger"
+          sx={{ minWidth: 320 }}
+          endDecorator={
+            <Box>
+              <Button size="sm" color="neutral" onClick={() => setDeleteDialogOpen(false)} sx={{ mr: 1 }}>
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                color="danger"
+                loading={deleteLoading}
+                onClick={async () => {
+                  setDeleteLoading(true);
+                  setDeleteError("");
+                  try {
+                    const token = sessionStorage.getItem('kinde_access_token');
+                    const res = await fetch(`${CONFIG.API_BASE_URL}/account`, {
+                      method: 'DELETE',
+                      headers: {
+                        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                      },
+                    });
+                    if (!res.ok) {
+                      const errText = await res.text();
+                      throw new Error(errText || 'Failed to delete account');
+                    }
+                    // Log out and redirect
+                    sessionStorage.removeItem('kinde_access_token');
+                    window.location.href = '/';
+                  } catch (err) {
+                    setDeleteError(err instanceof Error ? err.message : 'Failed to delete account');
+                  } finally {
+                    setDeleteLoading(false);
+                  }
+                }}
+              >
+                Confirm Delete
+              </Button>
+            </Box>
+          }
+        >
+          Are you sure you want to delete your account? This action cannot be undone.<br />
+          {deleteError && (
+            <Typography color="danger" sx={{ mt: 1 }}>{deleteError}</Typography>
+          )}
+        </Alert>
+      </Snackbar>
       <Snackbar
         open={!!success}
         autoHideDuration={3000}
