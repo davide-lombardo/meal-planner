@@ -101,7 +101,7 @@ export default function Header() {
         </IconButton>
         <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose} placement="bottom-end" sx={{ minWidth: 220, p: 1 }}>
           {isAuthenticated ? (
-            <>
+            <Box>
               <Typography level="body-xs" sx={{ px: 1, pt: 1, pb: 0.5, color: 'text.secondary', fontWeight: 700 }}>
                 Signed in as
               </Typography>
@@ -122,9 +122,9 @@ export default function Header() {
                 <ListItemDecorator><LogOut size={18} /></ListItemDecorator>
                 Logout
               </MenuItem>
-            </>
+            </Box>
           ) : (
-            <>
+            <Box>
               <Typography level="body-xs" sx={{ px: 1, pt: 1, pb: 0.5, color: 'text.secondary', fontWeight: 700 }}>
                 Welcome
               </Typography>
@@ -136,7 +136,7 @@ export default function Header() {
                 <ListItemDecorator><UserPlus size={18} /></ListItemDecorator>
                 Register
               </MenuItem>
-            </>
+            </Box>
           )}
         </Menu>
       </Box>

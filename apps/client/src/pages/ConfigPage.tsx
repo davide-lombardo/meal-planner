@@ -72,8 +72,16 @@ export default function ConfigPage() {
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
 
   React.useEffect(() => {
-    fetch(`${CONFIG.API_BASE_URL}/config`)
-      .then((res) => res.json())
+    const accessToken = sessionStorage.getItem('kinde_access_token');
+    fetch(`${CONFIG.API_BASE_URL}/config`, {
+      headers: {
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch config');
+        return res.json();
+      })
       .then((data: Config) => {
         try {
           if (!data.menuOptions) {
@@ -143,9 +151,13 @@ export default function ConfigPage() {
 
       ConfigSchema.parse(config);
 
+      const accessToken = sessionStorage.getItem('kinde_access_token');
       const response = await fetch(`${CONFIG.API_BASE_URL}/config`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
         body: JSON.stringify(config),
       });
 

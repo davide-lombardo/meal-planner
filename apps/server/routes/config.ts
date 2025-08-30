@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { getUserIdFromRequest } from '../utils/auth';
 import { ConfigSchema, type Config, type MenuOptions } from 'shared/schemas';
 import { getDb, parseConfig } from '../services/dbHelpers';
 import logger from '../utils/logger';
@@ -7,10 +8,15 @@ import fs from 'fs';
 const router = Router();
 
 // GET /api/config
+// ...existing code...
+
 router.get('/', async (req, res) => {
   try {
     const { db } = await getDb();
-    const config = parseConfig(db.exec('SELECT menuOptions FROM config WHERE id = 1'));
+    const userId = getUserIdFromRequest(req);
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+    const result = db.exec('SELECT menuOptions FROM config WHERE user_id = ?', [userId]);
+    const config = parseConfig(result);
     if (!config.menuOptions) config.menuOptions = {};
     if (!('telegramChatId' in config.menuOptions) && process.env.TELEGRAM_CHAT_ID) {
       (config.menuOptions as any).telegramChatId = process.env.TELEGRAM_CHAT_ID;
@@ -30,8 +36,10 @@ router.put('/', async (req, res) => {
       return res.status(400).json({ error: 'Invalid config input', details: parseResult.error.errors });
     }
     const { db, dbPath } = await getDb();
-    db.run('DELETE FROM config WHERE id = 1');
-    db.run('INSERT INTO config (id, menuOptions) VALUES (?, ?)', [1, JSON.stringify(parseResult.data.menuOptions || {})]);
+    const userId = getUserIdFromRequest(req);
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+    db.run('DELETE FROM config WHERE user_id = ?', [userId]);
+    db.run('INSERT INTO config (user_id, menuOptions) VALUES (?, ?)', [userId, JSON.stringify(parseResult.data.menuOptions || {})]);
     fs.writeFileSync(dbPath, Buffer.from(db.export()));
     res.status(200).json({ message: 'Config updated' });
   } catch (err) {
