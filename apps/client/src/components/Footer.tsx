@@ -47,9 +47,22 @@ const Footer: React.FC = () => {
             fontWeight: 600,
             fontSize: 15,
             opacity: 0.9,
+            marginRight: 16,
           }}
         >
           How it works
+        </a>
+        <a
+          href="/privacy"
+          style={{
+            color: theme.palette.primary.solidBg,
+            textDecoration: "underline",
+            fontWeight: 600,
+            fontSize: 15,
+            opacity: 0.9,
+          }}
+        >
+          Privacy Policy
         </a>
       </Typography>
     </Box>
