@@ -1,15 +1,16 @@
 import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import RecipeDetails from './pages/RecipeDetails';
-import HowItWorks from './pages/HowItWorks';
-import Header from './components/common/Header';
-import ConfigPage from './pages/ConfigPage';
-import NotFound from './pages/NotFound';
-import FindRecipes from './pages/FindRecipes';
+import React, { Suspense, lazy } from 'react';
+const Home = lazy(() => import('./pages/Home'));
+const RecipeDetails = lazy(() => import('./pages/RecipeDetails'));
+const HowItWorks = lazy(() => import('./pages/HowItWorks'));
+const Header = lazy(() => import('./components/common/Header'));
+const ConfigPage = lazy(() => import('./pages/ConfigPage'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const FindRecipes = lazy(() => import('./pages/FindRecipes'));
 
 export default function AppRouter() {
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -19,6 +20,6 @@ export default function AppRouter() {
         <Route path="/find-recipes" element={<FindRecipes />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </>
+    </Suspense>
   );
 }
