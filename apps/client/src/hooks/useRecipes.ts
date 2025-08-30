@@ -17,14 +17,27 @@ export function useRecipes() {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [search, setSearch] = useState<string>('');
+  const [type, setType] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
 
-  const fetchRecipes = useCallback(async (forceRefresh = false, customPage?: number, customPageSize?: number) => {
+  const fetchRecipes = useCallback(async (forceRefresh = false, customPage?: number, customPageSize?: number, customSearch?: string, customType?: string, customCategory?: string) => {
     const currentPage = customPage ?? page;
     const currentPageSize = customPageSize ?? pageSize;
+    const currentSearch = customSearch ?? search;
+    const currentType = customType ?? type;
+    const currentCategory = customCategory ?? category;
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${CONFIG.API_BASE_URL}/recipes?page=${currentPage}&pageSize=${currentPageSize}`);
+      const params = new URLSearchParams({
+        page: String(currentPage),
+        pageSize: String(currentPageSize),
+      });
+      if (currentSearch) params.append('search', currentSearch);
+      if (currentType) params.append('type', currentType);
+      if (currentCategory) params.append('category', currentCategory);
+      const response = await fetch(`${CONFIG.API_BASE_URL}/recipes?${params.toString()}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch recipes: ${response.status}`);
       }
@@ -32,7 +45,7 @@ export function useRecipes() {
       setRecipes(data.recipes);
       setTotal(data.total);
       // Optionally cache only the first page
-      if (currentPage === 1 && !forceRefresh) {
+      if (currentPage === 1 && !forceRefresh && !currentSearch && !currentType && !currentCategory) {
         recipeCache.set(RECIPES_CACHE_KEY, data.recipes);
       }
     } catch (err) {
@@ -41,11 +54,18 @@ export function useRecipes() {
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize]);
+  }, [page, pageSize, search, type, category]);
 
   useEffect(() => {
     fetchRecipes();
-  }, [fetchRecipes, page, pageSize]);
+  }, [fetchRecipes, page, pageSize, search, type, category]);
+  // Filter setters
+  const setFilters = useCallback((newSearch: string, newType: string, newCategory: string) => {
+    setSearch(newSearch);
+    setType(newType);
+    setCategory(newCategory);
+    setPage(1); // Reset to first page on filter change
+  }, []);
 
   // Function to add a new recipe to the state and cache
   const addRecipe = useCallback((recipe: Recipe) => {
@@ -96,6 +116,10 @@ export function useRecipes() {
     loading,
     error,
     fetchRecipes,
+  setFilters,
+  search,
+  type,
+  category,
     addRecipe,
     updateRecipe,
     deleteRecipe,

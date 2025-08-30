@@ -52,11 +52,36 @@ router.get('/', async (req, res) => {
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 10;
     const offset = (page - 1) * pageSize;
-    // Get total count
-    const countResult = db.exec('SELECT COUNT(*) as count FROM recipes');
+    const search = (req.query.search as string)?.trim().toLowerCase() || '';
+    const type = (req.query.type as string)?.trim().toLowerCase() || '';
+    const category = (req.query.category as string)?.trim().toLowerCase() || '';
+
+    // Build WHERE clause
+    let whereClauses = [];
+    let params: any[] = [];
+    if (search) {
+      whereClauses.push('(LOWER(nome) LIKE ? OR LOWER(categoria) LIKE ? OR LOWER(tipo) LIKE ? OR LOWER(ingredienti) LIKE ?)');
+      const likeSearch = `%${search}%`;
+      params.push(likeSearch, likeSearch, likeSearch, likeSearch);
+    }
+    if (type) {
+      whereClauses.push('LOWER(tipo) = ?');
+      params.push(type);
+    }
+    if (category) {
+      whereClauses.push('LOWER(categoria) = ?');
+      params.push(category);
+    }
+    const whereSQL = whereClauses.length ? `WHERE ${whereClauses.join(' AND ')}` : '';
+
+    // Get total count with filters
+    const countQuery = `SELECT COUNT(*) as count FROM recipes ${whereSQL}`;
+    const countResult = db.exec(countQuery, params);
     const total = countResult[0]?.values[0]?.[0] || 0;
-    // Get paginated recipes
-    const result = db.exec(`SELECT * FROM recipes ORDER BY timestamp DESC LIMIT ${pageSize} OFFSET ${offset}`);
+
+    // Get paginated recipes with filters
+    const recipesQuery = `SELECT * FROM recipes ${whereSQL} ORDER BY timestamp DESC LIMIT ${pageSize} OFFSET ${offset}`;
+    const result = db.exec(recipesQuery, params);
     const recipes = parseRecipes(result);
     res.json({ recipes, total });
   } catch (err) {

@@ -54,6 +54,10 @@ export default function Home() {
     deleteRecipe,
     goToPage,
     changePageSize,
+    setFilters,
+    search,
+    type,
+    category,
   } = useRecipes();
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editRecipe, setEditRecipe] = React.useState<Recipe | null>(null);
@@ -67,12 +71,13 @@ export default function Home() {
     open: false,
     recipe: null,
   });
-  const [search, setSearch] = React.useState("");
   const [actionSuccess, setActionSuccess] = React.useState("");
   const [actionError, setActionError] = React.useState("");
-  const [filterType, setFilterType] = React.useState<RecipeType | "">("");
-  const [filterCategory, setFilterCategory] = React.useState<Category | "">("");
-  const debouncedSearch = useDebouncedValue(search, 250);
+  // Use local state for filter controls, but sync with backend
+  const [localSearch, setLocalSearch] = React.useState("");
+  const [localType, setLocalType] = React.useState<RecipeType | "">("");
+  const [localCategory, setLocalCategory] = React.useState<Category | "">("");
+  const debouncedSearch = useDebouncedValue(localSearch, 250);
 
   React.useEffect(() => {
     if (location.state && location.state.editRecipe) {
@@ -177,7 +182,7 @@ export default function Home() {
     setDeleteDialog({ open: true, recipe });
   };
 
-  // Get unique types and categories from recipes
+  // Get unique types and categories from current page (for dropdowns)
   const types = Array.from(
     new Set(
       recipes.map((r) => r.tipo).filter((t): t is RecipeType => t !== undefined)
@@ -191,18 +196,10 @@ export default function Home() {
     )
   );
 
-  // Filter recipes by search and dropdowns
-  const filteredRecipes = recipes.filter((r) => {
-    const q = debouncedSearch.toLowerCase();
-    const matchesSearch =
-      r.nome.toLowerCase().includes(q) ||
-      (r.categoria && r.categoria.toLowerCase().includes(q)) ||
-      (r.tipo && r.tipo.toLowerCase().includes(q)) ||
-      r.ingredienti.some((i: any) => i.toLowerCase().includes(q));
-    const matchesType = !filterType || r.tipo === filterType;
-    const matchesCategory = !filterCategory || r.categoria === filterCategory;
-    return matchesSearch && matchesType && matchesCategory;
-  });
+  // Sync filters to backend when changed
+  React.useEffect(() => {
+    setFilters(debouncedSearch, localType, localCategory);
+  }, [debouncedSearch, localType, localCategory, setFilters]);
 
   return (
     <Box
@@ -365,16 +362,16 @@ export default function Home() {
       {/* Recipes Section */}
       <Box sx={{ maxWidth: 1100, mx: "auto", px: 2, py: 2 }}>
         <FilterSection
-          search={search}
-          onSearchChange={setSearch}
-          filterType={filterType}
-          onTypeChange={setFilterType}
-          filterCategory={filterCategory}
-          onCategoryChange={setFilterCategory}
+          search={localSearch}
+          onSearchChange={setLocalSearch}
+          filterType={localType}
+          onTypeChange={setLocalType}
+          filterCategory={localCategory}
+          onCategoryChange={setLocalCategory}
           types={types}
           categories={categories}
-          filteredCount={filteredRecipes.length}
-          totalCount={recipes.length}
+          filteredCount={recipes.length}
+          totalCount={total}
         />
         {error && <ErrorAlert message={error} />}
         {loading ? (
@@ -423,7 +420,7 @@ export default function Home() {
               </Card>
             ))}
           </Box>
-        ) : filteredRecipes.length === 0 ? (
+  ) : recipes.length === 0 ? (
           <Box sx={{ textAlign: "center", color: "text.secondary", py: 8 }}>
             <img
               src="/illustrations/empty.svg"
@@ -441,7 +438,7 @@ export default function Home() {
               useFlexGap
               sx={{ justifyContent: "flex-start" }}
             >
-              {filteredRecipes.map((recipe) => (
+              {recipes.map((recipe) => (
                 <RecipeCard
                   key={recipe.id}
                   recipe={recipe}
