@@ -373,30 +373,49 @@ export default function RecipeDetails() {
             <Typography
               level="h3"
               sx={{
-                fontWeight: 800,
+                fontWeight: 900,
                 mb: 2,
-                color: "text.primary",
-                letterSpacing: 0.5,
+                color: "primary.plainColor",
+                letterSpacing: 1,
+                fontSize: { xs: 24, md: 32 },
               }}
             >
               Ingredients
             </Typography>
             <Divider sx={{ mb: 3 }} />
-            <ul
-              style={{
-                margin: 0,
-                paddingLeft: 24,
-                color: "inherit",
-                fontSize: 17,
-                lineHeight: 2,
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 1.5,
+                px: 1,
+                py: 1,
+                bgcolor: 'background.level2',
+                borderRadius: 8,
+                boxShadow: 'sm',
+                minHeight: 56,
               }}
             >
               {recipe.ingredienti.map((ing: string, idx: number) => (
-                <li key={idx} style={{ color: "inherit", marginBottom: 4 }}>
+                <Chip
+                  key={idx}
+                  sx={{
+                    fontSize: 16,
+                    fontWeight: 500,
+                    px: 2,
+                    py: 1,
+                    bgcolor: 'background.body',
+                    color: 'text.primary',
+                    borderRadius: 6,
+                    boxShadow: 'xs',
+                  }}
+                  variant="soft"
+                  size="lg"
+                >
                   {ing}
-                </li>
+                </Chip>
               ))}
-            </ul>
+            </Box>
           </CardContent>
           {recipe.link && (
             <Box sx={{ mt: 3, mb: 1, px: { xs: 2, md: 4 } }}>
