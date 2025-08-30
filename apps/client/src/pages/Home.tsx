@@ -26,7 +26,7 @@ import ErrorAlert from "../components/ErrorAlert";
 import Footer from "../components/Footer";
 import JoyPagination from "../components/JoyPagination";
 import { useRecipes } from "../hooks/useRecipes";
-// import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
+import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
 import { useRecipeManagement } from "../hooks/useRecipeManagement";
 
 // Debounce hook
@@ -42,7 +42,7 @@ function useDebouncedValue<T>(value: T, delay: number): T {
 const API_URL = `${CONFIG.API_BASE_URL}/recipes`;
 
 export default function Home() {
-  // const { user } = useKindeAuth();
+  const { isAuthenticated } = useKindeAuth();
   const theme = useTheme();
   const location = useLocation();
   const {
@@ -59,7 +59,7 @@ export default function Home() {
     search,
     type,
     category,
-  } = useRecipes();
+  } = useRecipes(isAuthenticated);
 
   // Use backend management for add/update/delete
   const {
@@ -124,6 +124,7 @@ export default function Home() {
   const [config, setConfig] = React.useState<any>(null);
 
   React.useEffect(() => {
+    if (!isAuthenticated) return;
     const token = sessionStorage.getItem('kinde_access_token');
     fetch(`${CONFIG.API_BASE_URL}/config`, {
       headers: {
@@ -133,7 +134,7 @@ export default function Home() {
       .then((res) => res.json())
       .then((data) => setConfig(data))
       .catch(() => setConfig(null));
-  }, []);
+  }, [isAuthenticated]);
 
   const handleSendTelegram = async () => {
     setTelegramSending(true);

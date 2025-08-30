@@ -10,7 +10,7 @@ const RECIPES_CACHE_KEY = 'all-recipes';
 /**
  * A custom hook for managing recipes with caching
  */
-export function useRecipes() {
+export function useRecipes(isAuthenticated?: boolean) {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [loading, setLoading] = useState(false);
@@ -22,6 +22,11 @@ export function useRecipes() {
   const [category, setCategory] = useState<string>('');
 
   const fetchRecipes = useCallback(async (forceRefresh = false, customPage?: number, customPageSize?: number, customSearch?: string, customType?: string, customCategory?: string) => {
+    if (!isAuthenticated) {
+      setRecipes([]);
+      setTotal(0);
+      return;
+    }
     const currentPage = customPage ?? page;
     const currentPageSize = customPageSize ?? pageSize;
     const currentSearch = customSearch ?? search;
@@ -37,7 +42,12 @@ export function useRecipes() {
       if (currentSearch) params.append('search', currentSearch);
       if (currentType) params.append('type', currentType);
       if (currentCategory) params.append('category', currentCategory);
-      const response = await fetch(`${CONFIG.API_BASE_URL}/recipes?${params.toString()}`);
+      const token = sessionStorage.getItem('kinde_access_token');
+      const response = await fetch(`${CONFIG.API_BASE_URL}/recipes?${params.toString()}`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       if (!response.ok) {
         throw new Error(`Failed to fetch recipes: ${response.status}`);
       }
@@ -54,7 +64,7 @@ export function useRecipes() {
     } finally {
       setLoading(false);
     }
-  }, [page, pageSize, search, type, category]);
+  }, [page, pageSize, search, type, category, isAuthenticated]);
 
   useEffect(() => {
     fetchRecipes();
