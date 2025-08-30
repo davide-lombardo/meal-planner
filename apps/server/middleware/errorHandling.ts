@@ -5,10 +5,10 @@ import logger from '../utils/logger';
  * Middleware to handle errors in a consistent way
  */
 export function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
-  // Log the error
+  // Log the full error internally
   logger.error('API error:', err);
 
-  // Set appropriate status code based on error type
+  // Set appropriate status code and generic message
   let statusCode = 500;
   let message = 'Internal Server Error';
 
@@ -26,10 +26,10 @@ export function errorHandler(err: any, req: Request, res: Response, next: NextFu
     message = 'Forbidden';
   }
 
-  // Return error response
+  // Return only generic error info to client
   res.status(statusCode).json({
     error: message,
-    details: err.details || err.errors || err.message || null,
+    // Do not expose internal error details
     timestamp: new Date().toISOString(),
   });
 }
