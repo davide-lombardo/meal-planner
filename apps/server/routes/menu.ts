@@ -21,8 +21,34 @@ import {
 
 const router = Router();
 
-// ...existing code...
 
+// GET /api/menu/history - get all menu history
+router.get("/history", async (req, res) => {
+  logger.info("GET /api/menu/history");
+  try {
+    const { db } = await getDb();
+    const history = parseHistory(db.exec("SELECT * FROM history"));
+    res.status(200).json({ history });
+  } catch (error) {
+    const errMsg = error instanceof Error ? error.message : String(error);
+    logger.error("Failed to get history:s", errMsg);
+    res.status(500).json({ message: "Failed to get history", error: errMsg });
+  }
+});
+
+// POST /api/menu/history/clear - clear all menu history
+router.post("/history/clear", async (req, res) => {
+  logger.info("POST /api/menu/history/clear");
+  try {
+    const { db } = await getDb();
+    await db.exec("DELETE FROM history");
+    res.status(200).json({ message: "History cleared" });
+  } catch (error) {
+    const errMsg = error instanceof Error ? error.message : String(error);
+    logger.error("Failed to clear history: %s", errMsg);
+    res.status(500).json({ message: "Failed to clear history", error: errMsg });
+  }
+});
 // POST /api/menu/email - send meal plan as HTML email
 router.post("/email", async (req, res) => {
   logger.info("POST /api/menu/email");
