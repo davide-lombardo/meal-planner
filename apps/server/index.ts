@@ -14,6 +14,7 @@ import { errorHandler } from './middleware/errorHandling';
 import apiLimiter from './middleware/rateLimit';
 import { kindeUserSync } from './middleware/kindeUserSync';
 import { getDb } from 'services/dbHelpers';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -46,19 +47,31 @@ app.use('/api/account', accountRouter);
 // app.post('/api/debug/migrate-history-full', async (req, res) => {
 //   const results = [];
 //   try {
-//     const { db } = await getDb();
+//     const { db, dbPath } = await getDb();
+//     // Add user_id column
 //     try {
 //       db.exec('ALTER TABLE history ADD COLUMN user_id TEXT;');
 //       results.push({ column: 'user_id', status: 'added' });
 //     } catch (err) {
 //       results.push({ column: 'user_id', status: 'error', error: err instanceof Error ? err.message : String(err) });
 //     }
+//     // Add menu column
 //     try {
 //       db.exec('ALTER TABLE history ADD COLUMN menu TEXT;');
 //       results.push({ column: 'menu', status: 'added' });
 //     } catch (err) {
 //       results.push({ column: 'menu', status: 'error', error: err instanceof Error ? err.message : String(err) });
 //     }
+//     // Add created_at column
+//     try {
+//       db.exec('ALTER TABLE history ADD COLUMN created_at INTEGER;');
+//       results.push({ column: 'created_at', status: 'added' });
+//     } catch (err) {
+//       results.push({ column: 'created_at', status: 'error', error: err instanceof Error ? err.message : String(err) });
+//     }
+//     // Persist changes to disk
+//     const data = Buffer.from(db.export());
+//     fs.writeFileSync(dbPath, data);
 //     res.status(200).json({ results });
 //   } catch (error) {
 //     res.status(500).json({ error: error instanceof Error ? error.message : String(error) });

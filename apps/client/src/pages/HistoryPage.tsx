@@ -1,11 +1,15 @@
-
 import { useEffect, useState } from "react";
 import { Box, Button, Card, CardContent, Typography, Alert } from "@mui/joy";
 import Layout from "../components/common/Layout";
 import { CONFIG } from "../utils/constants";
+import { formatMenu } from "../utils/formatMenu";
 
 export default function HistoryPage() {
-  const [history, setHistory] = useState([]);
+  type HistoryMenu = {
+    menu: any;
+    [key: string]: any;
+  };
+  const [history, setHistory] = useState<HistoryMenu[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -66,16 +70,29 @@ export default function HistoryPage() {
         </Card>
       ) : (
         <Box>
-          {history.map((menu, idx) => (
-            <Card key={idx} variant="outlined" sx={{ mb: 3 }}>
-              <CardContent>
-                <Typography level="h4" sx={{ mb: 1 }}>Menu #{history.length - idx}</Typography>
-                <pre style={{ background: "#f9f9f9", padding: 12, borderRadius: 6, overflowX: "auto", margin: 0 }}>
-                  {JSON.stringify(menu, null, 2)}
-                </pre>
-              </CardContent>
-            </Card>
-          ))}
+          {history.map((menu, idx) => {
+            // Safe JSON parse for menu.menu
+            let parsedMenu;
+            if (typeof menu.menu === "string") {
+              try {
+                parsedMenu = JSON.parse(menu.menu);
+              } catch (e) {
+                parsedMenu = null;
+              }
+            } else {
+              parsedMenu = menu.menu;
+            }
+            return (
+              <Card key={idx} variant="outlined" sx={{ mb: 3 }}>
+                <CardContent>
+                  <Typography level="title-md" sx={{ mb: 1 }}>Menu #{history.length - idx}</Typography>
+                  <pre style={{ background: "#f9f9f9", padding: 12, borderRadius: 6, overflowX: "auto", margin: 0 }}>
+                    {formatMenu(parsedMenu)}
+                  </pre>
+                </CardContent>
+              </Card>
+            );
+          })}
         </Box>
       )}
     </Layout>

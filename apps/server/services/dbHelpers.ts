@@ -6,7 +6,6 @@ import { fileURLToPath } from 'url';
 import type { QueryExecResult } from 'sql.js';
 import { type Recipe, type Menu, type Config, type MenuOptions } from 'shared/schemas';
 
-// ES module compatible __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
