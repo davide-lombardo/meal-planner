@@ -69,7 +69,7 @@ export default function HistoryPage() {
           {history.map((menu, idx) => (
             <Card key={idx} variant="outlined" sx={{ mb: 3 }}>
               <CardContent>
-                <Typography level="h5" sx={{ mb: 1 }}>Menu #{history.length - idx}</Typography>
+                <Typography level="h4" sx={{ mb: 1 }}>Menu #{history.length - idx}</Typography>
                 <pre style={{ background: "#f9f9f9", padding: 12, borderRadius: 6, overflowX: "auto", margin: 0 }}>
                   {JSON.stringify(menu, null, 2)}
                 </pre>

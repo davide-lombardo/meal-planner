@@ -67,7 +67,12 @@ router.post("/email", async (req, res) => {
     const text =
       "In allegato trovi il menu settimanale e la lista della spesa.";
     await sendEmail(subject, text, html);
-    logger.info("Meal plan email sent");
+    // Save menu to history
+    await db.exec(
+      "INSERT INTO history (user_id, menu, created_at) VALUES (?, ?, ?)",
+      [userId, JSON.stringify(menu), Date.now()]
+    );
+    logger.info("Meal plan email sent and saved to history");
     res.status(200).json({ message: "Meal plan email sent successfully" });
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
@@ -136,7 +141,12 @@ router.post("/telegram", async (req, res) => {
     for (const id of chatIds) {
       await sendTelegramMessage(fullMessage, id);
     }
-    logger.info("Telegram message sent (menu + grocery list)");
+    // Save menu to history
+    await db.exec(
+      "INSERT INTO history (user_id, menu, created_at) VALUES (?, ?, ?)",
+      [userId, JSON.stringify(menu), Date.now()]
+    );
+    logger.info("Telegram message sent (menu + grocery list) and saved to history");
     res.status(200).json({ message: "Telegram message sent successfully" });
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);

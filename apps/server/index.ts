@@ -20,7 +20,6 @@ const __dirname = path.dirname(__filename);
 const envPath = path.resolve(__dirname, '../../.env');
 dotenv.config({ path: envPath });
 
-
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -32,6 +31,39 @@ app.use('/api/recipes', apiLimiter as any, recipesRouter);
 app.use('/api/config', apiLimiter as any, configRouter);
 app.use('/api/menu', apiLimiter as any, menuRouter);
 app.use('/api/account', accountRouter);
+
+// app.get('/api/debug/history-schema', async (req, res) => {
+//   try {
+//     const { db } = await getDb();
+//     const result = db.exec('PRAGMA table_info(history);');
+//     const columns = result[0]?.values?.map(row => ({ name: row[1], type: row[2] })) || [];
+//     res.status(200).json({ columns });
+//   } catch (error) {
+//     res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
+//   }
+// });
+
+// app.post('/api/debug/migrate-history-full', async (req, res) => {
+//   const results = [];
+//   try {
+//     const { db } = await getDb();
+//     try {
+//       db.exec('ALTER TABLE history ADD COLUMN user_id TEXT;');
+//       results.push({ column: 'user_id', status: 'added' });
+//     } catch (err) {
+//       results.push({ column: 'user_id', status: 'error', error: err instanceof Error ? err.message : String(err) });
+//     }
+//     try {
+//       db.exec('ALTER TABLE history ADD COLUMN menu TEXT;');
+//       results.push({ column: 'menu', status: 'added' });
+//     } catch (err) {
+//       results.push({ column: 'menu', status: 'error', error: err instanceof Error ? err.message : String(err) });
+//     }
+//     res.status(200).json({ results });
+//   } catch (error) {
+//     res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
+//   }
+// });
 
 // app.get('/api/debug/users', async (req, res) => {
 //   const { db } = await getDb();
