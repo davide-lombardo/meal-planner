@@ -7,7 +7,6 @@ const HowItWorks = lazy(() => import('./pages/HowItWorks'));
 const Header = lazy(() => import('./components/common/Header'));
 const ConfigPage = lazy(() => import('./pages/ConfigPage'));
 const NotFound = lazy(() => import('./pages/NotFound'));
-const FindRecipes = lazy(() => import('./pages/FindRecipes'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const HistoryPage = lazy(() => import('./pages/HistoryPage'));
 
@@ -30,7 +29,7 @@ export default function AppRouter() {
         <Route path="/recipe/:id" element={<RecipeDetails />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/config" element={<ConfigPage />} />
-        <Route path="/find-recipes" element={<FindRecipes />} />
+  {/* FindRecipes route removed */}
   <Route path="/privacy" element={<PrivacyPolicy />} />
   <Route path="/history" element={<HistoryPage />} />
         <Route path="*" element={<NotFound />} />

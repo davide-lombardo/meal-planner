@@ -17,7 +17,6 @@ const theme = extendTheme({
     dark: { palette: { ...darkTheme } },
   },
 });
-// ...existing code...
 
 export function ColorSchemeToggle() {
   const { mode, setMode } = useColorScheme();

@@ -7,7 +7,7 @@ export function formatMenu(menu: any): string {
   if (!menu || !Array.isArray(menu.pranzo) || !Array.isArray(menu.cena)) {
     return "Menù non disponibile";
   }
-  let formattedMenu = "Menù settimanale:\n\n";
+  let formattedMenu = "";
   for (let i = 0; i < 7; i++) {
     formattedMenu += `${daysOfWeek[i]}:\n`;
     formattedMenu += `  Pranzo: ${menu.pranzo[i]?.nome || "Non disponibile"}\n`;

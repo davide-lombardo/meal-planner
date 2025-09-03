@@ -44,11 +44,21 @@ export function parseHistory(result: QueryExecResult[]): Menu[] {
   if (!result.length) return [];
   const columns = result[0].columns;
   return result[0].values.map((row: unknown[]) => {
-    const obj: Partial<Menu> = {};
-    columns.forEach((col: string, idx: number) => {
-      obj[col as keyof Menu] = row[idx] as any;
-    });
-    return obj as Menu;
+    const menuIdx = columns.indexOf('menu');
+    const createdIdx = columns.indexOf('created_at');
+    if (menuIdx === -1) return { pranzo: [], cena: [] };
+    const menuStr = row[menuIdx] as string;
+    const createdAt = createdIdx !== -1 ? row[createdIdx] : undefined;
+    try {
+      const parsedMenu = JSON.parse(menuStr);
+      return {
+        pranzo: Array.isArray(parsedMenu.pranzo) ? parsedMenu.pranzo : [],
+        cena: Array.isArray(parsedMenu.cena) ? parsedMenu.cena : [],
+        created_at: createdAt,
+      };
+    } catch {
+      return { pranzo: [], cena: [], created_at: createdAt };
+    }
   });
 }
 

@@ -47,6 +47,7 @@ const advancedFeatures = [
 
 export default function HowItWorks() {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   return (
     <Layout 
       title="How It Works"
@@ -119,20 +120,20 @@ export default function HowItWorks() {
         sx={{ 
           p: 4, 
           borderRadius: 3,
-          bgcolor: 'warning.50',
+          bgcolor: isDark ? 'warning.900' : 'warning.50',
           border: '2px solid',
-          borderColor: 'warning.200',
+          borderColor: isDark ? 'warning.700' : 'warning.200',
           mb: 4
         }}
       >
         <CardContent>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
             <Zap size={28} style={{ color: theme.palette.primary.solidBg }} />
-            <Typography level="h3" sx={{ fontWeight: 700, color: 'warning.800' }}>
+            <Typography level="h3" sx={{ fontWeight: 700, color: isDark ? 'warning.100' : 'warning.800' }}>
               Advanced Features
             </Typography>
           </Box>
-          <Typography level="body-md" sx={{ color: 'warning.700', mb: 3 }}>
+          <Typography level="body-md" sx={{ color: isDark ? 'warning.200' : 'warning.700', mb: 3 }}>
             Unlock these powerful features in your configuration settings:
           </Typography>
           <Box sx={{ 
@@ -146,10 +147,10 @@ export default function HowItWorks() {
                   width: 6, 
                   height: 6, 
                   borderRadius: '50%', 
-                  bgcolor: 'warning.500',
+                  bgcolor: isDark ? 'warning.300' : 'warning.500',
                   flexShrink: 0
                 }} />
-                <Typography level="body-sm" sx={{ color: 'warning.800', fontWeight: 500 }}>
+                <Typography level="body-sm" sx={{ color: isDark ? 'warning.100' : 'warning.800', fontWeight: 500 }}>
                   {feature}
                 </Typography>
               </Box>
@@ -164,17 +165,17 @@ export default function HowItWorks() {
         sx={{ 
           p: 4, 
           borderRadius: 3,
-          bgcolor: 'success.50',
+          bgcolor: isDark ? 'success.900' : 'success.50',
           border: '1px solid',
-          borderColor: 'success.200',
+          borderColor: isDark ? 'success.700' : 'success.200',
           textAlign: 'center'
         }}
       >
         <CardContent>
-          <Typography level="h4" sx={{ fontWeight: 700, color: 'success.800', mb: 2 }}>
+          <Typography level="h4" sx={{ fontWeight: 700, color: isDark ? 'success.100' : 'success.800', mb: 2 }}>
             The Result?
           </Typography>
-          <Typography level="body-lg" sx={{ color: 'success.700', lineHeight: 1.6 }}>
+          <Typography level="body-lg" sx={{ color: isDark ? 'success.200' : 'success.700', lineHeight: 1.6 }}>
             Weekly menus that are <strong>healthy</strong>, <strong>diverse</strong>, and <strong>tailored to your tastes</strong> — 
             all while saving you time and mental energy. No more "what's for dinner?" stress!
           </Typography>

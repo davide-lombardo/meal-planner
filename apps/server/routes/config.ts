@@ -8,8 +8,6 @@ import fs from 'fs';
 const router = Router();
 
 // GET /api/config
-// ...existing code...
-
 router.get('/', async (req, res) => {
   try {
     const { db } = await getDb();

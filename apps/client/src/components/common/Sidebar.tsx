@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const navItems = [
   { label: 'Home', icon: <Home size={20} />, path: '/' },
-  { label: 'Find recipes', icon: <Refrigerator size={20} />, path: '/find-recipes' },
+  // FindRecipes link removed
   { label: 'How it works', icon: <Info size={20} />, path: '/how-it-works' },
   { label: 'History', icon: <Settings size={20} />, path: '/history' },
 ];
