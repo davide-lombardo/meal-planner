@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUserIdFromRequest } from '../utils/auth';
+import { getUserIdFromRequest } from "../utils/auth";
 import {
   getDb,
   parseRecipes,
@@ -21,7 +21,6 @@ import {
 
 const router = Router();
 
-
 // GET /api/menu/history - get all menu history
 router.get("/history", async (req, res) => {
   logger.info("GET /api/menu/history");
@@ -42,7 +41,7 @@ router.post("/history/clear", async (req, res) => {
   try {
     const { db, dbPath } = await getDb();
     await db.exec("DELETE FROM history");
-    const fs = await import('fs');
+    const fs = await import("fs");
     fs.writeFileSync(dbPath, Buffer.from(db.export()));
     res.status(200).json({ message: "History cleared" });
   } catch (error) {
@@ -55,28 +54,31 @@ router.post("/history/clear", async (req, res) => {
 router.post("/email", async (req, res) => {
   logger.info("POST /api/menu/email");
   try {
-  const { db, dbPath } = await getDb();
+    const { db, dbPath } = await getDb();
+
     const userId = getUserIdFromRequest(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
     const recipes = parseRecipes(db.exec("SELECT * FROM recipes"));
     const rawHistory = db.exec("SELECT * FROM history");
-  const history = parseHistory(rawHistory);
+    const history = parseHistory(rawHistory);
     const config = parseConfig(
       db.exec("SELECT menuOptions FROM config WHERE user_id = ?", [userId])
     );
     const menu = generateMenu(recipes, history, config);
     const html = generateHtmlEmail(menu, recipes);
+
     const subject = "Il tuo Menu Settimanale";
-    const text =
-      "In allegato trovi il menu settimanale e la lista della spesa.";
+    const text = "In allegato trovi il menu settimanale e la lista della spesa.";
     await sendEmail(subject, text, html);
     // Save menu to history
     await db.exec(
       "INSERT INTO history (user_id, menu, created_at) VALUES (?, ?, ?)",
       [userId, JSON.stringify(menu), Date.now()]
     );
-  const fs = await import('fs');
-  fs.writeFileSync(dbPath, Buffer.from(db.export()));
+    
+    const fs = await import("fs");
+    fs.writeFileSync(dbPath, Buffer.from(db.export()));
     logger.info("Meal plan email sent and saved to history");
     res.status(200).json({ message: "Meal plan email sent successfully" });
   } catch (error) {
@@ -151,7 +153,9 @@ router.post("/telegram", async (req, res) => {
       "INSERT INTO history (user_id, menu, created_at) VALUES (?, ?, ?)",
       [userId, JSON.stringify(menu), Date.now()]
     );
-    logger.info("Telegram message sent (menu + grocery list) and saved to history");
+    logger.info(
+      "Telegram message sent (menu + grocery list) and saved to history"
+    );
     res.status(200).json({ message: "Telegram message sent successfully" });
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);

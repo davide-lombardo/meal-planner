@@ -21,7 +21,12 @@ export default function HistoryPage() {
     try {
       const res = await fetch(`${CONFIG.API_BASE_URL}/menu/history`);
       const data = await res.json();
-      setHistory(data.history || []);
+      // Sort by created_at descending if available
+      const sorted = (data.history || []).slice().sort((a: HistoryMenu, b: HistoryMenu) => {
+        if (a.created_at && b.created_at) return Number(b.created_at) - Number(a.created_at);
+        return 0;
+      });
+      setHistory(sorted);
     } catch (err) {
       setError("Failed to load history");
     }
@@ -83,8 +88,8 @@ export default function HistoryPage() {
             return (
               <Card key={idx} variant="outlined" sx={{ mb: 3 }}>
                 <CardContent>
-                  <Typography level="title-md" sx={{ mb: 1 }}>
-                    {dateLabel ? `Menu from ${dateLabel}` : `Menu #${history.length - idx}`}
+                  <Typography level="title-md" sx={{ mb: 1, color: 'primary.solidBg', fontSize: '1.25rem' }}>
+                    {dateLabel ? `${dateLabel}` : `Menu #${history.length - idx}`}
                   </Typography>
                   <Box sx={{ mt: 2 }}>
                     <Box sx={{ display: 'flex', gap: 4, mb: 2, px: 2 }}>

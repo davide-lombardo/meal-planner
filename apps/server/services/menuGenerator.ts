@@ -31,17 +31,27 @@ import { getSeasonalRecipes, getCurrentSeason } from './seasonalManager';
  */
 export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Config): Menu {
   const menu: Menu = { pranzo: [], cena: [] };
-  const maxWeeks = config.menuOptions.maxRepetitionWeeks || 2;
+  const maxWeeks = config.menuOptions.maxRepetitionWeeks || 4;
   const useQuotas = config.menuOptions.useQuotas !== false;
   const enableSeasonalFiltering = config.menuOptions.enableSeasonalFiltering || false;
+  const useWeightedSelection = !!config.menuOptions.useWeightedSelection;
   const currentSeason = config.menuOptions.currentSeason || getCurrentSeason();
   const weeklyQuotas = useQuotas ? { ...config.menuOptions.mealTypeQuotas } : undefined;
   const usedThisWeek = new Set<string>();
+  const recentMenus = history.slice(-maxWeeks);
   const recentlyUsed = new Set(
-    history
-      .slice(-maxWeeks)
+    recentMenus
       .flatMap((menu) => [...menu.pranzo, ...menu.cena].filter((r) => r && r.id).map((r) => r!.id)),
   );
+  // Count usage for weighted selection
+  const usageCount: Record<string, number> = {};
+  if (useWeightedSelection) {
+    for (const menu of recentMenus) {
+      for (const r of [...menu.pranzo, ...menu.cena]) {
+        if (r && r.id) usageCount[r.id] = (usageCount[r.id] || 0) + 1;
+      }
+    }
+  }
 
   const canUseRecipe = (recipe: Recipe, mealType: string) => {
     if (!recipe || usedThisWeek.has(recipe.id) || recentlyUsed.has(recipe.id)) return false;
@@ -86,7 +96,7 @@ export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Co
       if (dayIndex === 6) return { id: 'libero', nome: 'Libero', tipo: 'cena', ingredienti: [] };
     }
 
-    // Try to find recipes following all rules (including seasonal)
+    // Try to find recipes following all rules
     let available = getAvailableRecipes(mealType);
 
     // Fallback 1: Ignore quotas but keep seasonal filtering
@@ -107,7 +117,23 @@ export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Co
 
     if (available.length === 0) return null;
 
-    const selected = available[Math.floor(Math.random() * available.length)];
+    let selected: Recipe | undefined;
+    if (useWeightedSelection && available.length > 0) {
+      // Assign weights: less-used = higher weight
+      const weights = available.map(r => 1 / ((usageCount[r.id] || 0) + 1));
+      const totalWeight = weights.reduce((a, b) => a + b, 0);
+      let rnd = Math.random() * totalWeight;
+      for (let i = 0; i < available.length; i++) {
+        rnd -= weights[i];
+        if (rnd <= 0) {
+          selected = available[i];
+          break;
+        }
+      }
+      if (selected === undefined) selected = available[available.length - 1];
+    } else {
+      selected = available[Math.floor(Math.random() * available.length)];
+    }
     usedThisWeek.add(selected.id);
 
     if (useQuotas && weeklyQuotas && selected.categoria && weeklyQuotas[selected.categoria]) {
