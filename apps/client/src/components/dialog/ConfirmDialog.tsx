@@ -14,8 +14,8 @@ export default function ConfirmDialog({ open, onClose, onConfirm, message }: Con
         <DialogTitle>Confirm</DialogTitle>
         <DialogContent>{message}</DialogContent>
         <DialogActions>
-          <Button variant="plain" color="neutral" onClick={onClose}>Cancel</Button>
           <Button color="danger" variant="solid" onClick={onConfirm}>Delete</Button>
+          <Button variant="plain" color="neutral" onClick={onClose}>Cancel</Button>
         </DialogActions>
       </ModalDialog>
     </Modal>
