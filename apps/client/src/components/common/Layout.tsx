@@ -67,7 +67,7 @@ export default function Layout({
             {title}
           </Typography>
           {subtitle && (
-            <Typography level="body-lg" sx={{ color: "text.secondary" }}>
+            <Typography level="body-lg" sx={{ color: "text.secondary", maxWidth: 700, mx: 'auto' }}>
               {subtitle}
             </Typography>
           )}

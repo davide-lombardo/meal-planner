@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Box, IconButton, List, ListItem, ListItemButton, ListItemDecorator, Typography, Drawer, useTheme } from '@mui/joy';
-import { Home, Settings, Info, Menu as MenuIcon, ChevronLeft, Refrigerator, History, X as CloseIcon } from 'lucide-react';
+import { Home, Settings, Info, Menu as MenuIcon, ChevronLeft, Refrigerator, History, X as CloseIcon, CookingPot } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const navItems = [
   { label: 'Home', icon: <Home size={20} />, path: '/' },
-  { label: 'How it works', icon: <Info size={20} />, path: '/how-it-works' },
+  { label: 'Discover', icon: <CookingPot size={20} />, path: '/discovery' },
   { label: 'History', icon: <History size={20} />, path: '/history' },
 ];
 
