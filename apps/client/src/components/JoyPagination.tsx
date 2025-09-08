@@ -23,7 +23,7 @@ const JoyPagination: React.FC<PaginationProps> = ({ page, total, pageSize, onPag
         variant="plain"
         color="neutral"
         startDecorator={<ChevronLeft size={18} />}
-  sx={{ borderRadius: 8, minWidth: 36, mx: 1, px: 1.5, fontWeight: 500 }}
+  sx={{ borderRadius: 8, minWidth: 36, mx: 0.25, px: 1.5, fontWeight: 500 }}
         disabled={page === 1}
         onClick={() => onPageChange(page - 1)}
       >
@@ -39,7 +39,7 @@ const JoyPagination: React.FC<PaginationProps> = ({ page, total, pageSize, onPag
           key={i}
           variant={i === page ? "solid" : "outlined"}
           color={i === page ? "success" : "neutral"}
-          sx={{ borderRadius: 8, minWidth: 36, mx: 1, fontWeight: 600, boxShadow: i === page ? `0 0 0 2px ${theme.palette.primary[500]}` : undefined }}
+          sx={{ borderRadius: 8, minWidth: 36, mx: 0.25, fontWeight: 600, boxShadow: i === page ? `0 0 0 2px ${theme.palette.primary[500]}` : undefined }}
           onClick={() => onPageChange(i)}
           disabled={i === page}
         >
@@ -66,7 +66,7 @@ const JoyPagination: React.FC<PaginationProps> = ({ page, total, pageSize, onPag
         key={first}
         variant={page === first ? "solid" : "outlined"}
         color={page === first ? "success" : "neutral"}
-  sx={{ borderRadius: 8, minWidth: 36, mx: 1, fontWeight: 600, boxShadow: page === first ? `0 0 0 2px ${theme.palette.primary[500]}` : undefined }}
+  sx={{ borderRadius: 8, minWidth: 36, mx: 0.25, fontWeight: 600, boxShadow: page === first ? `0 0 0 2px ${theme.palette.primary[500]}` : undefined }}
         onClick={() => onPageChange(first)}
         disabled={page === first}
       >
@@ -75,7 +75,7 @@ const JoyPagination: React.FC<PaginationProps> = ({ page, total, pageSize, onPag
     );
     if (start > first + 1) {
       pageButtons.push(
-        <Typography key="start-ellipsis" sx={{ mx: 1, fontWeight: 700, fontSize: 22, color: 'text.secondary' }}>
+  <Typography key="start-ellipsis" sx={{ mx: 0.25, fontWeight: 700, fontSize: 22, color: 'text.secondary' }}>
           ...
         </Typography>
       );
@@ -86,7 +86,7 @@ const JoyPagination: React.FC<PaginationProps> = ({ page, total, pageSize, onPag
           key={i}
           variant={i === page ? "solid" : "outlined"}
           color={i === page ? "success" : "neutral"}
-    sx={{ borderRadius: 8, minWidth: 36, mx: 1, fontWeight: 600, boxShadow: i === page ? `0 0 0 2px ${theme.palette.primary[500]}` : undefined }}
+  sx={{ borderRadius: 8, minWidth: 36, mx: 0.25, fontWeight: 600, boxShadow: i === page ? `0 0 0 2px ${theme.palette.primary[500]}` : undefined }}
           onClick={() => onPageChange(i)}
           disabled={i === page}
         >
@@ -96,7 +96,7 @@ const JoyPagination: React.FC<PaginationProps> = ({ page, total, pageSize, onPag
     }
     if (end < last - 1) {
       pageButtons.push(
-        <Typography key="end-ellipsis" sx={{ mx: 1, fontWeight: 700, fontSize: 22, color: 'text.secondary' }}>
+  <Typography key="end-ellipsis" sx={{ mx: 0.25, fontWeight: 700, fontSize: 22, color: 'text.secondary' }}>
           ...
         </Typography>
       );
@@ -106,7 +106,7 @@ const JoyPagination: React.FC<PaginationProps> = ({ page, total, pageSize, onPag
         key={last}
         variant={page === last ? "solid" : "outlined"}
         color={page === last ? "success" : "neutral"}
-  sx={{ borderRadius: 8, minWidth: 36, mx: 1, fontWeight: 600, boxShadow: page === last ? `0 0 0 2px ${theme.palette.primary[500]}` : undefined }}
+  sx={{ borderRadius: 8, minWidth: 36, mx: 0.25, fontWeight: 600, boxShadow: page === last ? `0 0 0 2px ${theme.palette.primary[500]}` : undefined }}
         onClick={() => onPageChange(last)}
         disabled={page === last}
       >
@@ -122,7 +122,7 @@ const JoyPagination: React.FC<PaginationProps> = ({ page, total, pageSize, onPag
       variant="plain"
       color="neutral"
       endDecorator={<ChevronRight size={18} />}
-  sx={{ borderRadius: 8, minWidth: 36, mx: 1, px: 1.5, fontWeight: 500 }}
+  sx={{ borderRadius: 8, minWidth: 36, mx: 0.25, px: 1.5, fontWeight: 500 }}
       disabled={page === totalPages}
       onClick={() => onPageChange(page + 1)}
     >

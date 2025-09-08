@@ -131,7 +131,7 @@ export default function MealDetailPage() {
                 href={meal.strYoutube}
                 target="_blank"
                 rel="noopener noreferrer"
-                color="success"
+                color="primary"
                 variant="soft"
                 startDecorator={<ExternalLink size={18} />}
                 sx={{ fontWeight: 700, borderRadius: 8 }}

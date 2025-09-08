@@ -321,30 +321,6 @@ export default function RecipeDetails() {
             </Box>
           </Box>
         </Box>
-
-        {/* Action Buttons in Hero Section */}
-        <Box sx={{ display: "flex", gap: 2, mt: { xs: 3, md: 4 } }}>
-          <Button
-            startDecorator={<Pencil />}
-            variant="plain"
-            color="neutral"
-            onClick={handleEdit}
-            sx={{ fontWeight: 700, borderRadius: 8, px: 3, py: 1.2 }}
-            aria-label="Edit Recipe"
-          >
-            Edit
-          </Button>
-          <Button
-            startDecorator={<Trash2 />}
-            variant="plain"
-            color="neutral"
-            onClick={handleDelete}
-            sx={{ fontWeight: 700, borderRadius: 8, px: 3, py: 1.2 }}
-            aria-label="Delete Recipe"
-          >
-            Delete
-          </Button>
-        </Box>
       </Sheet>
 
       <Box
@@ -416,26 +392,45 @@ export default function RecipeDetails() {
                 </Chip>
               ))}
             </Box>
-          </CardContent>
-          {recipe.link && (
-            <Box sx={{ mt: 3, mb: 1, px: { xs: 2, md: 4 } }}>
-              <a
-                href={recipe.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: theme.palette.primary.plainColor,
-                  textDecoration: "none",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  fontWeight: 600,
-                }}
+            {/* Actions at the bottom of the card */}
+            <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-start', alignItems: 'center' }}>
+              {recipe.link && (
+                <Button
+                  component="a"
+                  href={recipe.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  color="primary"
+                  variant="soft"
+                  startDecorator={<ExternalLink size={18} />}
+                  sx={{ fontWeight: 700, borderRadius: 8 }}
+                >
+                  View full recipe
+                </Button>
+              )}
+              <Button
+                color="primary"
+                variant="soft"
+                startDecorator={<Pencil size={18} />}
+                onClick={handleEdit}
+                aria-label="Edit Recipe"
+                sx={{ fontWeight: 700, borderRadius: 8 }}
               >
-                View full recipe <ExternalLink size={18} />
-              </a>
+                Edit
+              </Button>
+              <Button
+                color="danger"
+                variant="soft"
+                startDecorator={<Trash2 size={18} />}
+                onClick={handleDelete}
+                aria-label="Delete Recipe"
+                sx={{ fontWeight: 700, borderRadius: 8 }}
+              >
+                Delete
+              </Button>
             </Box>
-          )}
+          </CardContent>
+          {/* ...existing code... */}
         </Card>
         {/* Snackbars for feedback */}
         <Snackbar
