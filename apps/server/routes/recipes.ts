@@ -7,13 +7,10 @@ import logger from "../utils/logger";
 
 const router = Router();
 
-// GET /api/recipes/:id
 router.get("/:id", async (req, res) => {
   try {
     const { db } = await getDb();
-    const result = db.exec("SELECT * FROM recipes WHERE id = ?", [
-      req.params.id,
-    ]);
+    const result = db.exec("SELECT * FROM recipes WHERE id = ?", [req.params.id]);
     if (!result.length || !result[0].values.length) {
       return res.status(404).json({ error: "Recipe not found" });
     }
@@ -24,58 +21,23 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to load recipe" });
   }
 });
+
 router.get("/", async (req, res) => {
   try {
     const { db } = await getDb();
-    // Extract user_id from JWT if present
-    let userId: string | null = null;
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.split(" ")[1];
-        const decoded: any = jwt.decode(token);
-        if (decoded && decoded.sub) userId = decoded.sub;
-      } catch {}
-    }
+    const userId = extractUserIdFromRequest(req);
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 10;
     const offset = (page - 1) * pageSize;
     const search = (req.query.search as string)?.trim().toLowerCase() || "";
     const type = (req.query.type as string)?.trim().toLowerCase() || "";
     const category = (req.query.category as string)?.trim().toLowerCase() || "";
-
-    // Build WHERE clause
-    let whereClauses = [];
-    let params: any[] = [];
-    if (search) {
-      whereClauses.push(
-        "(LOWER(nome) LIKE ? OR LOWER(categoria) LIKE ? OR LOWER(tipo) LIKE ? OR LOWER(ingredienti) LIKE ?)"
-      );
-      const likeSearch = `%${search}%`;
-      params.push(likeSearch, likeSearch, likeSearch, likeSearch);
-    }
-    if (type) {
-      whereClauses.push("LOWER(tipo) = ?");
-      params.push(type);
-    }
-    if (category) {
-      whereClauses.push("LOWER(categoria) = ?");
-      params.push(category);
-      // User filtering: only show recipes for user or global
-      if (userId) {
-        whereClauses.push("(user_id = ? OR user_id IS NULL)");
-        params.push(userId);
-      }
-    }
-    const whereSQL = whereClauses.length
-      ? `WHERE ${whereClauses.join(" AND ")}`
-      : "";
-
+    // Build WHERE clause and params
+    const { whereSQL, params } = buildRecipeFilters(search, type, category, userId);
     // Get total count with filters
     const countQuery = `SELECT COUNT(*) as count FROM recipes ${whereSQL}`;
     const countResult = db.exec(countQuery, params);
     const total = countResult[0]?.values[0]?.[0] || 0;
-
     // Get paginated recipes with filters
     const recipesQuery = `SELECT * FROM recipes ${whereSQL} ORDER BY timestamp DESC LIMIT ${pageSize} OFFSET ${offset}`;
     const result = db.exec(recipesQuery, params);
@@ -91,29 +53,15 @@ router.post("/", async (req, res) => {
   try {
     const parseResult = RecipeSchema.safeParse(req.body);
     if (!parseResult.success) {
-      return res
-        .status(400)
-        .json({
-          error: "Invalid recipe input",
-          details: parseResult.error.errors,
-        });
+      return res.status(400).json({
+        error: "Invalid recipe input",
+        details: parseResult.error.errors,
+      });
     }
-    // Extract user_id from JWT if present
-    let userId: string | null = null;
-    const authHeader = req.headers.authorization;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.split(" ")[1];
-        const decoded: any = jwt.decode(token);
-        if (decoded && decoded.sub) userId = decoded.sub;
-      } catch {}
-    }
+    const userId = extractUserIdFromRequest(req);
     const { db, dbPath } = await getDb();
     const r = parseResult.data;
-    const timestamp =
-      typeof r.timestamp === "number" && !isNaN(r.timestamp)
-        ? r.timestamp
-        : Date.now();
+    const timestamp = typeof r.timestamp === "number" && !isNaN(r.timestamp) ? r.timestamp : Date.now();
     db.run(
       "INSERT OR REPLACE INTO recipes (id, nome, tipo, categoria, ingredienti, link, stagioni, timestamp, user_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
@@ -191,5 +139,50 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete recipe" });
   }
 });
+
+// Helper to extract userId from JWT
+function extractUserIdFromRequest(req: import('express').Request): string | null {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    try {
+      const token = authHeader.split(" ")[1];
+      const decoded: any = jwt.decode(token);
+      if (decoded && decoded.sub) return decoded.sub;
+    } catch {}
+  }
+  return null;
+}
+
+// Helper to build recipe filter SQL and params
+function buildRecipeFilters(
+  search: string,
+  type: string,
+  category: string,
+  userId: string | null
+): { whereSQL: string; params: any[] } {
+  let whereClauses: string[] = [];
+  let params: any[] = [];
+  if (search) {
+    whereClauses.push(
+      "(LOWER(nome) LIKE ? OR LOWER(categoria) LIKE ? OR LOWER(tipo) LIKE ? OR LOWER(ingredienti) LIKE ?)"
+    );
+    const likeSearch = `%${search}%`;
+    params.push(likeSearch, likeSearch, likeSearch, likeSearch);
+  }
+  if (type) {
+    whereClauses.push("LOWER(tipo) = ?");
+    params.push(type);
+  }
+  if (category) {
+    whereClauses.push("LOWER(categoria) = ?");
+    params.push(category);
+    if (userId) {
+      whereClauses.push("(user_id = ? OR user_id IS NULL)");
+      params.push(userId);
+    }
+  }
+  const whereSQL = whereClauses.length ? `WHERE ${whereClauses.join(" AND ")}` : "";
+  return { whereSQL, params };
+}
 
 export default router;

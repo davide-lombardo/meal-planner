@@ -5,7 +5,7 @@ dotenv.config();
 
 const router = express.Router();
 
-// DELETE /api/account - delete current user from Kinde
+// Delete current user from Kinde
 router.delete('/', async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
@@ -37,7 +37,6 @@ router.delete('/', async (req, res) => {
       { headers: { Authorization: `Bearer ${mgmtToken}` } }
     );
 
-    // Optionally: delete user data from your DB here
 
     res.status(200).json({ message: 'Account deleted successfully' });
   } catch (err) {

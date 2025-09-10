@@ -7,7 +7,6 @@ import fs from 'fs';
 
 const router = Router();
 
-// GET /api/config
 router.get('/', async (req, res) => {
   try {
     const { db } = await getDb();
@@ -26,7 +25,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// PUT /api/config
 router.put('/', async (req, res) => {
   try {
     const parseResult = ConfigSchema.safeParse(req.body);

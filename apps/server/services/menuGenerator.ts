@@ -78,12 +78,12 @@ export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Co
   const getFallbackRecipes = (mealType: string) => {
     // Fallback options when seasonal filtering is too restrictive
     let fallbackRecipes = recipes.filter(
-      (r) => (!r.tipo || r.tipo === mealType) && !recentlyUsed.has(r.id),
+      (r) => (!r.tipo || r.tipo === mealType) && !recentlyUsed.has(r.id) && !usedThisWeek.has(r.id),
     );
 
-    // If we still have no options, ignore recent usage too
+    // If we still have no options, ignore recent usage too, but still avoid duplicates in the same week
     if (fallbackRecipes.length === 0) {
-      fallbackRecipes = recipes.filter((r) => !r.tipo || r.tipo === mealType);
+      fallbackRecipes = recipes.filter((r) => (!r.tipo || r.tipo === mealType) && !usedThisWeek.has(r.id));
     }
 
     return fallbackRecipes;
@@ -112,7 +112,8 @@ export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Co
 
     // Fallback 3: Final fallback
     if (available.length === 0) {
-      available = recipes.filter((r) => !r.tipo || r.tipo === mealType);
+      // Always avoid duplicates in the same week
+      available = recipes.filter((r) => (!r.tipo || r.tipo === mealType) && !usedThisWeek.has(r.id));
     }
 
     if (available.length === 0) return null;

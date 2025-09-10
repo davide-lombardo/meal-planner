@@ -20,8 +20,9 @@ import {
 } from "services/menuGenerator";
 
 const router = Router();
+    const fs = await import("fs");
 
-// GET /api/menu/history - get all menu history
+
 router.get("/history", async (req, res) => {
   logger.info("GET /api/menu/history");
   try {
@@ -35,13 +36,12 @@ router.get("/history", async (req, res) => {
   }
 });
 
-// POST /api/menu/history/clear - clear all menu history
+
 router.post("/history/clear", async (req, res) => {
   logger.info("POST /api/menu/history/clear");
   try {
     const { db, dbPath } = await getDb();
     await db.exec("DELETE FROM history");
-    const fs = await import("fs");
     fs.writeFileSync(dbPath, Buffer.from(db.export()));
     res.status(200).json({ message: "History cleared" });
   } catch (error) {
@@ -50,7 +50,7 @@ router.post("/history/clear", async (req, res) => {
     res.status(500).json({ message: "Failed to clear history", error: errMsg });
   }
 });
-// POST /api/menu/email - send meal plan as HTML email
+
 router.post("/email", async (req, res) => {
   logger.info("POST /api/menu/email");
   try {
@@ -69,14 +69,15 @@ router.post("/email", async (req, res) => {
     const html = generateHtmlEmail(menu, recipes);
 
     const subject = "Il tuo Menu Settimanale";
-    const text = "In allegato trovi il menu settimanale e la lista della spesa.";
+    const text =
+      "In allegato trovi il menu settimanale e la lista della spesa.";
     await sendEmail(subject, text, html);
     // Save menu to history
     await db.exec(
       "INSERT INTO history (user_id, menu, created_at) VALUES (?, ?, ?)",
       [userId, JSON.stringify(menu), Date.now()]
     );
-    
+
     const fs = await import("fs");
     fs.writeFileSync(dbPath, Buffer.from(db.export()));
     logger.info("Meal plan email sent and saved to history");
@@ -90,35 +91,21 @@ router.post("/email", async (req, res) => {
   }
 });
 
-// POST /api/menu/telegram - send meal plan or custom message to Telegram
 router.post("/telegram", async (req, res) => {
   logger.info("POST /api/menu/telegram", { body: req.body });
   try {
     const { chatId, text } = req.body;
-    const { db } = await getDb();
+    const { db, dbPath } = await getDb();
+
     const userId = getUserIdFromRequest(req);
     if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
     const config = parseConfig(
       db.exec("SELECT menuOptions FROM config WHERE user_id = ?", [userId])
     );
-    // Collect chat IDs
-    let chatIds: string[] = [];
-    if (chatId) chatIds.push(String(chatId));
-    if (
-      "telegramChatId" in config.menuOptions &&
-      config.menuOptions.telegramChatId &&
-      !chatIds.includes(String(config.menuOptions.telegramChatId))
-    ) {
-      chatIds.push(String(config.menuOptions.telegramChatId));
-    }
-    if (Array.isArray(config.menuOptions.telegramChatIds)) {
-      for (const id of config.menuOptions.telegramChatIds) {
-        if (id && !chatIds.includes(String(id))) chatIds.push(String(id));
-      }
-    }
-    if (chatIds.length === 0 && process.env.TELEGRAM_CHAT_ID) {
-      chatIds.push(String(process.env.TELEGRAM_CHAT_ID));
-    }
+
+    const chatIds = collectTelegramChatIds(chatId, config);
+
     if (chatIds.length === 0) {
       return res.status(400).json({
         error:
@@ -126,36 +113,14 @@ router.post("/telegram", async (req, res) => {
       });
     }
 
-    // Send custom text if provided
     if (text && typeof text === "string") {
-      for (const id of chatIds) {
-        await sendTelegramMessage(text, id);
-      }
-      logger.info("Telegram message sent (custom)");
+      await sendCustomTelegramMessage(text, chatIds);
       return res
         .status(200)
         .json({ message: "Telegram message sent successfully" });
     }
 
-    // Generate and send menu + shopping list
-    const recipes = parseRecipes(db.exec("SELECT * FROM recipes"));
-    const history = parseHistory(db.exec("SELECT * FROM history"));
-    const menu = generateMenu(recipes, history, config);
-    const menuText = formatMenu(menu);
-    const categorizedList = generateShoppingList(menu, recipes);
-    const groceryText = formatShoppingListForTelegram(categorizedList);
-    const fullMessage = `Ciao! Il tuo menu settimanale è pronto su Meal Planner.\n\n${menuText}\n${groceryText}`;
-    for (const id of chatIds) {
-      await sendTelegramMessage(fullMessage, id);
-    }
-    // Save menu to history
-    await db.exec(
-      "INSERT INTO history (user_id, menu, created_at) VALUES (?, ?, ?)",
-      [userId, JSON.stringify(menu), Date.now()]
-    );
-    logger.info(
-      "Telegram message sent (menu + grocery list) and saved to history"
-    );
+    await sendGeneratedMenuToTelegram(db, dbPath, userId, config, chatIds);
     res.status(200).json({ message: "Telegram message sent successfully" });
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
@@ -165,5 +130,70 @@ router.post("/telegram", async (req, res) => {
       .json({ message: "Failed to send Telegram message", error: errMsg });
   }
 });
+
+// Helper to collect all possible Telegram chat IDs
+function collectTelegramChatIds(
+  chatId: string | undefined,
+  config: { menuOptions: any }
+): string[] {
+  let chatIds: string[] = [];
+  if (chatId) chatIds.push(String(chatId));
+  if (
+    "telegramChatId" in config.menuOptions &&
+    config.menuOptions.telegramChatId &&
+    !chatIds.includes(String(config.menuOptions.telegramChatId))
+  ) {
+    chatIds.push(String(config.menuOptions.telegramChatId));
+  }
+  if (Array.isArray(config.menuOptions.telegramChatIds)) {
+    for (const id of config.menuOptions.telegramChatIds) {
+      if (id && !chatIds.includes(String(id))) chatIds.push(String(id));
+    }
+  }
+  if (chatIds.length === 0 && process.env.TELEGRAM_CHAT_ID) {
+    chatIds.push(String(process.env.TELEGRAM_CHAT_ID));
+  }
+  return chatIds;
+}
+
+// Send a custom Telegram message to all chat IDs
+async function sendCustomTelegramMessage(
+  text: string,
+  chatIds: string[]
+): Promise<void> {
+  for (const id of chatIds) {
+    await sendTelegramMessage(text, id);
+  }
+  logger.info("Telegram message sent (custom)");
+}
+
+// Generate menu, send to Telegram, and save to history
+async function sendGeneratedMenuToTelegram(
+  db: any,
+  dbPath: any,
+  userId: string,
+  config: { menuOptions: any },
+  chatIds: string[]
+): Promise<void> {
+  const recipes = parseRecipes(db.exec("SELECT * FROM recipes"));
+  const history = parseHistory(db.exec("SELECT * FROM history"));
+  const menu = generateMenu(recipes, history, config);
+  const menuText = formatMenu(menu);
+  const categorizedList = generateShoppingList(menu, recipes);
+  const groceryText = formatShoppingListForTelegram(categorizedList);
+  const fullMessage = `Ciao! Il tuo menu settimanale è pronto su Meal Planner.\n\n${menuText}\n${groceryText}`;
+    
+  for (const id of chatIds) {
+    await sendTelegramMessage(fullMessage, id);
+  }
+  await db.exec(
+    "INSERT INTO history (user_id, menu, created_at) VALUES (?, ?, ?)",
+    [userId, JSON.stringify(menu), Date.now()]
+  );
+    fs.writeFileSync(dbPath, Buffer.from(db.export()));
+  logger.info(
+    "Telegram message sent (menu + grocery list) and saved to history"
+  );
+}
 
 export default router;
