@@ -11,7 +11,7 @@ interface DiscoveryRecipeCardProps {
 }
 
 const DiscoveryRecipeCard: React.FC<DiscoveryRecipeCardProps> = ({ title, image, category, area, id }) => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const displayCategory = category && category.trim() ? category : 'Unknown';
   const displayArea = area && area.trim() ? area : 'Unknown';
   return (
@@ -26,20 +26,20 @@ const DiscoveryRecipeCard: React.FC<DiscoveryRecipeCardProps> = ({ title, image,
         borderRadius: 12,
         boxShadow: 'md',
         position: 'relative',
-            overflow: 'hidden',
-            p: 0,
-            cursor: 'pointer',
-            transition: 'transform 0.15s, box-shadow 0.15s',
-            '&:hover': {
-              transform: 'translateY(-4px) scale(1.025)',
-              boxShadow: 'lg',
-              '& .discovery-card-img': {
-                transform: 'scale(1.08)',
-              },
-            },
-          }}
-          onClick={() => navigate(`/meal/${id}`)}
-        >
+        overflow: 'hidden',
+        p: 0,
+        cursor: 'pointer',
+        transition: 'transform 0.15s, box-shadow 0.15s',
+        '&:hover': {
+          transform: 'translateY(-4px) scale(1.025)',
+          boxShadow: 'lg',
+          '& .discovery-card-img': {
+            transform: 'scale(1.08)',
+          },
+        },
+      }}
+      onClick={() => window.open(`/meal/${id}`, '_blank')}
+    >
           <Box sx={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 1 }}>
             <img
               src={image}

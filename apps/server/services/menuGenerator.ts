@@ -1,6 +1,5 @@
-import { Recipe, Menu, Config } from 'shared/schemas';
+import { Recipe, Menu, Config, Season } from 'shared/schemas';
 import { getSeasonalRecipes, getCurrentSeason } from './seasonalManager';
-
 
 /**
  * HOW MEAL SELECTION WORKS
@@ -29,23 +28,41 @@ import { getSeasonalRecipes, getCurrentSeason } from './seasonalManager';
  *
  * This ensures you always get a complete menu, even with limited recipes.
  */
-export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Config): Menu {
-  const menu: Menu = { pranzo: [], cena: [] };
-  const maxWeeks = config.menuOptions.maxRepetitionWeeks || 4;
-  const useQuotas = config.menuOptions.useQuotas !== false;
-  const enableSeasonalFiltering = config.menuOptions.enableSeasonalFiltering || false;
-  const useWeightedSelection = !!config.menuOptions.useWeightedSelection;
-  const currentSeason = config.menuOptions.currentSeason || getCurrentSeason();
-  const weeklyQuotas = useQuotas ? { ...config.menuOptions.mealTypeQuotas } : undefined;
-  const usedThisWeek = new Set<string>();
-  const recentMenus = history.slice(-maxWeeks);
+
+interface MenuGeneratorState {
+  usedThisWeek: Set<string>;
+  recentlyUsed: Set<string>;
+  weeklyQuotas?: Record<string, number>;
+  usageCount: Record<string, number>;
+}
+
+interface MenuOptions {
+  maxWeeks: number;
+  useQuotas: boolean;
+  enableSeasonalFiltering: boolean;
+  useWeightedSelection: boolean;
+  currentSeason: Season;
+}
+
+function extractMenuOptions(config: Config): MenuOptions {
+  return {
+    maxWeeks: config.menuOptions.maxRepetitionWeeks || 4,
+    useQuotas: config.menuOptions.useQuotas !== false,
+    enableSeasonalFiltering: config.menuOptions.enableSeasonalFiltering || false,
+    useWeightedSelection: config.menuOptions.useWeightedSelection || false,
+    currentSeason: config.menuOptions.currentSeason || getCurrentSeason(),
+  };
+}
+
+function initializeState(recipes: Recipe[], history: Menu[], options: MenuOptions, config: Config): MenuGeneratorState {
+  const recentMenus = history.slice(-options.maxWeeks);
   const recentlyUsed = new Set(
     recentMenus
       .flatMap((menu) => [...menu.pranzo, ...menu.cena].filter((r) => r && r.id).map((r) => r!.id)),
   );
-  // Count usage for weighted selection
+
   const usageCount: Record<string, number> = {};
-  if (useWeightedSelection) {
+  if (options.useWeightedSelection) {
     for (const menu of recentMenus) {
       for (const r of [...menu.pranzo, ...menu.cena]) {
         if (r && r.id) usageCount[r.id] = (usageCount[r.id] || 0) + 1;
@@ -53,99 +70,114 @@ export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Co
     }
   }
 
-  const canUseRecipe = (recipe: Recipe, mealType: string) => {
-    if (!recipe || usedThisWeek.has(recipe.id) || recentlyUsed.has(recipe.id)) return false;
-    if (recipe.tipo && recipe.tipo !== mealType) return false;
-    if (useQuotas && weeklyQuotas && weeklyQuotas[recipe.categoria || ''] <= 0) return false;
-    return true;
+  return {
+    usedThisWeek: new Set<string>(),
+    recentlyUsed,
+    weeklyQuotas: options.useQuotas ? { ...config.menuOptions.mealTypeQuotas } : undefined,
+    usageCount,
   };
+}
 
-  const getAvailableRecipes = (mealType: string, ignoreQuotas = false) => {
-    // First apply seasonal filtering
-    let filteredRecipes = getSeasonalRecipes(recipes, currentSeason, enableSeasonalFiltering);
+function canUseRecipe(
+  recipe: Recipe, 
+  mealType: string, 
+  state: MenuGeneratorState, 
+  options: MenuOptions,
+  ignoreQuotas = false,
+  ignoreHistory = false
+): boolean {
+  if (!recipe || state.usedThisWeek.has(recipe.id)) return false;
+  if (!ignoreHistory && state.recentlyUsed.has(recipe.id)) return false;
+  if (recipe.tipo && recipe.tipo !== mealType) return false;
+  if (!ignoreQuotas && options.useQuotas && state.weeklyQuotas && state.weeklyQuotas[recipe.categoria || ''] <= 0) return false;
+  return true;
+}
 
-    return filteredRecipes.filter((recipe) => {
-      if (!ignoreQuotas) return canUseRecipe(recipe, mealType);
-      return (
-        recipe &&
-        !usedThisWeek.has(recipe.id) &&
-        !recentlyUsed.has(recipe.id) &&
-        (!recipe.tipo || recipe.tipo === mealType)
-      );
-    });
-  };
 
-  const getFallbackRecipes = (mealType: string) => {
-    // Fallback options when seasonal filtering is too restrictive
-    let fallbackRecipes = recipes.filter(
-      (r) => (!r.tipo || r.tipo === mealType) && !recentlyUsed.has(r.id) && !usedThisWeek.has(r.id),
-    );
+function getFilteredRecipes(
+  recipes: Recipe[],
+  mealType: string,
+  state: MenuGeneratorState,
+  options: MenuOptions,
+  ignoreQuotas = false,
+  ignoreHistory = false,
+  ignoreSeasonality = false
+): Recipe[] {
+  // Apply seasonal filtering unless ignored
+  let filteredRecipes = ignoreSeasonality 
+    ? recipes 
+    : getSeasonalRecipes(recipes, options.currentSeason, options.enableSeasonalFiltering);
 
-    // If we still have no options, ignore recent usage too, but still avoid duplicates in the same week
-    if (fallbackRecipes.length === 0) {
-      fallbackRecipes = recipes.filter((r) => (!r.tipo || r.tipo === mealType) && !usedThisWeek.has(r.id));
+  return filteredRecipes.filter((recipe) => 
+    canUseRecipe(recipe, mealType, state, options, ignoreQuotas, ignoreHistory)
+  );
+}
+
+function selectWeightedRecipe(recipes: Recipe[], usageCount: Record<string, number>): Recipe {
+  if (recipes.length === 1) return recipes[0];
+
+  const weights = recipes.map(r => 1 / ((usageCount[r.id] || 0) + 1));
+  const totalWeight = weights.reduce((a, b) => a + b, 0);
+  let rnd = Math.random() * totalWeight;
+  
+  for (let i = 0; i < recipes.length; i++) {
+    rnd -= weights[i];
+    if (rnd <= 0) {
+      return recipes[i];
     }
+  }
+  
+  return recipes[recipes.length - 1];
+}
 
-    return fallbackRecipes;
-  };
+function selectRandomRecipe(recipes: Recipe[]): Recipe {
+  return recipes[Math.floor(Math.random() * recipes.length)];
+}
 
-  const selectMeal = (mealType: string, dayIndex: number): Recipe | null => {
-    // Special cases for weekend dinners
-    if (mealType === 'cena') {
-      if (dayIndex === 5) return { id: 'pizza', nome: 'Pizza', tipo: 'cena', ingredienti: [] };
-      if (dayIndex === 6) return { id: 'libero', nome: 'Libero', tipo: 'cena', ingredienti: [] };
-    }
+function selectMealWithFallbacks(
+  allRecipes: Recipe[],
+  mealType: string,
+  dayIndex: number,
+  state: MenuGeneratorState,
+  options: MenuOptions
+): Recipe | null {
+  // Special cases for weekend dinners
+  if (mealType === 'cena') {
+    if (dayIndex === 5) return { id: 'pizza', nome: 'Pizza', tipo: 'cena', ingredienti: [] };
+    if (dayIndex === 6) return { id: 'libero', nome: 'Libero', tipo: 'cena', ingredienti: [] };
+  }
 
-    // Try to find recipes following all rules
-    let available = getAvailableRecipes(mealType);
+  // Try different fallback strategies in order
+  const fallbackStrategies = [
+    () => getFilteredRecipes(allRecipes, mealType, state, options), // All rules
+    () => getFilteredRecipes(allRecipes, mealType, state, options, true), // Ignore quotas
+    () => getFilteredRecipes(allRecipes, mealType, state, options, true, false, true), // Ignore quotas + seasonality
+    () => getFilteredRecipes(allRecipes, mealType, state, options, true, true, true), // Ignore everything except duplicates
+  ];
 
-    // Fallback 1: Ignore quotas but keep seasonal filtering
-    if (available.length === 0) {
-      available = getAvailableRecipes(mealType, true);
-    }
+  for (const getAvailable of fallbackStrategies) {
+    const available = getAvailable();
+    if (available.length === 0) continue;
 
-    // Fallback 2: If seasonal filtering is too restrictive, expand to all recipes
-    if (available.length === 0 && enableSeasonalFiltering) {
-      console.warn(`No seasonal recipes available for ${mealType}, falling back to all recipes`);
-      available = getFallbackRecipes(mealType);
-    }
+    const selected = options.useWeightedSelection 
+      ? selectWeightedRecipe(available, state.usageCount)
+      : selectRandomRecipe(available);
 
-    // Fallback 3: Final fallback
-    if (available.length === 0) {
-      // Always avoid duplicates in the same week
-      available = recipes.filter((r) => (!r.tipo || r.tipo === mealType) && !usedThisWeek.has(r.id));
-    }
-
-    if (available.length === 0) return null;
-
-    let selected: Recipe | undefined;
-    if (useWeightedSelection && available.length > 0) {
-      // Assign weights: less-used = higher weight
-      const weights = available.map(r => 1 / ((usageCount[r.id] || 0) + 1));
-      const totalWeight = weights.reduce((a, b) => a + b, 0);
-      let rnd = Math.random() * totalWeight;
-      for (let i = 0; i < available.length; i++) {
-        rnd -= weights[i];
-        if (rnd <= 0) {
-          selected = available[i];
-          break;
-        }
-      }
-      if (selected === undefined) selected = available[available.length - 1];
-    } else {
-      selected = available[Math.floor(Math.random() * available.length)];
-    }
-    usedThisWeek.add(selected.id);
-
-    if (useQuotas && weeklyQuotas && selected.categoria && weeklyQuotas[selected.categoria]) {
-      weeklyQuotas[selected.categoria]--;
+    // Update state
+    state.usedThisWeek.add(selected.id);
+    if (options.useQuotas && state.weeklyQuotas && selected.categoria && state.weeklyQuotas[selected.categoria]) {
+      state.weeklyQuotas[selected.categoria]--;
     }
 
     return selected;
-  };
+  }
 
-  // Randomize meal slot selection to add variety in assignment order
+  return null;
+}
+
+function createMealSlots(): { type: 'pranzo' | 'cena'; day: number }[] {
   const allMealSlots = [] as { type: 'pranzo' | 'cena'; day: number }[];
+  
   for (let i = 0; i < 7; i++) {
     allMealSlots.push({ type: 'pranzo', day: i });
     allMealSlots.push({ type: 'cena', day: i });
@@ -157,25 +189,37 @@ export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Co
     [allMealSlots[i], allMealSlots[j]] = [allMealSlots[j], allMealSlots[i]];
   }
 
-  allMealSlots.forEach((slot) => {
-    const meal = selectMeal(slot.type, slot.day);
+  return allMealSlots;
+}
+
+export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Config): Menu {
+  const menu: Menu = { pranzo: [], cena: [] };
+  const options = extractMenuOptions(config);
+  const state = initializeState(recipes, history, options, config);
+  const mealSlots = createMealSlots();
+
+  mealSlots.forEach((slot) => {
+    const meal = selectMealWithFallbacks(recipes, slot.type, slot.day, state, options);
     if (slot.type === 'pranzo') menu.pranzo[slot.day] = meal;
     else menu.cena[slot.day] = meal;
   });
 
   return menu;
 }
+
 export function formatMenu(menu: Menu): string {
- const daysOfWeek = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
- let formattedMenu = 'Menù settimanale:\n\n';
- for (let i = 0; i < 7; i++) {
-   formattedMenu += `${daysOfWeek[i]}:\n`;
-   formattedMenu += `  Pranzo: ${menu.pranzo[i]?.nome || 'Non disponibile'}\n`;
-   formattedMenu += `  Cena: ${menu.cena[i]?.nome || 'Non disponibile'}\n\n`;
- }
- return formattedMenu;
+  const daysOfWeek = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
+  let formattedMenu = 'Menù settimanale:\n\n';
+  
+  for (let i = 0; i < 7; i++) {
+    formattedMenu += `${daysOfWeek[i]}:\n`;
+    formattedMenu += `  Pranzo: ${menu.pranzo[i]?.nome || 'Non disponibile'}\n`;
+    formattedMenu += `  Cena: ${menu.cena[i]?.nome || 'Non disponibile'}\n\n`;
+  }
+  
+  return formattedMenu;
 }
 
-// Export everything we need from other modules
+
 export { generateShoppingList } from './shoppingListGenerator';
 export { generateHtmlEmail } from './emailFormatter';

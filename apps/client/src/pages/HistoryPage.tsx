@@ -89,7 +89,7 @@ export default function HistoryPage() {
             const parsedMenu = menu;
             let dateLabel = '';
             if (menu.created_at) {
-              dateLabel = dayjs(Number(menu.created_at)).format('D MMMM YYYY');
+              dateLabel = dayjs(Number(menu.created_at)).format('D MMMM YYYY - HH:mm');
             }
 
             return (
