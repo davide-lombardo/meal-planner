@@ -307,10 +307,13 @@ export default function ConfigPage() {
               borderBottomRightRadius: "0px",
               p: 0.5,
               mb: 3,
+              gap: 1,
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
             },
             "& .MuiTab-root": {
-              borderRadius: "8px",
+              borderRadius: "12px",
+              borderBottomLeftRadius: "0px",
+              borderBottomRightRadius: "0px",
               transition: "all 0.2s ease",
               fontWeight: 600,
               "&:hover": {

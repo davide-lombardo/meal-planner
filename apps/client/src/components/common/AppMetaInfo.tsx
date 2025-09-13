@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
+import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import { Box, Typography } from "@mui/joy";
 import { Monitor, Info, User } from "lucide-react";
 import { APP_VERSION } from "../../version";
@@ -22,39 +22,47 @@ const AppMetaInfo: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{
-      width: "100%",
-      position: "fixed",
-      left: 0,
-      bottom: 0,
-      zIndex: 2000,
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      py: 1,
-      px: 2,
-      bgcolor: "background.level1",
-      color: "text.secondary",
-      fontSize: 13,
-      boxShadow: "0 -2px 8px rgba(0,0,0,0.06)",
-      borderTop: "1px solid",
-      borderColor: "divider"
-    }}>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <Info size={16} style={{ marginRight: 4 }} />
+    <Box
+      sx={{
+        width: "100%",
+        position: "fixed",
+        left: 0,
+        bottom: 0,
+        zIndex: 2000,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        py: 1,
+        px: 2,
+        bgcolor: "background.level1",
+        color: "text.secondary",
+        fontSize: 13,
+        boxShadow: "0 -2px 8px rgba(0,0,0,0.06)",
+        borderTop: "1px solid",
+        borderColor: "divider",
+      }}
+    >
+      <Box
+        sx={{
+          display: { xs: "none", sm: "flex" },
+          alignItems: "center",
+          gap: 1,
+        }}
+      >
+        <Info size={16} />
         <Typography level="body-xs" sx={{ fontWeight: 500 }}>
           Version: {APP_VERSION}
         </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <User size={16} style={{ marginRight: 4 }} />
+        <User size={16} />
         <Typography level="body-xs" sx={{ fontWeight: 500 }}>
-          {isAuthenticated ? `User: ${user?.email || "No email"}` : "Not signed in"}
+          {isAuthenticated ? `${user?.email || "No email"}` : "Not signed in"}
         </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <Monitor size={16} style={{ marginRight: 4 }} />
+        <Monitor size={16} />
         <Typography level="body-xs" sx={{ fontWeight: 500 }}>
           Screen: {screenSize}
         </Typography>
