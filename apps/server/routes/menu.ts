@@ -27,8 +27,27 @@ router.get("/history", async (req, res) => {
   logger.info("GET /api/menu/history");
   try {
     const { db } = await getDb();
-    const history = parseHistory(db.exec("SELECT * FROM history"));
-    res.status(200).json({ history });
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = (page - 1) * limit;
+    const date = req.query.date as string | undefined;
+    let whereClause = '';
+    let params: any[] = [];
+    if (date) {
+      // Expect date in YYYY-MM-DD format, filter by day
+      const start = new Date(date);
+      start.setHours(0,0,0,0);
+      const end = new Date(date);
+      end.setHours(23,59,59,999);
+      whereClause = 'WHERE created_at >= ? AND created_at <= ?';
+      params = [start.getTime(), end.getTime()];
+    }
+    const rawHistory = db.exec(`SELECT * FROM history ${whereClause} ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,...params);
+    const history = parseHistory(rawHistory);
+    // Get total count for pagination
+    const countResult = db.exec(`SELECT COUNT(*) as count FROM history ${whereClause}`,...params);
+    const total = countResult[0]?.values?.[0]?.[0] || 0;
+    res.status(200).json({ history, total });
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
     logger.error("Failed to get history:s", errMsg);
