@@ -545,42 +545,38 @@ export default function Home() {
       <Snackbar
         open={!!sendSuccess}
         autoHideDuration={3000}
+        color="success"
         onClose={() => setSendSuccess("")}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert color="success" variant="solid">
-          {sendSuccess}
-        </Alert>
+        {sendSuccess}
       </Snackbar>
       <Snackbar
         open={!!sendError}
         autoHideDuration={3000}
+        color="danger"
         onClose={() => setSendError("")}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert color="danger" variant="solid">
-          {sendError}
-        </Alert>
+        {sendError}
       </Snackbar>
       <Snackbar
         open={!!actionSuccess}
         autoHideDuration={2500}
+        color="success"
         onClose={() => setActionSuccess("")}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert color="success" variant="solid">
-          {actionSuccess}
-        </Alert>
+        {actionSuccess}
       </Snackbar>
       <Snackbar
         open={!!actionError}
         autoHideDuration={2500}
+        color="danger"
         onClose={() => setActionError("")}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert color="danger" variant="solid">
-          {actionError}
-        </Alert>
+        {actionError}
       </Snackbar>
       {/* Footer */}
       <Footer />

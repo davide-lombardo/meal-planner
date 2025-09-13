@@ -65,13 +65,18 @@ export default function HistoryPage() {
       showBackButton={true}
     >
       <Box sx={{ mb: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Input
-          type="date"
-          value={filterDate}
-          onChange={e => setFilterDate(e.target.value)}
-          sx={{ maxWidth: 220, mr: 2 }}
-          slotProps={{ input: { min: "2000-01-01", max: dayjs().format("YYYY-MM-DD") } }}
-        />
+        <Box sx={{ display: 'flex', flexDirection: 'column', mr: 2 }}>
+          <Typography level="body-sm" sx={{ mb: 0.5, fontWeight: 500 }}>
+            Filter by date
+          </Typography>
+          <Input
+            type="date"
+            value={filterDate}
+            onChange={e => setFilterDate(e.target.value)}
+            sx={{ maxWidth: 220 }}
+            slotProps={{ input: { min: "2000-01-01", max: dayjs().format("YYYY-MM-DD") } }}
+          />
+        </Box>
         <Button color="danger" variant="soft" onClick={() => setConfirmOpen(true)} disabled={loading}>
           Clear History
         </Button>

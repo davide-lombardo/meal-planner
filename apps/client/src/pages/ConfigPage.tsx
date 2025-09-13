@@ -295,7 +295,7 @@ export default function ConfigPage() {
       </Box>
 
       {/* Main Content */}
-      <Box sx={{ maxWidth: 1200, mx: "auto", px: 2 }}>
+      <Box sx={{ maxWidth: 1200, mx: "auto", px: 2, borderRadius: "12px" }}>
         <Tabs
           value={activeTab}
           onChange={(_, value) => setActiveTab(value as number)}
@@ -303,6 +303,8 @@ export default function ConfigPage() {
             "& .MuiTabList-root": {
               bgcolor: "background.level1",
               borderRadius: "12px",
+              borderBottomLeftRadius: "0px",
+              borderBottomRightRadius: "0px",
               p: 0.5,
               mb: 3,
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
