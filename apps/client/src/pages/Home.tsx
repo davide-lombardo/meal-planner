@@ -285,7 +285,7 @@ export default function Home() {
               maxWidth: 500,
             }}
           >
-            Organize your favorite recipes. Generate a weekly menu and shopping
+            Add your favorite recipes. Generate a weekly menu and shopping
             list in one click!
           </Typography>
           <Button

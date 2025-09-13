@@ -17,6 +17,14 @@ import {
   Grid,
   Select,
   Option,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanel,
+  AccordionGroup,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/joy";
 import {
   Plus,
@@ -26,6 +34,11 @@ import {
   Sun,
   Leaf,
   CloudRain,
+  Settings,
+  Calendar,
+  ShoppingCart,
+  BarChart3,
+  MessageCircle,
 } from "lucide-react";
 import {
   Config,
@@ -38,11 +51,12 @@ import { CONFIG } from "../utils/constants";
 import Layout from "../components/common/Layout";
 import { Season } from "shared/schemas";
 import CustomSwitch from "../components/CustomSwitch";
+import { useTheme } from "../hooks/useTheme";
+import { lightTheme, darkTheme } from "../theme";
 
 const getCurrentSeason = (): "spring" | "summer" | "autumn" | "winter" => {
   const now = new Date();
-  const month = now.getMonth() + 1; // getMonth() returns 0-11
-
+  const month = now.getMonth() + 1;
   if (month >= 3 && month <= 5) return "spring";
   if (month >= 6 && month <= 8) return "summer";
   if (month >= 9 && month <= 11) return "autumn";
@@ -73,7 +87,12 @@ export default function ConfigPage() {
   const [success, setSuccess] = React.useState("");
   const [error, setError] = React.useState("");
   const [hasUnsavedChanges, setHasUnsavedChanges] = React.useState(false);
+  const [activeTab, setActiveTab] = React.useState(0);
 
+  const { actualTheme } = useTheme();
+  const themeObj = actualTheme === "dark" ? darkTheme : lightTheme;
+
+  // Your existing useEffect and handlers remain the same...
   React.useEffect(() => {
     const accessToken = sessionStorage.getItem('kinde_access_token');
     fetch(`${CONFIG.API_BASE_URL}/config`, {
@@ -90,11 +109,9 @@ export default function ConfigPage() {
           if (!data.menuOptions) {
             data.menuOptions = {};
           }
-
           if (!data.menuOptions.currentSeason) {
             data.menuOptions.currentSeason = getCurrentSeason();
           }
-
           ConfigSchema.parse(data);
           setConfig(data);
         } catch (e) {
@@ -117,7 +134,6 @@ export default function ConfigPage() {
     (key: keyof MenuOptions, value: unknown) => {
       setConfig((prev: Config | null) => {
         if (!prev) return prev;
-
         const updatedConfig = {
           ...prev,
           menuOptions: {
@@ -125,7 +141,6 @@ export default function ConfigPage() {
             [key]: value,
           },
         };
-
         try {
           ConfigSchema.parse(updatedConfig);
           setHasUnsavedChanges(true);
@@ -137,7 +152,7 @@ export default function ConfigPage() {
             "Invalid configuration: " +
               (e instanceof Error ? e.message : "Unknown error")
           );
-          return prev; // Don't apply invalid changes
+          return prev;
         }
       });
     },
@@ -148,12 +163,9 @@ export default function ConfigPage() {
     setSaving(true);
     setError("");
     setSuccess("");
-
     try {
       if (!config) throw new Error("No configuration data available");
-
       ConfigSchema.parse(config);
-
       const accessToken = sessionStorage.getItem('kinde_access_token');
       const response = await fetch(`${CONFIG.API_BASE_URL}/config`, {
         method: "PUT",
@@ -163,12 +175,10 @@ export default function ConfigPage() {
         },
         body: JSON.stringify(config),
       });
-
       if (!response.ok) {
         const errorData = await response.text();
         throw new Error(`Save failed: ${errorData}`);
       }
-
       setSuccess("Configuration saved successfully!");
       setHasUnsavedChanges(false);
     } catch (e) {
@@ -195,18 +205,8 @@ export default function ConfigPage() {
 
   if (loading) {
     return (
-      <Layout
-        title="Loading..."
-        subtitle="Please wait while we load your configuration"
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: "200px",
-          }}
-        >
+      <Layout title="Loading..." subtitle="Please wait while we load your configuration">
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "200px" }}>
           <Typography level="h4" sx={{ color: "text.secondary" }}>
             Loading configuration...
           </Typography>
@@ -218,14 +218,7 @@ export default function ConfigPage() {
   if (!config) {
     return (
       <Layout title="Configuration Error" showBackButton={false}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: "200px",
-          }}
-        >
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "200px" }}>
           <Card variant="soft" color="danger">
             <CardContent>
               <Typography level="h4">Configuration Error</Typography>
@@ -240,507 +233,401 @@ export default function ConfigPage() {
   const mo = config.menuOptions || {};
 
   return (
-    <Layout
-      title="Settings"
-      subtitle="Customize how your weekly menus are generated"
-    >
-      {/* Save Button Section */}
+    <Layout title="Settings" subtitle="Customize how your weekly menus are generated">
+      {/* Sticky Save Button */}
       <Box
         sx={{
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          justifyContent: { xs: "stretch", sm: "flex-end" },
-          alignItems: { xs: "stretch", sm: "center" },
-          gap: { xs: 1.5, sm: 2 },
-          mb: 4,
-          width: "100%",
+          position: "sticky",
+          top: 0,
+          zIndex: 1000,
+          bgcolor: "background.body",
+          borderBottom: "1px solid",
+          borderColor: "divider",
+          py: 2,
+          mb: 3,
         }}
       >
-        {hasUnsavedChanges && (
-          <Chip
-            variant="soft"
-            color="warning"
-            size="sm"
-            sx={{ alignSelf: { xs: "flex-start", sm: "center" } }}
-          >
-            Unsaved changes
-          </Chip>
-        )}
-        <Button
-          variant="soft"
-          color="primary"
-          startDecorator={<Save size={18} />}
-          onClick={handleSave}
-          loading={saving}
-          disabled={!hasUnsavedChanges}
+        <Box
           sx={{
-            fontWeight: 700,
-            borderRadius: 2,
-            px: 4,
-            minWidth: 180,
-            alignSelf: { xs: "stretch", sm: "center" },
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            maxWidth: 1200,
+            mx: "auto",
+            px: 2,
           }}
         >
-          {saving ? "Saving..." : "Save Changes"}
-        </Button>
+          <Box>
+            {hasUnsavedChanges && (
+              <Chip variant="soft" color="warning" size="sm">
+                Unsaved changes
+              </Chip>
+            )}
+          </Box>
+          <Button
+            variant="solid"
+            color="primary"
+            startDecorator={<Save size={18} />}
+            onClick={handleSave}
+            loading={saving}
+            disabled={!hasUnsavedChanges}
+            sx={{ fontWeight: 600, px: 4 }}
+          >
+            {saving ? "Saving..." : "Save Changes"}
+          </Button>
+        </Box>
       </Box>
 
-      <Grid
-        container
-        spacing={4}
-        sx={{
-          width: "100%",
-          margin: 0,
-          maxWidth: 1200,
-          mx: "auto",
-          alignItems: "stretch",
-        }}
-      >
-        {/* General Settings */}
-        <Grid xs={12} sx={{ display: "flex" }}>
-          <Card
-            variant="outlined"
-            sx={{
-              flex: 1.5,
-              display: "flex",
-              flexDirection: "column",
-              height: "100%",
-              borderRadius: 3,
-              border: "2px solid",
-              borderColor: "divider",
-              boxShadow: 2,
-              zIndex: 2,
-            }}
-          >
-            <CardContent
-              sx={{ p: 5, flex: 1, display: "flex", flexDirection: "column" }}
+      {/* Main Content */}
+      <Box sx={{ maxWidth: 1200, mx: "auto", px: 2 }}>
+        <Tabs 
+          value={activeTab} 
+          onChange={(_, value) => setActiveTab(value as number)}
+          sx={{
+            '& .MuiTabList-root': {
+              bgcolor: 'background.level1',
+              borderRadius: '12px',
+              p: 0.5,
+              mb: 3,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            },
+            '& .MuiTab-root': {
+              borderRadius: '8px',
+              transition: 'all 0.2s ease',
+              fontWeight: 600,
+              '&:hover': {
+                bgcolor: 'background.level2',
+              },
+              '&[aria-selected="true"]': {
+                  bgcolor: 'background.level2',
+                  color: themeObj.primary[500],
+                  borderBottom: 'none',
+                  boxShadow: 'none',
+                  '&:hover': {
+                    bgcolor: 'background.level1',
+                  },
+              },
+            },
+          }}
+        >
+          <TabList>
+            <Tab>
+              <Settings size={16} style={{ marginRight: 8 }} />
+              General
+            </Tab>
+            <Tab>
+              <Calendar size={16} style={{ marginRight: 8 }} />
+              Seasonal
+            </Tab>
+            <Tab>
+              <ShoppingCart size={16} style={{ marginRight: 8 }} />
+              Ingredients
+            </Tab>
+            <Tab>
+              <BarChart3 size={16} style={{ marginRight: 8 }} />
+              Quotas
+            </Tab>
+          </TabList>
+
+          {/* General Tab */}
+          <TabPanel value={0} sx={{ px: 0 }}>
+            <AccordionGroup 
+              sx={{ 
+                '& .MuiAccordion-root': {
+                  borderRadius: '12px',
+                  mb: 2,
+                  '&:last-child': { mb: 0 },
+                },
+              }}
             >
-              <Typography
-                level="h3"
-                sx={{
-                  fontWeight: 800,
-                  mb: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                  fontSize: "2rem",
-                }}
-              >
-                <Save size={22} style={{ marginRight: 4 }} />
-                General Settings
-              </Typography>
-              <Box sx={{ width: "100%", my: 2 }}>
-                <Box
-                  sx={{
-                    borderBottom: "2px solid",
-                    borderColor: "divider",
-                    width: "100%",
-                  }}
-                />
-              </Box>
-              <Typography
-                level="body-sm"
-                sx={{ color: "text.secondary", mb: 3 }}
-              >
-                Basic configuration for menu generation
-              </Typography>
-              <Stack spacing={2}>
-                <Box>
-                  <FormField
-                    label="Default Telegram Chat ID"
-                    tooltip="Default Telegram chat ID to send the menu (used if not specified elsewhere)"
-                  >
-                    <Input
-                      type="text"
-                      value={mo.telegramChatId ?? ""}
-                      onChange={(e) =>
-                        setMenuOption("telegramChatId", e.target.value)
-                      }
-                      placeholder="es. 123456789"
-                      sx={{ maxWidth: 240 }}
-                    />
-                  </FormField>
-                  <FormField
-                    label="Additional Telegram Chat IDs"
-                    tooltip="Other Telegram chat IDs to send the menu (one or more, in addition to the default)"
-                  >
-                    <Stack spacing={1} sx={{ maxWidth: 340 }}>
-                      <List sx={{ "--List-gap": "8px", mb: 1 }}>
-                        {(mo.telegramChatIds || []).map(
-                          (id: string, idx: number) => (
-                            <ListItem
-                              key={id}
-                              sx={{ px: 0, py: 0.5, alignItems: "center" }}
-                            >
-                              <Input
-                                size="sm"
-                                value={id}
-                                type="text"
-                                onChange={(e) => {
-                                  const arr = [...(mo.telegramChatIds || [])];
-                                  arr[idx] = e.target.value;
-                                  setMenuOption("telegramChatIds", arr);
-                                }}
-                                sx={{
-                                  bgcolor: "background.level2",
-                                  color: "text.primary",
-                                  maxWidth: 200,
-                                  mr: 1,
-                                }}
-                                aria-label="Telegram Chat ID"
-                              />
-                              <IconButton
-                                size="md"
-                                sx={{ minWidth: 45 }}
-                                color="danger"
-                                variant="soft"
-                                onClick={() => {
-                                  const arr = [...(mo.telegramChatIds || [])];
-                                  arr.splice(idx, 1);
-                                  setMenuOption("telegramChatIds", arr);
-                                }}
-                              >
-                                <Trash2 size={14} />
-                              </IconButton>
-                            </ListItem>
-                          )
-                        )}
-                      </List>
-                      <Box sx={{ display: "flex", gap: 1 }}>
+              <Accordion>
+                <AccordionSummary>
+                  <Typography level="h4" startDecorator={<Settings size={18} />}>
+                    Basic Settings
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ p: 4 }}>
+                  <Stack spacing={4}>
+                    <Box>
+                      <FormField
+                        label="Maximum repetition weeks"
+                        tooltip="Avoid repeating recipes for this many weeks"
+                      >
                         <Input
-                          size="sm"
-                          placeholder="Add new chat ID"
-                          sx={{
-                            bgcolor: "background.level2",
-                            color: "text.primary",
-                          }}
-                          id="new-telegram-chat-id"
-                          aria-label="Add new chat ID"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              const input = document.getElementById(
-                                "new-telegram-chat-id"
-                              ) as HTMLInputElement;
-                              const val = input?.value.trim();
-                              if (val) {
-                                setMenuOption("telegramChatIds", [
-                                  ...(mo.telegramChatIds || []),
-                                  val,
-                                ]);
-                                input.value = "";
-                              }
-                            }
-                          }}
+                          type="number"
+                          value={mo.maxRepetitionWeeks ?? ""}
+                          onChange={(e) =>
+                            setMenuOption("maxRepetitionWeeks", Number(e.target.value))
+                          }
+                          placeholder="e.g. 4"
+                          sx={{ maxWidth: 180 }}
                         />
-                        <Button
-                          size="sm"
-                          variant="soft"
-                          onClick={() => {
-                            const input = document.getElementById(
-                              "new-telegram-chat-id"
-                            ) as HTMLInputElement;
-                            const val = input?.value.trim();
-                            if (val) {
-                              setMenuOption("telegramChatIds", [
-                                ...(mo.telegramChatIds || []),
-                                val,
-                              ]);
-                              input.value = "";
-                            }
-                          }}
-                          aria-label="Add new chat ID"
-                        >
-                          <Plus size={18} />
-                        </Button>
-                      </Box>
-                    </Stack>
-                  </FormField>
-                  <Box sx={{ width: "100%", my: 3 }}>
+                      </FormField>
+                    </Box>
+                    
                     <Box
                       sx={{
-                        borderBottom: "2px solid",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        p: 3,
+                        borderRadius: 3,
+                        bgcolor: "background.level1",
+                        border: "1px solid",
                         borderColor: "divider",
-                        width: "100%",
                       }}
-                    />
-                  </Box>
+                    >
+                      <Box>
+                        <Typography level="title-sm" sx={{ fontWeight: 600, mb: 0.5 }}>
+                          Enable weighted selection
+                        </Typography>
+                        <Typography level="body-sm" sx={{ color: "text.secondary" }}>
+                          Prioritize less-used recipes when generating menus
+                        </Typography>
+                      </Box>
+                      <CustomSwitch
+                        checked={!!mo.useWeightedSelection}
+                        onChange={(e) =>
+                          setMenuOption("useWeightedSelection", e.target.checked)
+                        }
+                      />
+                    </Box>
+                  </Stack>
+                </AccordionDetails>
+              </Accordion>
+
+              <Accordion>
+                <AccordionSummary>
+                  <Typography level="h4" startDecorator={<MessageCircle size={18} />}>
+                    Telegram Settings
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ p: 4 }}>
+                  <Stack spacing={4}>
+                    <Box>
+                      <FormField
+                        label="Default Telegram Chat ID"
+                        tooltip="Default Telegram chat ID to send the menu"
+                      >
+                        <Input
+                          type="text"
+                          value={mo.telegramChatId ?? ""}
+                          onChange={(e) => setMenuOption("telegramChatId", e.target.value)}
+                          placeholder="es. 123456789"
+                          sx={{ maxWidth: 280 }}
+                        />
+                      </FormField>
+                    </Box>
+
+                    <Box>
+                      <FormField
+                        label="Additional Telegram Chat IDs"
+                        tooltip="Other Telegram chat IDs to send the menu"
+                      >
+                        <Stack spacing={2} sx={{ maxWidth: 400 }}>
+                          {(mo.telegramChatIds || []).length > 0 && (
+                            <List sx={{ "--List-gap": "8px", p: 0, maxWidth: "100%", ml: 0 }}>
+                              {(mo.telegramChatIds || []).map((id: string, idx: number) => (
+                                <ListItem key={id} sx={{ px: 0, py: 1, alignItems: "center", minWidth: 0, width: "100%", ml: 0 }}>
+                                  <Input
+                                    size="md"
+                                    value={id}
+                                    type="text"
+                                    onChange={(e) => {
+                                      const arr = [...(mo.telegramChatIds || [])];
+                                      arr[idx] = e.target.value;
+                                      setMenuOption("telegramChatIds", arr);
+                                    }}
+                                    sx={{ 
+                                      bgcolor: "background.level2", 
+                                    }}
+                                  />
+                                  <IconButton
+                                    size="md"
+                                    color="danger"
+                                    variant="soft"
+                                    onClick={() => {
+                                      const arr = [...(mo.telegramChatIds || [])];
+                                      arr.splice(idx, 1);
+                                      setMenuOption("telegramChatIds", arr);
+                                    }}
+                                  >
+                                    <Trash2 size={16} />
+                                  </IconButton>
+                                </ListItem>
+                              ))}
+                            </List>
+                          )}
+                          
+                          <Box sx={{ display: "flex", gap: 1, alignItems: "flex-end" }}>
+                            <Input
+                              size="md"
+                              placeholder="Add new chat ID"
+                              id="new-telegram-chat-id"
+                              sx={{ 
+                                bgcolor: "background.level2",
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  const input = e.target as HTMLInputElement;
+                                  const val = input.value.trim();
+                                  if (val) {
+                                    setMenuOption("telegramChatIds", [
+                                      ...(mo.telegramChatIds || []),
+                                      val,
+                                    ]);
+                                    input.value = "";
+                                  }
+                                }
+                              }}
+                            />
+                            <IconButton
+                              size="md"
+                              variant="soft"
+                              color="primary"
+                              onClick={() => {
+                                const input = document.getElementById("new-telegram-chat-id") as HTMLInputElement;
+                                const val = input?.value.trim();
+                                if (val) {
+                                  setMenuOption("telegramChatIds", [
+                                    ...(mo.telegramChatIds || []),
+                                    val,
+                                  ]);
+                                  input.value = "";
+                                }
+                              }}
+                            >
+                              <Plus size={16} />
+                            </IconButton>
+                          </Box>
+                        </Stack>
+                      </FormField>
+                    </Box>
+                  </Stack>
+                </AccordionDetails>
+              </Accordion>
+            </AccordionGroup>
+          </TabPanel>
+
+          {/* Seasonal Tab */}
+          <TabPanel value={1} sx={{ px: 0 }}>
+            <Card variant="outlined" sx={{ p: 4, borderRadius: 3 }}>
+              <Stack spacing={4}>
+                <Box sx={{ textAlign: "left", mb: 2 }}>
+                  <Typography level="h2" startDecorator={seasonIcons[mo.currentSeason || "spring"]}>
+                    Seasonal Settings
+                  </Typography>
+                  <Typography level="body-md" sx={{ color: "text.secondary", mt: 1 }}>
+                    Filter recipes based on the current season
+                  </Typography>
                 </Box>
-                <FormField
-                  label="Maximum repetition weeks"
-                  tooltip="Avoid repeating recipes for this many weeks"
-                >
-                  <Input
-                    type="number"
-                    value={mo.maxRepetitionWeeks ?? ""}
-                    onChange={(e) =>
-                      setMenuOption(
-                        "maxRepetitionWeeks",
-                        Number(e.target.value)
-                      )
-                    }
-                    placeholder="e.g. 4"
-                    sx={{ maxWidth: 140 }}
-                  />
-                </FormField>
+
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    p: 2,
-                    borderRadius: 2,
-                    bgcolor: "background.level1",
-                    border: "1px solid",
-                    borderColor: "divider",
-                    mt: 1,
-                    maxWidth: 420,
-                  }}
-                >
-                  <Box>
-                    <Typography
-                      level="body-sm"
-                      sx={{ fontWeight: 600, mb: 0.5 }}
-                    >
-                      Enable weighted selection
-                    </Typography>
-                    <Typography
-                      level="body-xs"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      Prioritize less-used recipes
-                    </Typography>
-                  </Box>
-                  <CustomSwitch
-                    checked={!!mo.useWeightedSelection}
-                    onChange={(e) =>
-                      setMenuOption("useWeightedSelection", e.target.checked)
-                    }
-                  />
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Seasonal Settings */}
-        <Grid xs={12} lg={6} sx={{ display: "flex" }}>
-          <Card
-            variant="outlined"
-            sx={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              height: "100%",
-              borderRadius: 3,
-              border: "1px solid",
-              borderColor: "divider",
-            }}
-          >
-            <CardContent
-              sx={{ p: 4, flex: 1, display: "flex", flexDirection: "column" }}
-            >
-              <Typography
-                level="h3"
-                sx={{
-                  fontWeight: 700,
-                  mb: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                }}
-              >
-                {seasonIcons[mo.currentSeason || "spring"]}
-                Seasonal Settings
-              </Typography>
-              <Box sx={{ width: "100%", my: 2 }}>
-                <Box
-                  sx={{
-                    borderBottom: "2px solid",
-                    borderColor: "divider",
-                    width: "100%",
-                  }}
-                />
-              </Box>
-              <Typography
-                level="body-sm"
-                sx={{ color: "text.secondary", mb: 3 }}
-              >
-                Filter recipes based on the current season
-              </Typography>
-
-              <Stack spacing={3}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    p: 2,
-                    borderRadius: 2,
+                    p: 3,
+                    borderRadius: 3,
                     bgcolor: "background.level1",
                     border: "1px solid",
                     borderColor: "divider",
                   }}
                 >
                   <Box>
-                    <Typography
-                      level="body-sm"
-                      sx={{ fontWeight: 600, mb: 0.5 }}
-                    >
+                    <Typography level="title-sm" sx={{ fontWeight: 600, mb: 0.5 }}>
                       Enable seasonal filtering
                     </Typography>
-                    <Typography
-                      level="body-xs"
-                      sx={{ color: "text.secondary" }}
-                    >
+                    <Typography level="body-sm" sx={{ color: "text.secondary" }}>
                       Only show recipes for the current season
                     </Typography>
                   </Box>
                   <CustomSwitch
                     checked={!!mo.enableSeasonalFiltering}
-                    onChange={(e) =>
-                      handleSeasonalFilteringToggle(e.target.checked)
-                    }
+                    onChange={(e) => handleSeasonalFilteringToggle(e.target.checked)}
                   />
                 </Box>
 
-                <FormField
-                  label="Current season"
-                  tooltip="Select the current season for recipe filtering"
-                >
-                  <Select
-                    value={mo.currentSeason || getCurrentSeason()}
-                    onChange={(_, value) => {
-                      if (value) {
-                        handleSeasonChange(
-                          value as "spring" | "summer" | "autumn" | "winter"
-                        );
-                      }
-                    }}
-                    sx={{ maxWidth: 180 }}
-                  >
-                    {Object.entries(seasonLabels).map(([key, label]) => (
-                      <Option key={key} value={key}>
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          {seasonIcons[key as keyof typeof seasonIcons]}
-                          {label}
-                        </Box>
-                      </Option>
-                    ))}
-                  </Select>
-                </FormField>
+                <Box sx={{ maxWidth: 300 }}>
+                  <FormField label="Current season" tooltip="Select the current season for recipe filtering">
+                    <Select
+                      value={mo.currentSeason || getCurrentSeason()}
+                      onChange={(_, value) => {
+                        if (value) {
+                          handleSeasonChange(value as Season);
+                        }
+                      }}
+                      sx={{ width: "100%" }}
+                    >
+                      {Object.entries(seasonLabels).map(([key, label]) => (
+                        <Option key={key} value={key}>
+                          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                            {seasonIcons[key as keyof typeof seasonIcons]}
+                            {label}
+                          </Box>
+                        </Option>
+                      ))}
+                    </Select>
+                  </FormField>
+                </Box>
 
                 {mo.enableSeasonalFiltering && (
                   <Box
                     sx={{
-                      p: 2,
-                      borderRadius: 2,
-                      bgcolor: "background.level2",
+                      p: 3,
+                      borderRadius: 3,
+                      bgcolor: "primary.50",
                       border: "1px solid",
                       borderColor: "primary.200",
                     }}
                   >
-                    <Typography
-                      level="body-xs"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      Currently filtering for:{" "}
-                      <strong>
-                        {seasonLabels[mo.currentSeason || "spring"]}
-                      </strong>
+                    <Typography level="body-sm" sx={{ color: "primary.700" }}>
+                      <strong>Currently filtering for: {seasonLabels[mo.currentSeason || "spring"]}</strong>
                       <br />
-                      Only recipes marked for this season will be included in
-                      menu generation.
+                      Only recipes marked for this season will be included in menu generation.
                     </Typography>
                   </Box>
                 )}
               </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Card>
+          </TabPanel>
 
-        {/* Ingredient Planning */}
-        <Grid xs={12} lg={6} sx={{ display: "flex" }}>
-          <Card
-            variant="outlined"
-            sx={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              height: "100%",
-              borderRadius: 3,
-              border: "1px solid",
-              borderColor: "divider",
-            }}
-          >
-            <CardContent
-              sx={{ p: 4, flex: 1, display: "flex", flexDirection: "column" }}
-            >
-              <Typography
-                level="h3"
-                sx={{
-                  fontWeight: 700,
-                  mb: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                }}
-              >
-                <Leaf size={20} />
-                Ingredient Planning
-              </Typography>
-              <Box sx={{ width: "100%", my: 2 }}>
-                <Box
-                  sx={{
-                    borderBottom: "2px solid",
-                    borderColor: "divider",
-                    width: "100%",
-                  }}
-                />
-              </Box>
-              <Typography
-                level="body-sm"
-                sx={{ color: "text.secondary", mb: 3 }}
-              >
-                Optimize menus based on available ingredients
-              </Typography>
+          {/* Ingredients Tab */}
+          <TabPanel value={2} sx={{ px: 0 }}>
+            <Card variant="outlined" sx={{ p: 4, borderRadius: 3 }}>
+              <Stack spacing={4}>
+                <Box sx={{ textAlign: "left", mb: 2 }}>
+                  <Typography level="h2" startDecorator={<Leaf size={22} />}>
+                    Ingredient Planning
+                  </Typography>
+                  <Typography level="body-md" sx={{ color: "text.secondary", mt: 1 }}>
+                    Optimize menus based on available ingredients
+                  </Typography>
+                </Box>
 
-              <Stack spacing={3}>
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    p: 2,
-                    borderRadius: 2,
+                    p: 3,
+                    borderRadius: 3,
                     bgcolor: "background.level1",
                     border: "1px solid",
                     borderColor: "divider",
                   }}
                 >
                   <Box>
-                    <Typography
-                      level="body-sm"
-                      sx={{ fontWeight: 600, mb: 0.5 }}
-                    >
+                    <Typography level="title-sm" sx={{ fontWeight: 600, mb: 0.5 }}>
                       Enable ingredient planning
                     </Typography>
-                    <Typography
-                      level="body-xs"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      Prefer recipes using your ingredients
+                    <Typography level="body-sm" sx={{ color: "text.secondary" }}>
+                      Prefer recipes using your available ingredients
                     </Typography>
                   </Box>
                   <CustomSwitch
                     checked={!!mo.enableIngredientPlanning}
-                    onChange={(e) =>
-                      setMenuOption(
-                        "enableIngredientPlanning",
-                        e.target.checked
-                      )
-                    }
+                    onChange={(e) => setMenuOption("enableIngredientPlanning", e.target.checked)}
                   />
                 </Box>
 
@@ -748,169 +635,118 @@ export default function ConfigPage() {
                   <EditableArray
                     label="Available ingredients"
                     value={mo.availableIngredients || []}
-                    onChange={(arr) =>
-                      setMenuOption("availableIngredients", arr)
-                    }
+                    onChange={(arr) => setMenuOption("availableIngredients", arr)}
                     placeholder="Add ingredient"
                     tooltip="Ingredients you have at home"
                     disabled={!mo.enableIngredientPlanning}
                   />
                 </Box>
               </Stack>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Card>
+          </TabPanel>
 
-        {/* Quotas & Preferences */}
-        <Grid xs={12} sx={{ display: "flex" }}>
-          <Card
-            variant="outlined"
-            sx={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              height: "100%",
-              borderRadius: 3,
-              border: "1px solid",
-              borderColor: "divider",
-            }}
-          >
-            <CardContent
-              sx={{ p: 4, flex: 1, display: "flex", flexDirection: "column" }}
-            >
-              <Typography
-                level="h3"
-                sx={{
-                  fontWeight: 700,
-                  mb: 1,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                }}
-              >
-                <ListItemDecorator sx={{ minWidth: 0 }}>
-                  <CloudRain size={20} />
-                </ListItemDecorator>
-                Quotas & Preferences
-              </Typography>
-              <Box sx={{ width: "100%", my: 2 }}>
+          {/* Quotas Tab */}
+          <TabPanel value={3} sx={{ px: 0 }}>
+            <Card variant="outlined" sx={{ p: 4, borderRadius: 3 }}>
+              <Stack spacing={4}>
+                <Box sx={{ textAlign: "left", mb: 2 }}>
+                  <Typography level="h2" startDecorator={<BarChart3 size={22} />}>
+                    Quotas & Preferences
+                  </Typography>
+                  <Typography level="body-md" sx={{ color: "text.secondary", mt: 1 }}>
+                    Control meal frequency and set recipe preferences
+                  </Typography>
+                </Box>
+
                 <Box
                   sx={{
-                    borderBottom: "2px solid",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    p: 3,
+                    borderRadius: 3,
+                    bgcolor: "background.level1",
+                    border: "1px solid",
                     borderColor: "divider",
-                    width: "100%",
                   }}
-                />
-              </Box>
-              <Typography
-                level="body-sm"
-                sx={{ color: "text.secondary", mb: 4 }}
-              >
-                Control meal frequency and set recipe preferences
-              </Typography>
+                >
+                  <Box>
+                    <Typography level="title-sm" sx={{ fontWeight: 600, mb: 0.5 }}>
+                      Use meal type quotas
+                    </Typography>
+                    <Typography level="body-sm" sx={{ color: "text.secondary" }}>
+                      Limit specific meal types per week
+                    </Typography>
+                  </Box>
+                  <CustomSwitch
+                    checked={!!mo.useQuotas}
+                    onChange={(e) => setMenuOption("useQuotas", e.target.checked)}
+                  />
+                </Box>
 
-              <Grid container spacing={4}>
-                {/* Quotas Section */}
-                <Grid xs={12} md={6}>
-                  <Stack spacing={3}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        p: 2,
-                        borderRadius: 2,
-                        bgcolor: "background.level1",
-                        border: "1px solid",
-                        borderColor: "divider",
-                      }}
-                    >
-                      <Box>
-                        <Typography
-                          level="body-sm"
-                          sx={{ fontWeight: 600, mb: 0.5 }}
-                        >
-                          Use meal type quotas
-                        </Typography>
-                        <Typography
-                          level="body-xs"
-                          sx={{ color: "text.secondary" }}
-                        >
-                          Limit meal types per week
-                        </Typography>
-                      </Box>
-                      <CustomSwitch
-                        checked={!!mo.useQuotas}
-                        onChange={(e) =>
-                          setMenuOption("useQuotas", e.target.checked)
-                        }
-                      />
-                    </Box>
-
-                    {mo.useQuotas && (
-                      <Box>
-                        <Typography
-                          level="body-sm"
-                          sx={{ fontWeight: 600, mb: 2 }}
-                        >
-                          Weekly quotas by meal type
-                        </Typography>
-                        <Card variant="soft" sx={{ p: 2 }}>
-                          <List sx={{ "--List-gap": "8px" }}>
-                            {["pesce", "carne", "formaggio", "uova", "legumi"].map((category) => (
-                              <ListItem
-                                key={category}
-                                sx={{
-                                  bgcolor: "background.body",
-                                  borderRadius: 1,
-                                  px: 2,
-                                  py: 1,
-                                }}
-                              >
-                                <ListItemDecorator sx={{ minWidth: 120 }}>
-                                  <Typography level="body-sm" sx={{ fontWeight: 600 }}>
-                                    {category}
+                {mo.useQuotas && (
+                  <Box>
+                    <Typography level="title-md" sx={{ fontWeight: 600, mb: 3 }}>
+                      Weekly quotas by meal type
+                    </Typography>
+                    <Card variant="soft" sx={{ p: 3, borderRadius: 2 }}>
+                      <List sx={{ "--List-gap": "12px" }}>
+                        {["pesce", "carne", "formaggio", "uova", "legumi"].map((category) => (
+                          <ListItem
+                            key={category}
+                            sx={{ 
+                              bgcolor: "background.body", 
+                              borderRadius: 2, 
+                              px: 3, 
+                              py: 2,
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <ListItemDecorator sx={{ minWidth: 140 }}>
+                              <Typography level="title-sm" sx={{ fontWeight: 600, textTransform: "capitalize" }}>
+                                {category}
+                              </Typography>
+                            </ListItemDecorator>
+                            <Box sx={{ ml: "auto" }}>
+                              <Input
+                                type="number"
+                                value={mo.mealTypeQuotas?.[category] || 0}
+                                onChange={(e) =>
+                                  setMenuOption("mealTypeQuotas", {
+                                    ...mo.mealTypeQuotas,
+                                    [category]: Number(e.target.value),
+                                  })
+                                }
+                                sx={{ maxWidth: 100 }}
+                                size="md"
+                                endDecorator={
+                                  <Typography level="body-sm" sx={{ color: "text.secondary" }}>
+                                    /week
                                   </Typography>
-                                </ListItemDecorator>
-                                <Input
-                                  type="number"
-                                  value={mo.mealTypeQuotas?.[category] || 0}
-                                  onChange={(e) =>
-                                    setMenuOption("mealTypeQuotas", {
-                                      ...mo.mealTypeQuotas,
-                                      [category]: Number(e.target.value),
-                                    })
-                                  }
-                                  sx={{ maxWidth: 80, ml: "auto", mr: 1 }}
-                                  size="sm"
-                                />
-                              </ListItem>
-                            ))}
-                          </List>
-                        </Card>
-                      </Box>
-                    )}
-                  </Stack>
-                </Grid>
+                                }
+                              />
+                            </Box>
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Card>
+                  </Box>
+                )}
+              </Stack>
+            </Card>
+          </TabPanel>
+        </Tabs>
 
-                {/* Preferences section */}
-                <Grid xs={12} md={6}>
-                  {/* Preferences section removed as requested */}
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      {/* Account Delete Section */}
-      <Box sx={{ mt: 4, mb: 2, textAlign: 'center' }}>
-        <Button color="danger" variant="soft" onClick={() => setDeleteDialogOpen(true)}>
-          Delete Account
-        </Button>
+        {/* Account Delete Section */}
+        <Box sx={{ mt: 6, pt: 4, borderTop: "1px solid", borderColor: "divider", textAlign: "center" }}>
+          <Button color="danger" variant="soft" onClick={() => setDeleteDialogOpen(true)}>
+            Delete Account
+          </Button>
+        </Box>
       </Box>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Your existing Snackbars and dialogs remain the same... */}
       <Snackbar open={deleteDialogOpen} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
         <Alert
           variant="solid"
@@ -940,7 +776,6 @@ export default function ConfigPage() {
                       const errText = await res.text();
                       throw new Error(errText || 'Failed to delete account');
                     }
-                    // Log out and redirect
                     sessionStorage.removeItem('kinde_access_token');
                     window.location.href = '/';
                   } catch (err) {
@@ -955,12 +790,13 @@ export default function ConfigPage() {
             </Box>
           }
         >
-          Are you sure you want to delete your account? This action cannot be undone.<br />
+          Are you sure you want to delete your account? This action cannot be undone.
           {deleteError && (
             <Typography color="danger" sx={{ mt: 1 }}>{deleteError}</Typography>
           )}
         </Alert>
       </Snackbar>
+
       <Snackbar
         open={!!success}
         autoHideDuration={3000}

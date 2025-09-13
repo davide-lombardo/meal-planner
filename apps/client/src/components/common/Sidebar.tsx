@@ -115,12 +115,11 @@ export default function Sidebar() {
   if (isMobile) {
     return (
       <>
-        <Box sx={{ position: 'fixed', top: 16, left: 16, zIndex: 2100, display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ position: 'fixed', top: 9, left: 16, zIndex: 2100, display: 'flex', alignItems: 'center' }}>
           <IconButton
             onClick={() => setMobileOpen(true)}
             variant="plain"
             color="neutral"
-            sx={{ mr: 1 }}
             aria-label="Open sidebar"
           >
             <MenuIcon size={28} />

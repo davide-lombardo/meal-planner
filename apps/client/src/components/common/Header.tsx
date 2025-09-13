@@ -55,11 +55,13 @@ export default function Header() {
             gap: 0.5,
           }}
         >
-          <img
-            src="/meal-planner-logo.svg"
-            alt="Meal Planner Logo"
-            style={{ width: 80, height: 80 }}
-          />
+          <Box sx={{ display: { xs: 'none', sm: 'inline-block' } }}>
+            <img
+              src="/meal-planner-logo.svg"
+              alt="Meal Planner Logo"
+              style={{ width: 80, height: 80 }}
+            />
+          </Box>
           <span
             style={{
               marginLeft: "0",
