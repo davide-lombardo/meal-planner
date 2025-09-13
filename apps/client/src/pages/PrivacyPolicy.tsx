@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Box, Typography } from '@mui/joy';
 
 export default function PrivacyPolicy() {

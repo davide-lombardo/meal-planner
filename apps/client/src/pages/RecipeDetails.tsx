@@ -50,14 +50,12 @@ export default function RecipeDetails() {
 
   React.useEffect(() => {
     setLoading(true);
-    const token = sessionStorage.getItem('kinde_access_token');
-    fetch(`${CONFIG.API_BASE_URL}/recipes/${id}`,
-      {
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      }
-    )
+    const token = sessionStorage.getItem("kinde_access_token");
+    fetch(`${CONFIG.API_BASE_URL}/recipes/${id}`, {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    })
       .then((res) => {
         if (!res.ok) {
           if (res.status === 404) {
@@ -85,7 +83,7 @@ export default function RecipeDetails() {
   const handleConfirmDelete = async () => {
     setConfirmOpen(false);
     try {
-      const token = sessionStorage.getItem('kinde_access_token');
+      const token = sessionStorage.getItem("kinde_access_token");
       const res = await fetch(`${CONFIG.API_BASE_URL}/recipes/${id}`, {
         method: "DELETE",
         headers: {
@@ -361,14 +359,14 @@ export default function RecipeDetails() {
             <Divider sx={{ mb: 3 }} />
             <Box
               sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
+                display: "flex",
+                flexWrap: "wrap",
                 gap: 1.5,
                 px: 1,
                 py: 1,
-                bgcolor: 'background.level2',
+                bgcolor: "background.level2",
                 borderRadius: 8,
-                boxShadow: 'sm',
+                boxShadow: "sm",
                 minHeight: 56,
               }}
             >
@@ -380,10 +378,10 @@ export default function RecipeDetails() {
                     fontWeight: 500,
                     px: 2,
                     py: 1,
-                    bgcolor: 'background.body',
-                    color: 'text.primary',
+                    bgcolor: "background.body",
+                    color: "text.primary",
                     borderRadius: 6,
-                    boxShadow: 'xs',
+                    boxShadow: "xs",
                   }}
                   variant="soft"
                   size="lg"
@@ -392,8 +390,17 @@ export default function RecipeDetails() {
                 </Chip>
               ))}
             </Box>
+
             {/* Actions at the bottom of the card */}
-            <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-start', alignItems: 'center' }}>
+            <Box
+              sx={{
+                mt: 4,
+                display: "flex",
+                gap: 2,
+                justifyContent: "flex-start",
+                alignItems: "center",
+              }}
+            >
               {recipe.link && (
                 <Button
                   component="a"
@@ -430,7 +437,6 @@ export default function RecipeDetails() {
               </Button>
             </Box>
           </CardContent>
-          {/* ...existing code... */}
         </Card>
         {/* Snackbars for feedback */}
         <Snackbar

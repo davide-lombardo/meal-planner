@@ -1,8 +1,7 @@
 import React from "react";
 import { Box, Typography, useTheme } from "@mui/joy";
-import { ChefHat } from "lucide-react";
 import { ColorSchemeToggle } from "../../ThemeProvider";
-import { IconButton, Menu, MenuItem, Avatar, ListItemDecorator } from "@mui/joy";
+import { IconButton, Menu, MenuItem, ListItemDecorator } from "@mui/joy";
 import { User, LogIn, UserPlus, LogOut, Settings } from "lucide-react";
 import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
 

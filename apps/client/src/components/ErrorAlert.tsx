@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { Alert } from '@mui/joy';
-import { Search } from 'lucide-react';
+import * as React from "react";
+import { Alert } from "@mui/joy";
+import { Search } from "lucide-react";
 
 interface ErrorAlertProps {
   message: string;
@@ -16,14 +16,14 @@ export default function ErrorAlert({ message, icon, sx }: ErrorAlertProps) {
       sx={{
         mb: 2,
         maxWidth: 600,
-        mx: 'auto',
-        border: '1px solid',
-        borderColor: 'warning.solidBg',
-        bgcolor: 'warning.softBg',
-        color: 'text.primary',
+        mx: "auto",
+        border: "1px solid",
+        borderColor: "warning.solidBg",
+        bgcolor: "warning.softBg",
+        color: "text.primary",
         fontWeight: 500,
-        fontSize: '16px',
-        alignItems: 'center',
+        fontSize: "16px",
+        alignItems: "center",
         gap: 1.5,
         ...sx,
       }}

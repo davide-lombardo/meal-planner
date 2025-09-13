@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/joy';
-import { useNavigate } from 'react-router-dom';
 
 interface DiscoveryRecipeCardProps {
   title: string;
@@ -11,7 +10,7 @@ interface DiscoveryRecipeCardProps {
 }
 
 const DiscoveryRecipeCard: React.FC<DiscoveryRecipeCardProps> = ({ title, image, category, area, id }) => {
-  // const navigate = useNavigate();
+
   const displayCategory = category && category.trim() ? category : 'Unknown';
   const displayArea = area && area.trim() ? area : 'Unknown';
   return (

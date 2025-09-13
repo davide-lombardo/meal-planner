@@ -6,7 +6,6 @@ import ConfirmDialog from "../components/dialog/ConfirmDialog";
 import dayjs from "dayjs";
 import Layout from "../components/common/Layout";
 import { CONFIG } from "../utils/constants";
-import { formatMenu } from "../utils/formatMenu";
 
 export default function HistoryPage() {
   const [filterDate, setFilterDate] = useState<string>("");

@@ -1,4 +1,5 @@
 import * as React from "react";
+import AppMetaInfo from "../components/common/AppMetaInfo";
 import {
   Box,
   Typography,
@@ -12,13 +13,12 @@ import {
   Option,
 } from "@mui/joy";
 import { useTheme } from "@mui/joy/styles";
-import { PlusCircle, Mail, Loader2, Send, ChevronLeft, ChevronRight } from "lucide-react";
+import { PlusCircle, Mail, Loader2, Send } from "lucide-react";
 import RecipeCard from "../components/RecipeCard";
 import RecipeDialog from "../components/dialog/RecipeDialog";
 import ConfirmDialog from "../components/dialog/ConfirmDialog";
 import { useLocation } from "react-router-dom";
 import Skeleton from "@mui/joy/Skeleton";
-import { RecipeSchema } from "shared/schemas";
 import FilterSection from "../components/FiltersSection";
 import { CONFIG } from "../utils/constants";
 import { Recipe, Category, RecipeType } from "shared/schemas";
@@ -26,7 +26,7 @@ import ErrorAlert from "../components/ErrorAlert";
 import Footer from "../components/Footer";
 import JoyPagination from "../components/JoyPagination";
 import { useRecipes } from "../hooks/useRecipes";
-import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
+import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 import { useRecipeManagement } from "../hooks/useRecipeManagement";
 
 // Debounce hook
@@ -38,8 +38,6 @@ function useDebouncedValue<T>(value: T, delay: number): T {
   }, [value, delay]);
   return debounced;
 }
-
-const API_URL = `${CONFIG.API_BASE_URL}/recipes`;
 
 export default function Home() {
   const { isAuthenticated } = useKindeAuth();
@@ -56,17 +54,11 @@ export default function Home() {
     goToPage,
     changePageSize,
     setFilters,
-    search,
-    type,
-    category,
   } = useRecipes(isAuthenticated);
 
-  // Use backend management for add/update/delete
-  const {
-    updateRecipe,
-    deleteRecipe,
-    createRecipe,
-  } = useRecipeManagement(CONFIG.API_BASE_URL);
+  const { updateRecipe, deleteRecipe, createRecipe } = useRecipeManagement(
+    CONFIG.API_BASE_URL
+  );
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [editRecipe, setEditRecipe] = React.useState<Recipe | null>(null);
   const [sending, setSending] = React.useState(false);
@@ -81,7 +73,7 @@ export default function Home() {
   });
   const [actionSuccess, setActionSuccess] = React.useState("");
   const [actionError, setActionError] = React.useState("");
-  // Use local state for filter controls, but sync with backend
+
   const [localSearch, setLocalSearch] = React.useState("");
   const [localType, setLocalType] = React.useState<RecipeType | "">("");
   const [localCategory, setLocalCategory] = React.useState<Category | "">("");
@@ -91,6 +83,7 @@ export default function Home() {
     if (location.state && location.state.editRecipe) {
       setEditRecipe(location.state.editRecipe);
       setDialogOpen(true);
+
       // Clean up state so dialog doesn't reopen on next visit
       window.history.replaceState({}, document.title);
     }
@@ -101,7 +94,7 @@ export default function Home() {
     setSendError("");
     setSendSuccess("");
     try {
-      const token = sessionStorage.getItem('kinde_access_token');
+      const token = sessionStorage.getItem("kinde_access_token");
       const response = await fetch(`${CONFIG.API_BASE_URL}/menu/email`, {
         method: "POST",
         headers: {
@@ -125,7 +118,7 @@ export default function Home() {
 
   React.useEffect(() => {
     if (!isAuthenticated) return;
-    const token = sessionStorage.getItem('kinde_access_token');
+    const token = sessionStorage.getItem("kinde_access_token");
     fetch(`${CONFIG.API_BASE_URL}/config`, {
       headers: {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -150,9 +143,10 @@ export default function Home() {
         setTelegramSending(false);
         return;
       }
+
       // Send empty text so BE generates the meal plan and grocery list
       const body = { chatId };
-      const token = sessionStorage.getItem('kinde_access_token');
+      const token = sessionStorage.getItem("kinde_access_token");
       const response = await fetch(`${CONFIG.API_BASE_URL}/menu/telegram`, {
         method: "POST",
         headers: {
@@ -204,7 +198,7 @@ export default function Home() {
     try {
       await deleteRecipe(deleteDialog.recipe.id);
       // Remove from local state
-      addRecipe(deleteDialog.recipe); // This should be a remove, but useRecipes only exposes add/update/delete
+      deleteRecipe(deleteDialog.recipe.id);
       setDeleteDialog({ open: false, recipe: null });
       setActionSuccess("Recipe deleted!");
     } catch {
@@ -216,8 +210,7 @@ export default function Home() {
     setDeleteDialog({ open: true, recipe });
   };
 
-  // Get unique types and categories from current page (for dropdowns)
-  // Use recipes directly from backend
+  // Extract unique types and categories for filters
   const types = Array.from(
     new Set(
       recipes.map((r) => r.tipo).filter((t): t is RecipeType => t !== undefined)
@@ -242,9 +235,11 @@ export default function Home() {
         bgcolor: "background.body",
         minHeight: "100vh",
         py: 0,
+        pb: 8,
         color: "text.primary",
       }}
     >
+      <AppMetaInfo />
       {/* Hero Section */}
       <Box
         sx={{
@@ -285,8 +280,8 @@ export default function Home() {
               maxWidth: 500,
             }}
           >
-            Add your favorite recipes. Generate a weekly menu and shopping
-            list in one click!
+            Add your favorite recipes. Generate a weekly menu and shopping list
+            in one click!
           </Typography>
           <Button
             data-testid="add-recipe-btn"
@@ -455,7 +450,7 @@ export default function Home() {
               </Card>
             ))}
           </Box>
-  ) : recipes.length === 0 ? (
+        ) : recipes.length === 0 ? (
           <Box sx={{ textAlign: "center", color: "text.secondary", py: 8 }}>
             <img
               src="/illustrations/empty.svg"

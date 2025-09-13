@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ReactNode } from "react";
 import Footer from "../Footer";
+import AppMetaInfo from "./AppMetaInfo";
 
 interface LayoutProps {
   children: ReactNode;
@@ -47,7 +48,14 @@ export default function Layout({
               color="primary"
               variant="soft"
               onClick={() => navigate(backButtonPath)}
-              sx={{ fontWeight: 700, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 40 }}
+              sx={{
+                fontWeight: 700,
+                borderRadius: 8,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                minWidth: 40,
+              }}
             >
               <ArrowLeft />
             </Button>
@@ -67,7 +75,10 @@ export default function Layout({
             {title}
           </Typography>
           {subtitle && (
-            <Typography level="body-lg" sx={{ color: "text.secondary", maxWidth: 700, mx: 'auto' }}>
+            <Typography
+              level="body-lg"
+              sx={{ color: "text.secondary", maxWidth: 700, mx: "auto" }}
+            >
               {subtitle}
             </Typography>
           )}
@@ -75,9 +86,10 @@ export default function Layout({
       </Box>
 
       {/* Main Content */}
-      <Box sx={{ maxWidth, mx: "auto" }}>{children}</Box>
+      <Box sx={{ maxWidth, mx: "auto", pb: 5 }}>{children}</Box>
       {/* Footer */}
       <Footer />
+      <AppMetaInfo />
     </Box>
   );
 }

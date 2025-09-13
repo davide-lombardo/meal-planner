@@ -35,7 +35,6 @@ export default function AppRouter() {
         <Route path="/recipe/:id" element={<RecipeDetails />} />
         <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/config" element={<ConfigPage />} />
-        {/* FindRecipes route removed */}
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/discovery" element={<DiscoveryPage />} />
