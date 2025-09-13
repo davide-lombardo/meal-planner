@@ -24,8 +24,6 @@ export const MenuOptionsSchema = z.object({
   enableIngredientPlanning: z.boolean().optional(),
   lockedMeals: z.record(z.string(), z.string()).optional(),
   availableIngredients: z.array(z.string()).optional(),
-  preferredRecipes: z.array(z.string()).optional(),
-  avoidedRecipes: z.array(z.string()).optional(),
   enableSeasonalFiltering: z.boolean().optional(),
   currentSeason: SeasonSchema.optional(),
   telegramChatId: z.string().optional(),

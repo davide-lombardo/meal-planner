@@ -857,101 +857,35 @@ export default function ConfigPage() {
                         </Typography>
                         <Card variant="soft" sx={{ p: 2 }}>
                           <List sx={{ "--List-gap": "8px" }}>
-                            {Object.entries(mo.mealTypeQuotas || {}).map(
-                              ([category, quota]: [string, number]) => (
-                                <ListItem
-                                  key={category}
-                                  sx={{
-                                    bgcolor: "background.body",
-                                    borderRadius: 1,
-                                    px: 2,
-                                    py: 1,
-                                  }}
-                                >
-                                  <ListItemDecorator sx={{ minWidth: 100 }}>
-                                    <Typography
-                                      level="body-sm"
-                                      sx={{ fontWeight: 600 }}
-                                    >
-                                      {category}
-                                    </Typography>
-                                  </ListItemDecorator>
-                                  <Input
-                                    type="number"
-                                    value={quota}
-                                    onChange={(e) =>
-                                      setMenuOption("mealTypeQuotas", {
-                                        ...mo.mealTypeQuotas,
-                                        [category]: Number(e.target.value),
-                                      })
-                                    }
-                                    sx={{ maxWidth: 80, ml: "auto", mr: 1 }}
-                                    size="sm"
-                                  />
-                                  <IconButton
-                                    size="sm"
-                                    color="danger"
-                                    variant="soft"
-                                    onClick={() => {
-                                      const updated = { ...mo.mealTypeQuotas };
-                                      delete updated[category];
-                                      setMenuOption("mealTypeQuotas", updated);
-                                    }}
-                                  >
-                                    <Trash2 size={14} />
-                                  </IconButton>
-                                </ListItem>
-                              )
-                            )}
-
-                            <ListItem
-                              sx={{
-                                bgcolor: "background.level1",
-                                borderRadius: 1,
-                                px: 2,
-                                py: 1,
-                              }}
-                            >
-                              <Input
-                                size="sm"
-                                placeholder="Category name"
-                                sx={{ flex: 1, mr: 1 }}
-                                id="new-category"
-                              />
-                              <Input
-                                size="sm"
-                                type="number"
-                                placeholder="Max per week"
-                                sx={{ maxWidth: 120, mr: 1 }}
-                                id="new-quota"
-                              />
-                              <IconButton
-                                size="sm"
-                                color="primary"
-                                onClick={() => {
-                                  const categoryInput = document.getElementById(
-                                    "new-category"
-                                  ) as HTMLInputElement;
-                                  const quotaInput = document.getElementById(
-                                    "new-quota"
-                                  ) as HTMLInputElement;
-
-                                  const category = categoryInput?.value.trim();
-                                  const quota = Number(quotaInput?.value);
-
-                                  if (category && quota > 0) {
-                                    setMenuOption("mealTypeQuotas", {
-                                      ...mo.mealTypeQuotas,
-                                      [category]: quota,
-                                    });
-                                    categoryInput.value = "";
-                                    quotaInput.value = "";
-                                  }
+                            {["pesce", "carne", "formaggio", "uova", "legumi"].map((category) => (
+                              <ListItem
+                                key={category}
+                                sx={{
+                                  bgcolor: "background.body",
+                                  borderRadius: 1,
+                                  px: 2,
+                                  py: 1,
                                 }}
                               >
-                                <Plus size={14} />
-                              </IconButton>
-                            </ListItem>
+                                <ListItemDecorator sx={{ minWidth: 120 }}>
+                                  <Typography level="body-sm" sx={{ fontWeight: 600 }}>
+                                    {category}
+                                  </Typography>
+                                </ListItemDecorator>
+                                <Input
+                                  type="number"
+                                  value={mo.mealTypeQuotas?.[category] || 0}
+                                  onChange={(e) =>
+                                    setMenuOption("mealTypeQuotas", {
+                                      ...mo.mealTypeQuotas,
+                                      [category]: Number(e.target.value),
+                                    })
+                                  }
+                                  sx={{ maxWidth: 80, ml: "auto", mr: 1 }}
+                                  size="sm"
+                                />
+                              </ListItem>
+                            ))}
                           </List>
                         </Card>
                       </Box>
@@ -961,23 +895,7 @@ export default function ConfigPage() {
 
                 {/* Preferences section */}
                 <Grid xs={12} md={6}>
-                  <Stack spacing={3}>
-                    <EditableArray
-                      label="Preferred recipes"
-                      value={mo.preferredRecipes || []}
-                      onChange={(arr) => setMenuOption("preferredRecipes", arr)}
-                      placeholder="Recipe ID"
-                      tooltip="Recipe IDs to prioritize"
-                    />
-
-                    <EditableArray
-                      label="Avoided recipes"
-                      value={mo.avoidedRecipes || []}
-                      onChange={(arr) => setMenuOption("avoidedRecipes", arr)}
-                      placeholder="Recipe ID"
-                      tooltip="Recipe IDs to avoid"
-                    />
-                  </Stack>
+                  {/* Preferences section removed as requested */}
                 </Grid>
               </Grid>
             </CardContent>
