@@ -55,20 +55,20 @@ export default function Header() {
             gap: 0.5,
           }}
         >
-          <ChefHat
-            size={32}
-            color={theme.palette.text.primary}
-            strokeWidth={1}
+          <img
+            src="/meal-planner-logo.svg"
+            alt="Meal Planner Logo"
+            style={{ width: 80, height: 80 }}
           />
           <span
             style={{
               marginLeft: "0",
               fontWeight: 700,
               letterSpacing: "0",
-              textTransform: "lowercase",
+              color: theme.palette.primary.solidActiveBg,
             }}
           >
-            Meal Planner
+            MealPlanner
           </span>
         </Box>
       </Typography>

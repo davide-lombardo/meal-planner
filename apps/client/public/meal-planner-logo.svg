@@ -1,0 +1,45 @@
+<!--?xml version="1.0" encoding="UTF-8"?-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 200" width="800" height="800" role="img" aria-labelledby="title desc">
+  <title id="title">Calendar Mascot Logo</title>
+  <desc id="desc">Cute calendar mascot with smiley face, spoon on the left and fork on the right rotated inward, pointing toward each other.</desc>
+
+  <!-- Calendar body -->
+  <rect x="60" y="40" rx="14" ry="14" width="140" height="104" fill="#a5d6a7" stroke="#6f9f78" stroke-width="2"></rect>
+
+  <!-- Top binder -->
+  <rect x="60" y="30" rx="8" width="140" height="24" fill="#7fbf8f" stroke="#6f9f78" stroke-width="1.5"></rect>
+  <rect x="80" y="22" width="16" height="10" rx="3" fill="#6f9f78"></rect>
+  <rect x="164" y="22" width="16" height="10" rx="3" fill="#6f9f78"></rect>
+
+  <!-- Face -->
+  <circle cx="130" cy="88" r="32" fill="#ffffff"></circle>
+  <circle cx="112" cy="96" r="6.5" fill="#a5d6a7"></circle>
+  <circle cx="148" cy="96" r="6.5" fill="#a5d6a7"></circle>
+  <ellipse cx="118" cy="82" rx="4.2" ry="5.5" fill="#2a2a2a"></ellipse>
+  <ellipse cx="142" cy="82" rx="4.2" ry="5.5" fill="#2a2a2a"></ellipse>
+  <path d="M116 96 Q130 112 144 96" stroke="#2a2a2a" stroke-width="2.8" fill="none" stroke-linecap="round"></path>
+
+  <!-- Spoon (left, rotated inward) -->
+  <g transform="translate(40,65) rotate(-20)">
+    <!-- handle -->
+    <rect x="10" y="34" width="8" height="80" rx="4" fill="#efefef" stroke="#9a9a9a" stroke-width="1.2"></rect>
+    <!-- bowl -->
+    <ellipse cx="14" cy="18" rx="14" ry="20" fill="#efefef" stroke="#9a9a9a" stroke-width="1.2"></ellipse>
+  </g>
+
+  <!-- Fork (right, rotated inward) -->
+  <g transform="translate(220,65) rotate(20)">
+    <!-- handle -->
+    <rect x="-18" y="34" width="8" height="80" rx="4" fill="#efefef" stroke="#9a9a9a" stroke-width="1.2"></rect>
+    <!-- head -->
+    <rect x="-22" y="16" width="16" height="20" rx="2" fill="#efefef" stroke="#9a9a9a" stroke-width="1.2"></rect>
+    <!-- tines -->
+    <rect x="-21" y="6" width="2.5" height="12" fill="#9a9a9a"></rect>
+    <rect x="-16" y="6" width="2.5" height="12" fill="#9a9a9a"></rect>
+    <rect x="-11" y="6" width="2.5" height="12" fill="#9a9a9a"></rect>
+    <rect x="-6" y="6" width="2.5" height="12" fill="#9a9a9a"></rect>
+  </g>
+
+  <!-- transparent background -->
+  <rect x="0" y="0" width="260" height="200" fill="none"></rect>
+</svg>
