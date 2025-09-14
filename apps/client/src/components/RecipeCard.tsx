@@ -78,7 +78,7 @@ export default function RecipeCard({ recipe, onEdit, onDelete }: RecipeCardProps
       sx={{
         bgcolor: theme.palette.background.level1,
         color: theme.palette.text.primary,
-        width: 340,
+        width: { xs: '100%', sm: 340 },
         height: 220,
         mb: 3,
         borderRadius: 12,

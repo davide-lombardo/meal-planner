@@ -414,7 +414,7 @@ export default function Home() {
                 variant="soft"
                 sx={{
                   bgcolor: "neutral.solidBg",
-                  width: 340,
+                  width: { xs: '100%', sm: 340 },
                   height: 220,
                   mb: 3,
                   borderRadius: 12,

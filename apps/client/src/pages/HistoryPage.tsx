@@ -17,6 +17,8 @@ import Layout from "../components/common/Layout";
 import { CONFIG } from "../utils/constants";
 
 export default function HistoryPage() {
+  const DEFAULT_PAGE_SIZE = 5;
+
   const [filterDate, setFilterDate] = useState<string>("");
   type HistoryMenu = {
     menu: any;
@@ -28,7 +30,7 @@ export default function HistoryPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [pageSize, setPageSize] = useState(4);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   const fetchHistory = async (pageNum = 1, date?: string, size = pageSize) => {
     setLoading(true);
@@ -93,11 +95,20 @@ export default function HistoryPage() {
         sx={{
           mb: 3,
           display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: { xs: "stretch", sm: "center" },
+          gap: { xs: 2, sm: 0 },
         }}
       >
-        <Box sx={{ display: "flex", flexDirection: "column", mr: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            mr: { xs: 0, sm: 2 },
+            mb: { xs: 2, sm: 0 },
+          }}
+        >
           <Typography level="body-sm" sx={{ mb: 0.5, fontWeight: 500 }}>
             Filter by date
           </Typography>
@@ -105,7 +116,7 @@ export default function HistoryPage() {
             type="date"
             value={filterDate}
             onChange={(e) => setFilterDate(e.target.value)}
-            sx={{ maxWidth: 220 }}
+            sx={{ maxWidth: { xs: "100%", sm: 220 } }}
             slotProps={{
               input: { min: "2000-01-01", max: dayjs().format("YYYY-MM-DD") },
             }}
@@ -116,6 +127,7 @@ export default function HistoryPage() {
           variant="soft"
           onClick={() => setConfirmOpen(true)}
           disabled={loading}
+          sx={{ width: { xs: "100%", sm: "auto" } }}
         >
           Clear History
         </Button>
@@ -168,7 +180,7 @@ export default function HistoryPage() {
                   sx={{
                     mb: 4,
                     mx: "auto",
-                    maxWidth: 800,
+                    maxWidth: { xs: "100%", sm: 800 },
                     backgroundColor: "background.level1",
                     border: "3px solid",
                     borderColor: "primary.700",
@@ -258,7 +270,7 @@ export default function HistoryPage() {
                     >
                       <Typography
                         sx={{
-                          fontSize: "2.5rem",
+                          fontSize: { xs: "1.5rem", sm: "2.5rem" },
                           fontFamily: "inherit",
                           fontWeight: "bold",
                           color: "primary.700",
@@ -279,7 +291,7 @@ export default function HistoryPage() {
                       />
                       <Typography
                         sx={{
-                          fontSize: "1.2rem",
+                          fontSize: { xs: "1rem", sm: "1.2rem" },
                           fontFamily: "inherit",
                           fontStyle: "italic",
                           color: "primary.700",
@@ -321,7 +333,7 @@ export default function HistoryPage() {
                             <Typography
                               sx={{
                                 mx: 3,
-                                fontSize: "1.4rem",
+                                fontSize: { xs: "1.1rem", sm: "1.4rem" },
                                 fontFamily: "inherit",
                                 fontWeight: "bold",
                                 color: "primary.700",
@@ -344,16 +356,16 @@ export default function HistoryPage() {
                           <Box
                             sx={{
                               display: "grid",
-                              gridTemplateColumns: "1fr 1fr",
-                              gap: 4,
-                              px: 2,
+                              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+                              gap: { xs: 2, sm: 4 },
+                              px: { xs: 0, sm: 2 },
                             }}
                           >
                             {/* Pranzo */}
                             <Box>
                               <Typography
                                 sx={{
-                                  fontSize: "1.1rem",
+                                  fontSize: { xs: "0.95rem", sm: "1.1rem" },
                                   fontFamily: "inherit",
                                   fontWeight: "bold",
                                   color: "primary.700",
@@ -380,7 +392,7 @@ export default function HistoryPage() {
                               >
                                 <Typography
                                   sx={{
-                                    fontSize: "1rem",
+                                    fontSize: { xs: "0.9rem", sm: "1rem" },
                                     fontFamily: "inherit",
                                     color: parsedMenu?.pranzo?.[i]?.nome
                                       ? "text.primary"
@@ -431,7 +443,7 @@ export default function HistoryPage() {
                               >
                                 <Typography
                                   sx={{
-                                    fontSize: "1rem",
+                                    fontSize: { xs: "0.9rem", sm: "1rem" },
                                     fontFamily: "inherit",
                                     color: parsedMenu?.cena?.[i]?.nome
                                       ? "text.primary"
@@ -467,7 +479,7 @@ export default function HistoryPage() {
                     >
                       <Typography
                         sx={{
-                          fontSize: "0.9rem",
+                          fontSize: { xs: "0.8rem", sm: "0.9rem" },
                           fontFamily: "inherit",
                           fontStyle: "italic",
                           color: "primary.700",
@@ -485,10 +497,11 @@ export default function HistoryPage() {
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
               justifyContent: "center",
               alignItems: "center",
               mt: 4,
-              gap: 2,
+              gap: { xs: 2, sm: 2 },
               flexWrap: "wrap",
             }}
           >
@@ -511,7 +524,7 @@ export default function HistoryPage() {
                 color="neutral"
                 variant="outlined"
               >
-                {[1, 5, 10, 20, 50].map((size) => (
+                {[5, 10, 20, 50].map((size) => (
                   <Option key={size} value={size}>
                     {size}
                   </Option>

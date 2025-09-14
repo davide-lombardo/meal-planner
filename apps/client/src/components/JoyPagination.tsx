@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Typography } from "@mui/joy";
+import { Button, Typography, Box } from "@mui/joy";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "@mui/joy/styles";
 
@@ -21,13 +21,36 @@ const JoyPagination: React.FC<PaginationProps> = ({
   const maxButtons = 7;
   const pageButtons: React.ReactNode[] = [];
 
+  // Responsive styles
+  const containerSx = {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: { xs: 0.5, sm: 1.5 },
+    px: { xs: 0.5, sm: 2 },
+    py: { xs: 1, sm: 2 },
+    width: "100%",
+    maxWidth: "100vw",
+    overflowX: "auto",
+  };
+
   pageButtons.push(
     <Button
       key="prev"
       variant="plain"
       color="neutral"
       startDecorator={<ChevronLeft size={18} />}
-      sx={{ borderRadius: 8, minWidth: 36, mx: 0.25, px: 1.5, fontWeight: 500 }}
+      sx={{
+        borderRadius: 8,
+        minWidth: { xs: 36, sm: 44 },
+        mx: 0.25,
+        px: { xs: 1, sm: 1.5 },
+        fontWeight: 500,
+        fontSize: { xs: "0.95rem", sm: "1rem" },
+        height: { xs: 36, sm: 44 },
+        touchAction: "manipulation",
+      }}
       disabled={page === 1}
       onClick={() => onPageChange(page - 1)}
     >
@@ -45,13 +68,16 @@ const JoyPagination: React.FC<PaginationProps> = ({
           color={i === page ? "success" : "neutral"}
           sx={{
             borderRadius: 8,
-            minWidth: 36,
+            minWidth: { xs: 36, sm: 44 },
             mx: 0.25,
             fontWeight: 600,
+            fontSize: { xs: "0.95rem", sm: "1rem" },
+            height: { xs: 36, sm: 44 },
             boxShadow:
               i === page
                 ? `0 0 0 2px ${theme.palette.primary[500]}`
                 : undefined,
+            touchAction: "manipulation",
           }}
           onClick={() => onPageChange(i)}
           disabled={i === page}
@@ -81,13 +107,16 @@ const JoyPagination: React.FC<PaginationProps> = ({
         color={page === first ? "success" : "neutral"}
         sx={{
           borderRadius: 8,
-          minWidth: 36,
+          minWidth: { xs: 36, sm: 44 },
           mx: 0.25,
           fontWeight: 600,
+          fontSize: { xs: "0.95rem", sm: "1rem" },
+          height: { xs: 36, sm: 44 },
           boxShadow:
             page === first
               ? `0 0 0 2px ${theme.palette.primary[500]}`
               : undefined,
+          touchAction: "manipulation",
         }}
         onClick={() => onPageChange(first)}
         disabled={page === first}
@@ -118,13 +147,16 @@ const JoyPagination: React.FC<PaginationProps> = ({
           color={i === page ? "success" : "neutral"}
           sx={{
             borderRadius: 8,
-            minWidth: 36,
+            minWidth: { xs: 36, sm: 44 },
             mx: 0.25,
             fontWeight: 600,
+            fontSize: { xs: "0.95rem", sm: "1rem" },
+            height: { xs: 36, sm: 44 },
             boxShadow:
               i === page
                 ? `0 0 0 2px ${theme.palette.primary[500]}`
                 : undefined,
+            touchAction: "manipulation",
           }}
           onClick={() => onPageChange(i)}
           disabled={i === page}
@@ -155,13 +187,16 @@ const JoyPagination: React.FC<PaginationProps> = ({
         color={page === last ? "success" : "neutral"}
         sx={{
           borderRadius: 8,
-          minWidth: 36,
+          minWidth: { xs: 36, sm: 44 },
           mx: 0.25,
           fontWeight: 600,
+          fontSize: { xs: "0.95rem", sm: "1rem" },
+          height: { xs: 36, sm: 44 },
           boxShadow:
             page === last
               ? `0 0 0 2px ${theme.palette.primary[500]}`
               : undefined,
+          touchAction: "manipulation",
         }}
         onClick={() => onPageChange(last)}
         disabled={page === last}
@@ -177,7 +212,16 @@ const JoyPagination: React.FC<PaginationProps> = ({
       variant="plain"
       color="neutral"
       endDecorator={<ChevronRight size={18} />}
-      sx={{ borderRadius: 8, minWidth: 36, mx: 0.25, px: 1.5, fontWeight: 500 }}
+      sx={{
+        borderRadius: 8,
+        minWidth: { xs: 36, sm: 44 },
+        mx: 0.25,
+        px: { xs: 1, sm: 1.5 },
+        fontWeight: 500,
+        fontSize: { xs: "0.95rem", sm: "1rem" },
+        height: { xs: 36, sm: 44 },
+        touchAction: "manipulation",
+      }}
       disabled={page === totalPages}
       onClick={() => onPageChange(page + 1)}
     >
@@ -185,7 +229,9 @@ const JoyPagination: React.FC<PaginationProps> = ({
     </Button>
   );
 
-  return <>{pageButtons}</>;
+
+    // Responsive container for pagination
+    return <Box sx={containerSx}>{pageButtons}</Box>;
 };
 
 export default JoyPagination;

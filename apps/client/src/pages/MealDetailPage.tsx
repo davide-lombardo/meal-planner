@@ -109,7 +109,7 @@ export default function MealDetailPage() {
       >
         <Box sx={{ position: "absolute", top: 16, left: 16 }}>
           <IconButton
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/")}
             variant="soft"
             color="primary"
             sx={{
