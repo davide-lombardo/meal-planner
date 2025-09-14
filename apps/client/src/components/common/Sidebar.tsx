@@ -56,14 +56,14 @@ export default function Sidebar() {
           px: 0,
           justifyContent: 'center',
           alignItems: 'center',
-          width: 'calc(100vw - 32px)', // 16px padding on each side
+          width: 'calc(100vw - 32px)',
           maxWidth: '420px',
           boxSizing: 'border-box',
         } : {};
         const mobileIconStyles = isMobile && mobileOpen ? {
           minWidth: 0,
           mr: 0,
-          ml: 2, // add left margin for mobile
+          ml: 2, 
           fontSize: 32,
           display: 'flex',
           justifyContent: 'center',
@@ -164,12 +164,21 @@ export default function Sidebar() {
   if (isMobile) {
     return (
       <>
-        <Box sx={{ position: 'fixed', top: 9, left: 16, zIndex: 2100, display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ position: 'fixed', top: 4, left: 16, zIndex: 2100, display: 'flex', alignItems: 'center' }}>
           <IconButton
             onClick={() => setMobileOpen(true)}
             variant="plain"
             color="neutral"
             aria-label="Open sidebar"
+            sx={{
+              bgcolor: 'background.level2',
+              borderRadius: '50%',
+              boxShadow: 'sm',
+              p: 1,
+              '&:hover': {
+                bgcolor: 'background.level3',
+              },
+            }}
           >
             <MenuIcon size={28} />
           </IconButton>

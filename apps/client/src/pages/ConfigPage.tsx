@@ -340,7 +340,7 @@ export default function ConfigPage() {
               borderBottomRightRadius: "0px",
               transition: "all 0.2s ease",
               fontWeight: 600,
-              fontSize: { xs: "0.75rem", sm: "0.875rem" },
+              fontSize: { xs: "1rem", sm: "0.875rem" },
               py: { xs: 1, sm: 1.5 },
               minHeight: { xs: 36, sm: 44 },
               "&:hover": {

@@ -416,7 +416,7 @@ export default function RecipeDetails() {
                 </Button>
               )}
               <Button
-                color="primary"
+                color="neutral"
                 variant="soft"
                 startDecorator={<Pencil size={18} />}
                 onClick={handleEdit}

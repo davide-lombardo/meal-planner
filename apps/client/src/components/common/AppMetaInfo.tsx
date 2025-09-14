@@ -24,6 +24,7 @@ const AppMetaInfo: React.FC = () => {
   return (
     <Box
       sx={{
+        marginBottom: '-1px',
         width: "100%",
         position: "fixed",
         left: 0,

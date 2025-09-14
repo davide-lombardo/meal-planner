@@ -308,7 +308,9 @@ export default function Home() {
           </Button>
           <Button
             data-testid="send-meal-plan-btn"
-            startDecorator={<Mail />}
+            startDecorator={
+              sending ? <Loader2 className="spin" size={18} /> : <Mail />
+            }
             size="lg"
             color="primary"
             variant="soft"
@@ -321,15 +323,17 @@ export default function Home() {
             onClick={handleSendMealPlan}
             disabled={sending}
           >
-            {sending ? (
-              <Loader2 className="spin" size={18} />
-            ) : (
-              "Send plan via Email"
-            )}
+            Send plan via Email
           </Button>
           <Button
             data-testid="send-telegram-btn"
-            startDecorator={<Send />}
+            startDecorator={
+              telegramSending ? (
+                <Loader2 className="spin" size={18} />
+              ) : (
+                <Send />
+              )
+            }
             size="lg"
             color="primary"
             variant="soft"
@@ -337,11 +341,7 @@ export default function Home() {
             onClick={handleSendTelegram}
             disabled={telegramSending}
           >
-            {telegramSending ? (
-              <Loader2 className="spin" size={18} />
-            ) : (
-              "Send plan via Telegram"
-            )}
+            Send plan via Telegram
           </Button>
           {/* Telegram Snackbar */}
           <Snackbar
@@ -414,7 +414,7 @@ export default function Home() {
                 variant="soft"
                 sx={{
                   bgcolor: "neutral.solidBg",
-                  width: { xs: '100%', sm: 340 },
+                  width: { xs: "100%", sm: 340 },
                   height: 220,
                   mb: 3,
                   borderRadius: 12,

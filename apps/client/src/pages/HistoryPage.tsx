@@ -195,8 +195,6 @@ export default function HistoryPage() {
                       left: 0,
                       right: 0,
                       bottom: 0,
-                      background:
-                        "repeating-linear-gradient(0deg, transparent, transparent 24px, var(--joy-palette-primary-100) 25px)",
                       pointerEvents: "none",
                       opacity: 0.3,
                     },
