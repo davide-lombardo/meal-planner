@@ -93,7 +93,7 @@ export default function HistoryPage() {
     >
       <Box
         sx={{
-          mb: 3,
+          mb: 5,
           display: "flex",
           flexDirection: { xs: "column", sm: "row" },
           justifyContent: "space-between",

@@ -381,245 +381,227 @@ export default function ConfigPage() {
 
           {/* General Tab */}
           <TabPanel value={0} sx={{ px: 0 }}>
-            <AccordionGroup
-              sx={{
-                "& .MuiAccordion-root": {
-                  borderRadius: "12px",
-                  mb: 2,
-                  "&:last-child": { mb: 0 },
-                },
-              }}
-            >
-              <Accordion>
-                <AccordionSummary>
-                  <Typography
-                    level="h4"
-                    startDecorator={<Settings size={18} />}
-                    sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
+            <Box sx={{ mb: 4, p: { xs: 2, sm: 4 }, borderRadius: 3, bgcolor: "background.level1" }}>
+              <Typography
+                level="h4"
+                startDecorator={<Settings size={18} />}
+                sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" }, mb: 2 }}
+              >
+                Basic Settings
+              </Typography>
+              <Stack spacing={4}>
+                <Box>
+                  <FormField
+                    label="Maximum repetition weeks"
+                    tooltip="Avoid repeating recipes for this many weeks"
                   >
-                    Basic Settings
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails sx={{ p: { xs: 2, sm: 4 } }}>
-                  <Stack spacing={4}>
-                    <Box>
-                      <FormField
-                        label="Maximum repetition weeks"
-                        tooltip="Avoid repeating recipes for this many weeks"
-                      >
-                        <Input
-                          type="number"
-                          value={mo.maxRepetitionWeeks ?? ""}
-                          onChange={(e) =>
-                            setMenuOption(
-                              "maxRepetitionWeeks",
-                              Number(e.target.value)
-                            )
-                          }
-                          placeholder="e.g. 4"
-                          sx={{ maxWidth: { xs: "100%", sm: 180 } }}
-                        />
-                      </FormField>
-                    </Box>
+                    <Input
+                      type="number"
+                      value={mo.maxRepetitionWeeks ?? ""}
+                      onChange={(e) =>
+                        setMenuOption(
+                          "maxRepetitionWeeks",
+                          Number(e.target.value)
+                        )
+                      }
+                      placeholder="e.g. 4"
+                      sx={{ maxWidth: { xs: "100%", sm: 180 } }}
+                    />
+                  </FormField>
+                </Box>
 
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: { xs: "column", sm: "row" },
-                        alignItems: { xs: "flex-start", sm: "center" },
-                        justifyContent: "space-between",
-                        gap: { xs: 2, sm: 0 },
-                        p: 3,
-                        borderRadius: 3,
-                        bgcolor: "background.level1",
-                        border: "1px solid",
-                        borderColor: "divider",
-                      }}
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    alignItems: { xs: "flex-start", sm: "center" },
+                    justifyContent: "space-between",
+                    gap: { xs: 2, sm: 0 },
+                    p: 3,
+                    borderRadius: 3,
+                    bgcolor: "background.level1",
+                    border: "1px solid",
+                    borderColor: "divider",
+                  }}
+                >
+                  <Box>
+                    <Typography
+                      level="title-sm"
+                      sx={{ fontWeight: 600, mb: 0.5 }}
                     >
-                      <Box>
-                        <Typography
-                          level="title-sm"
-                          sx={{ fontWeight: 600, mb: 0.5 }}
-                        >
-                          Enable weighted selection
-                        </Typography>
-                        <Typography
-                          level="body-sm"
-                          sx={{ color: "text.secondary" }}
-                        >
-                          Prioritize less-used recipes when generating menus
-                        </Typography>
-                      </Box>
-                      <Box sx={{ alignSelf: { xs: "flex-end", sm: "center" } }}>
-                        <CustomSwitch
-                          checked={!!mo.useWeightedSelection}
-                          onChange={(e) =>
-                            setMenuOption(
-                              "useWeightedSelection",
-                              e.target.checked
-                            )
-                          }
-                        />
-                      </Box>
-                    </Box>
-                  </Stack>
-                </AccordionDetails>
-              </Accordion>
+                      Enable weighted selection
+                    </Typography>
+                    <Typography
+                      level="body-sm"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      Prioritize less-used recipes when generating menus
+                    </Typography>
+                  </Box>
+                  <Box sx={{ alignSelf: { xs: "flex-end", sm: "center" } }}>
+                    <CustomSwitch
+                      checked={!!mo.useWeightedSelection}
+                      onChange={(e) =>
+                        setMenuOption(
+                          "useWeightedSelection",
+                          e.target.checked
+                        )
+                      }
+                    />
+                  </Box>
+                </Box>
+              </Stack>
+            </Box>
 
-              <Accordion>
-                <AccordionSummary>
-                  <Typography
-                    level="h4"
-                    startDecorator={<MessageCircle size={18} />}
-                    sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
+            <Box sx={{ mb: 4, p: { xs: 2, sm: 4 }, borderRadius: 3, bgcolor: "background.level1" }}>
+              <Typography
+                level="h4"
+                startDecorator={<MessageCircle size={18} />}
+                sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" }, mb: 2 }}
+              >
+                Telegram Settings
+              </Typography>
+              <Stack spacing={4}>
+                <Box>
+                  <FormField
+                    label="Default Telegram Chat ID"
+                    tooltip="Default Telegram chat ID to send the menu"
                   >
-                    Telegram Settings
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails sx={{ p: { xs: 2, sm: 4 } }}>
-                  <Stack spacing={4}>
-                    <Box>
-                      <FormField
-                        label="Default Telegram Chat ID"
-                        tooltip="Default Telegram chat ID to send the menu"
+                    <Input
+                      type="text"
+                      value={mo.telegramChatId ?? ""}
+                      onChange={(e) =>
+                        setMenuOption("telegramChatId", e.target.value)
+                      }
+                      placeholder="es. 123456789"
+                      sx={{ maxWidth: { xs: "100%", sm: 280 } }}
+                    />
+                  </FormField>
+                </Box>
+
+                <Box>
+                  <FormField
+                    label="Additional Telegram Chat IDs"
+                    tooltip="Other Telegram chat IDs to send the menu"
+                  >
+                    <Stack
+                      spacing={2}
+                      sx={{ maxWidth: { xs: "100%", sm: 400 } }}
+                    >
+                      {(mo.telegramChatIds || []).length > 0 && (
+                        <List
+                          sx={{
+                            "--List-gap": "8px",
+                            p: 0,
+                            maxWidth: "100%",
+                            ml: 0,
+                          }}
+                        >
+                          {(mo.telegramChatIds || []).map(
+                            (id: string, idx: number) => (
+                              <ListItem
+                                key={id}
+                                sx={{
+                                  px: 0,
+                                  py: 1,
+                                  alignItems: "center",
+                                  minWidth: 0,
+                                  width: "100%",
+                                  ml: 0,
+                                  gap: { xs: 1, sm: 2 },
+                                }}
+                              >
+                                <Input
+                                  size="md"
+                                  value={id}
+                                  type="text"
+                                  onChange={(e) => {
+                                    const arr = [
+                                      ...(mo.telegramChatIds || []),
+                                    ];
+                                    arr[idx] = e.target.value;
+                                    setMenuOption("telegramChatIds", arr);
+                                  }}
+                                  sx={{
+                                    bgcolor: "background.level2",
+                                    flex: 1,
+                                  }}
+                                />
+                                <IconButton
+                                  size="md"
+                                  color="danger"
+                                  variant="soft"
+                                  onClick={() => {
+                                    const arr = [
+                                      ...(mo.telegramChatIds || []),
+                                    ];
+                                    arr.splice(idx, 1);
+                                    setMenuOption("telegramChatIds", arr);
+                                  }}
+                                >
+                                  <Trash2 size={16} />
+                                </IconButton>
+                              </ListItem>
+                            )
+                          )}
+                        </List>
+                      )}
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 1,
+                          alignItems: "flex-end",
+                        }}
                       >
                         <Input
-                          type="text"
-                          value={mo.telegramChatId ?? ""}
-                          onChange={(e) =>
-                            setMenuOption("telegramChatId", e.target.value)
-                          }
-                          placeholder="es. 123456789"
-                          sx={{ maxWidth: { xs: "100%", sm: 280 } }}
+                          size="md"
+                          placeholder="Add new chat ID"
+                          id="new-telegram-chat-id"
+                          sx={{
+                            bgcolor: "background.level2",
+                            flex: 1,
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              const input = e.target as HTMLInputElement;
+                              const val = input.value.trim();
+                              if (val) {
+                                setMenuOption("telegramChatIds", [
+                                  ...(mo.telegramChatIds || []),
+                                  val,
+                                ]);
+                                input.value = "";
+                              }
+                            }
+                          }}
                         />
-                      </FormField>
-                    </Box>
-
-                    <Box>
-                      <FormField
-                        label="Additional Telegram Chat IDs"
-                        tooltip="Other Telegram chat IDs to send the menu"
-                      >
-                        <Stack
-                          spacing={2}
-                          sx={{ maxWidth: { xs: "100%", sm: 400 } }}
+                        <IconButton
+                          size="md"
+                          variant="soft"
+                          color="primary"
+                          onClick={() => {
+                            const input = document.getElementById(
+                              "new-telegram-chat-id"
+                            ) as HTMLInputElement;
+                            const val = input?.value.trim();
+                            if (val) {
+                              setMenuOption("telegramChatIds", [
+                                ...(mo.telegramChatIds || []),
+                                val,
+                              ]);
+                              input.value = "";
+                            }
+                          }}
                         >
-                          {(mo.telegramChatIds || []).length > 0 && (
-                            <List
-                              sx={{
-                                "--List-gap": "8px",
-                                p: 0,
-                                maxWidth: "100%",
-                                ml: 0,
-                              }}
-                            >
-                              {(mo.telegramChatIds || []).map(
-                                (id: string, idx: number) => (
-                                  <ListItem
-                                    key={id}
-                                    sx={{
-                                      px: 0,
-                                      py: 1,
-                                      alignItems: "center",
-                                      minWidth: 0,
-                                      width: "100%",
-                                      ml: 0,
-                                      gap: { xs: 1, sm: 2 },
-                                    }}
-                                  >
-                                    <Input
-                                      size="md"
-                                      value={id}
-                                      type="text"
-                                      onChange={(e) => {
-                                        const arr = [
-                                          ...(mo.telegramChatIds || []),
-                                        ];
-                                        arr[idx] = e.target.value;
-                                        setMenuOption("telegramChatIds", arr);
-                                      }}
-                                      sx={{
-                                        bgcolor: "background.level2",
-                                        flex: 1,
-                                      }}
-                                    />
-                                    <IconButton
-                                      size="md"
-                                      color="danger"
-                                      variant="soft"
-                                      onClick={() => {
-                                        const arr = [
-                                          ...(mo.telegramChatIds || []),
-                                        ];
-                                        arr.splice(idx, 1);
-                                        setMenuOption("telegramChatIds", arr);
-                                      }}
-                                    >
-                                      <Trash2 size={16} />
-                                    </IconButton>
-                                  </ListItem>
-                                )
-                              )}
-                            </List>
-                          )}
-
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: 1,
-                              alignItems: "flex-end",
-                            }}
-                          >
-                            <Input
-                              size="md"
-                              placeholder="Add new chat ID"
-                              id="new-telegram-chat-id"
-                              sx={{
-                                bgcolor: "background.level2",
-                                flex: 1,
-                              }}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                  const input = e.target as HTMLInputElement;
-                                  const val = input.value.trim();
-                                  if (val) {
-                                    setMenuOption("telegramChatIds", [
-                                      ...(mo.telegramChatIds || []),
-                                      val,
-                                    ]);
-                                    input.value = "";
-                                  }
-                                }
-                              }}
-                            />
-                            <IconButton
-                              size="md"
-                              variant="soft"
-                              color="primary"
-                              onClick={() => {
-                                const input = document.getElementById(
-                                  "new-telegram-chat-id"
-                                ) as HTMLInputElement;
-                                const val = input?.value.trim();
-                                if (val) {
-                                  setMenuOption("telegramChatIds", [
-                                    ...(mo.telegramChatIds || []),
-                                    val,
-                                  ]);
-                                  input.value = "";
-                                }
-                              }}
-                            >
-                              <Plus size={16} />
-                            </IconButton>
-                          </Box>
-                        </Stack>
-                      </FormField>
-                    </Box>
-                  </Stack>
-                </AccordionDetails>
-              </Accordion>
-            </AccordionGroup>
+                          <Plus size={16} />
+                        </IconButton>
+                      </Box>
+                    </Stack>
+                  </FormField>
+                </Box>
+              </Stack>
+            </Box>
           </TabPanel>
 
           {/* Seasonal Tab */}
