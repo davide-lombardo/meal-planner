@@ -614,7 +614,7 @@ export default function ConfigPage() {
                 <Box sx={{ textAlign: "left", mb: 2 }}>
                   <Typography
                     level="h2"
-                    startDecorator={seasonIcons[mo.currentSeason || "spring"]}
+                    startDecorator={<Calendar size={22} />}
                     sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
                   >
                     Seasonal Settings
@@ -732,7 +732,7 @@ export default function ConfigPage() {
                 <Box sx={{ textAlign: "left", mb: 2 }}>
                   <Typography
                     level="h2"
-                    startDecorator={<Leaf size={22} />}
+                    startDecorator={<ShoppingCart size={22} />}
                     sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
                   >
                     Ingredient Planning
