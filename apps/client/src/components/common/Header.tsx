@@ -3,7 +3,7 @@ import { Box, Typography, useTheme } from "@mui/joy";
 import { ColorSchemeToggle } from "../../ThemeProvider";
 import { IconButton, Menu, MenuItem, ListItemDecorator } from "@mui/joy";
 import { User, LogIn, UserPlus, LogOut, Settings } from "lucide-react";
-import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
+import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 
 export default function Header() {
   const theme = useTheme();
@@ -54,7 +54,7 @@ export default function Header() {
             gap: 0.5,
           }}
         >
-          <Box sx={{ display: { xs: 'none', sm: 'inline-block' } }}>
+          <Box sx={{ display: { xs: "none", sm: "inline-block" } }}>
             <img
               src="/meal-planner-logo.svg"
               alt="Meal Planner Logo"
@@ -63,13 +63,23 @@ export default function Header() {
           </Box>
           <span
             style={{
-              marginLeft: "0",
               fontWeight: 700,
               letterSpacing: "0",
               color: theme.palette.primary.solidActiveBg,
             }}
           >
-            MealPlanner
+            Meal
+          </span>
+          <span
+            style={{
+              fontWeight: 700,
+              letterSpacing: "0",
+              color: theme.palette.text.primary,
+
+              marginLeft: -4,
+            }}
+          >
+            Planner
           </span>
         </Box>
       </Typography>
@@ -100,38 +110,111 @@ export default function Header() {
         >
           <User size={24} />
         </IconButton>
-        <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose} placement="bottom-end" sx={{ minWidth: 220, p: 1 }}>
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}
+          placement="bottom-end"
+          sx={{ minWidth: 220, p: 1 }}
+        >
           {isAuthenticated ? (
             <Box>
-              <Typography level="body-xs" sx={{ px: 1, pt: 1, pb: 0.5, color: 'text.secondary', fontWeight: 700 }}>
+              <Typography
+                level="body-xs"
+                sx={{
+                  px: 1,
+                  pt: 1,
+                  pb: 0.5,
+                  color: "text.secondary",
+                  fontWeight: 700,
+                }}
+              >
                 Signed in as
               </Typography>
-              <MenuItem disabled sx={{ mb: 1, bgcolor: 'background.level1', borderRadius: 2 }}>
-                <Typography level="body-sm" sx={{ fontWeight: 700, color: 'primary.solidBg' }}>{user?.email || "No email"}</Typography>
+              <MenuItem
+                disabled
+                sx={{ mb: 1, bgcolor: "background.level1", borderRadius: 2 }}
+              >
+                <Typography
+                  level="body-sm"
+                  sx={{ fontWeight: 700, color: "primary.solidBg" }}
+                >
+                  {user?.email || "No email"}
+                </Typography>
               </MenuItem>
-              <Typography level="body-xs" sx={{ px: 1, pt: 0.5, pb: 0.5, color: 'text.secondary', fontWeight: 700 }}>
+              <Typography
+                level="body-xs"
+                sx={{
+                  px: 1,
+                  pt: 0.5,
+                  pb: 0.5,
+                  color: "text.secondary",
+                  fontWeight: 700,
+                }}
+              >
                 Account
               </Typography>
-              <MenuItem onClick={() => { handleMenuClose(); window.location.href = '/config'; }} sx={{ borderRadius: 2, mb: 1 }}>
-                <ListItemDecorator><Settings size={18} /></ListItemDecorator>
+              <MenuItem
+                onClick={() => {
+                  handleMenuClose();
+                  window.location.href = "/config";
+                }}
+                sx={{ borderRadius: 2, mb: 1 }}
+              >
+                <ListItemDecorator>
+                  <Settings size={18} />
+                </ListItemDecorator>
                 Settings
               </MenuItem>
-              <MenuItem onClick={() => { handleMenuClose(); logout(); }} sx={{ borderRadius: 2 }}>
-                <ListItemDecorator><LogOut size={18} /></ListItemDecorator>
+              <MenuItem
+                onClick={() => {
+                  handleMenuClose();
+                  logout();
+                }}
+                sx={{ borderRadius: 2 }}
+              >
+                <ListItemDecorator>
+                  <LogOut size={18} />
+                </ListItemDecorator>
                 Logout
               </MenuItem>
             </Box>
           ) : (
             <Box>
-              <Typography level="body-xs" sx={{ px: 1, pt: 1, pb: 0.5, color: 'text.secondary', fontWeight: 700 }}>
+              <Typography
+                level="body-xs"
+                sx={{
+                  px: 1,
+                  pt: 1,
+                  pb: 0.5,
+                  color: "text.secondary",
+                  fontWeight: 700,
+                }}
+              >
                 Welcome
               </Typography>
-              <MenuItem onClick={() => { handleMenuClose(); login(); }} sx={{ borderRadius: 2, mb: 1 }}>
-                <ListItemDecorator><LogIn size={18} /></ListItemDecorator>
+              <MenuItem
+                onClick={() => {
+                  handleMenuClose();
+                  login();
+                }}
+                sx={{ borderRadius: 2, mb: 1 }}
+              >
+                <ListItemDecorator>
+                  <LogIn size={18} />
+                </ListItemDecorator>
                 Login
               </MenuItem>
-              <MenuItem onClick={() => { handleMenuClose(); register(); }} sx={{ borderRadius: 2 }}>
-                <ListItemDecorator><UserPlus size={18} /></ListItemDecorator>
+              <MenuItem
+                onClick={() => {
+                  handleMenuClose();
+                  register();
+                }}
+                sx={{ borderRadius: 2 }}
+              >
+                <ListItemDecorator>
+                  <UserPlus size={18} />
+                </ListItemDecorator>
                 Register
               </MenuItem>
             </Box>

@@ -28,9 +28,55 @@ export default function Sidebar() {
   };
 
   const renderNavList = () => (
-    <List sx={{ flex: 1, mt: 2 }}>
+    <List
+      sx={{
+        flex: 1,
+        mt: 2,
+        ...(isMobile && mobileOpen
+          ? {
+              width: '100%',
+              maxWidth: '100vw',
+              boxSizing: 'border-box',
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100%',
+              minHeight: 0,
+            }
+          : {}),
+      }}
+    >
       {navItems.map(({ label, icon, path }) => {
         const selected = location.pathname === path;
+        // Mobile-only styles
+        const mobileItemStyles = isMobile && mobileOpen ? {
+          minHeight: 72,
+          px: 0,
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: 'calc(100vw - 32px)', // 16px padding on each side
+          maxWidth: '420px',
+          boxSizing: 'border-box',
+        } : {};
+        const mobileIconStyles = isMobile && mobileOpen ? {
+          minWidth: 0,
+          mr: 0,
+          ml: 2, // add left margin for mobile
+          fontSize: 32,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        } : {};
+        const mobileLabelStyles = isMobile && mobileOpen ? {
+          fontSize: 22,
+          textAlign: 'center',
+          width: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+          display: 'flex',
+        } : {};
         return (
           <ListItem key={path} sx={{ mb: 0.5, p: 0 }}>
             <ListItemButton
@@ -43,24 +89,25 @@ export default function Sidebar() {
                 justifyContent: open || isMobile ? 'flex-start' : 'center',
                 overflow: 'hidden',
                 transition: 'background-color 0.2s, color 0.2s, padding-left 0.2s, padding-right 0.2s, width 0.2s',
-                  '&.Mui-selected, &.Mui-selected:hover': {
-                    bgcolor: theme.palette.primary[theme.palette.mode === 'dark' ? 700 : 100],
+                '&.Mui-selected, &.Mui-selected:hover': {
+                  bgcolor: theme.palette.primary[theme.palette.mode === 'dark' ? 700 : 100],
+                  color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
+                  '& .Sidebar-icon, & .Sidebar-label': {
                     color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
-                    '& .Sidebar-icon, & .Sidebar-label': {
-                      color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
-                    },
                   },
-                  '&:hover': {
-                    bgcolor: theme.palette.primary[theme.palette.mode === 'dark' ? 700 : 100],
+                },
+                '&:hover': {
+                  bgcolor: theme.palette.primary[theme.palette.mode === 'dark' ? 700 : 100],
+                  color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
+                  '& .Sidebar-icon, & .Sidebar-label': {
                     color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
-                    '& .Sidebar-icon, & .Sidebar-label': {
-                      color: theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700],
-                    },
                   },
+                },
                 '&:focus-visible': {
                   outline: 'none',
                   boxShadow: (theme) => `0 0 0 2px ${theme.palette.neutral.outlinedBorder}`,
                 },
+                ...mobileItemStyles,
               }}
             >
               <ListItemDecorator
@@ -69,15 +116,16 @@ export default function Sidebar() {
                   minWidth: 0,
                   mr: open || isMobile ? 2 : 0,
                   ml: 1,
-                    color: selected
-                      ? theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700]
-                      : theme.palette.neutral[theme.palette.mode === 'dark' ? 100 : 700],
+                  color: selected
+                    ? theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700]
+                    : theme.palette.neutral[theme.palette.mode === 'dark' ? 100 : 700],
                   transition: 'color 0.2s, margin-right 0.2s',
+                  ...mobileIconStyles,
                 }}
               >
-                {icon}
+                {React.cloneElement(icon, isMobile && mobileOpen ? { size: 32 } : { size: 20 })}
               </ListItemDecorator>
-   
+
               {(open || isMobile) && (
                 <Typography
                   className="Sidebar-label"
@@ -86,9 +134,10 @@ export default function Sidebar() {
                     whiteSpace: 'nowrap',
                     opacity: open || isMobile ? 1 : 0,
                     transition: 'color 0.2s, opacity 0.2s ease-out',
-                      color: selected
-                        ? theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700]
-                        : theme.palette.neutral[theme.palette.mode === 'dark' ? 100 : 700],
+                    color: selected
+                      ? theme.palette.primary[theme.palette.mode === 'dark' ? 100 : 700]
+                      : theme.palette.neutral[theme.palette.mode === 'dark' ? 100 : 700],
+                    ...mobileLabelStyles,
                   }}
                 >
                   {label}
