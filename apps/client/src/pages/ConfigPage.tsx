@@ -41,7 +41,7 @@ import {
   MessageCircle,
   User,
 } from "lucide-react";
-import { Config, MenuOptions, ConfigSchema } from "shared/schemas";
+import { Config, MenuOptions, ConfigSchema, CategorySchema } from "shared/schemas";
 import { EditableArray } from "../components/common/EditableArray";
 import { FormField } from "../components/common/FormField";
 import { CONFIG } from "../utils/constants";
@@ -211,6 +211,7 @@ export default function ConfigPage() {
             alignItems: "center",
             justifyContent: "center",
             minHeight: "200px",
+            px: { xs: 2, sm: 4 },
           }}
         >
           <Typography level="h4" sx={{ color: "text.secondary" }}>
@@ -230,6 +231,7 @@ export default function ConfigPage() {
             alignItems: "center",
             justifyContent: "center",
             minHeight: "200px",
+            px: { xs: 2, sm: 4 },
           }}
         >
           <Card variant="soft" color="danger">
@@ -259,21 +261,28 @@ export default function ConfigPage() {
           bgcolor: "background.body",
           borderBottom: "1px solid",
           borderColor: "divider",
-          py: 2,
+          py: { xs: 2, sm: 2 },
           mb: 3,
         }}
       >
         <Box
           sx={{
             display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
             justifyContent: "space-between",
-            alignItems: "center",
+            alignItems: { xs: "stretch", sm: "center" },
+            gap: { xs: 2, sm: 0 },
             maxWidth: 1200,
             mx: "auto",
-            px: 2,
+            px: { xs: 2, sm: 2 },
           }}
         >
-          <Box>
+          <Box
+            sx={{
+              display: { xs: "flex", sm: "block" },
+              justifyContent: "center",
+            }}
+          >
             {hasUnsavedChanges && (
               <Chip variant="soft" color="warning" size="sm">
                 Unsaved changes
@@ -287,7 +296,11 @@ export default function ConfigPage() {
             onClick={handleSave}
             loading={saving}
             disabled={!hasUnsavedChanges}
-            sx={{ fontWeight: 600, px: 4 }}
+            sx={{
+              fontWeight: 600,
+              px: 4,
+              width: { xs: "100%", sm: "auto" },
+            }}
           >
             {saving ? "Saving..." : "Save Changes"}
           </Button>
@@ -295,7 +308,14 @@ export default function ConfigPage() {
       </Box>
 
       {/* Main Content */}
-      <Box sx={{ maxWidth: 1200, mx: "auto", px: 2, borderRadius: "12px" }}>
+      <Box
+        sx={{
+          maxWidth: 1200,
+          mx: "auto",
+          px: { xs: 1, sm: 2 },
+          borderRadius: "12px",
+        }}
+      >
         <Tabs
           value={activeTab}
           onChange={(_, value) => setActiveTab(value as number)}
@@ -307,15 +327,22 @@ export default function ConfigPage() {
               borderBottomRightRadius: "0px",
               p: 0.5,
               mb: 3,
-              gap: 1,
+              gap: { xs: 0, sm: 1 },
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              flexDirection: { xs: "column", sm: "row" },
+              "& .MuiTabList-scroller": {
+                overflow: { xs: "visible", sm: "auto" },
+              },
             },
             "& .MuiTab-root": {
-              borderRadius: "12px",
+              borderRadius: { xs: "8px", sm: "12px" },
               borderBottomLeftRadius: "0px",
               borderBottomRightRadius: "0px",
               transition: "all 0.2s ease",
               fontWeight: 600,
+              fontSize: { xs: "0.75rem", sm: "0.875rem" },
+              py: { xs: 1, sm: 1.5 },
+              minHeight: { xs: 36, sm: 44 },
               "&:hover": {
                 bgcolor: "background.level2",
               },
@@ -334,19 +361,21 @@ export default function ConfigPage() {
           <TabList>
             <Tab>
               <Settings size={16} style={{ marginRight: 8 }} />
-              General
+              <Box>General</Box>
             </Tab>
             <Tab>
               <Calendar size={16} style={{ marginRight: 8 }} />
-              Seasonal
+              <Box >Seasonal</Box>
             </Tab>
             <Tab>
               <ShoppingCart size={16} style={{ marginRight: 8 }} />
-              Ingredients
+              <Box>
+                Ingredients
+              </Box>
             </Tab>
             <Tab>
               <BarChart3 size={16} style={{ marginRight: 8 }} />
-              Quotas
+              <Box>Quotas</Box>
             </Tab>
           </TabList>
 
@@ -366,11 +395,12 @@ export default function ConfigPage() {
                   <Typography
                     level="h4"
                     startDecorator={<Settings size={18} />}
+                    sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
                   >
                     Basic Settings
                   </Typography>
                 </AccordionSummary>
-                <AccordionDetails sx={{ p: 4 }}>
+                <AccordionDetails sx={{ p: { xs: 2, sm: 4 } }}>
                   <Stack spacing={4}>
                     <Box>
                       <FormField
@@ -387,7 +417,7 @@ export default function ConfigPage() {
                             )
                           }
                           placeholder="e.g. 4"
-                          sx={{ maxWidth: 180 }}
+                          sx={{ maxWidth: { xs: "100%", sm: 180 } }}
                         />
                       </FormField>
                     </Box>
@@ -395,8 +425,10 @@ export default function ConfigPage() {
                     <Box
                       sx={{
                         display: "flex",
-                        alignItems: "center",
+                        flexDirection: { xs: "column", sm: "row" },
+                        alignItems: { xs: "flex-start", sm: "center" },
                         justifyContent: "space-between",
+                        gap: { xs: 2, sm: 0 },
                         p: 3,
                         borderRadius: 3,
                         bgcolor: "background.level1",
@@ -418,15 +450,17 @@ export default function ConfigPage() {
                           Prioritize less-used recipes when generating menus
                         </Typography>
                       </Box>
-                      <CustomSwitch
-                        checked={!!mo.useWeightedSelection}
-                        onChange={(e) =>
-                          setMenuOption(
-                            "useWeightedSelection",
-                            e.target.checked
-                          )
-                        }
-                      />
+                      <Box sx={{ alignSelf: { xs: "flex-end", sm: "center" } }}>
+                        <CustomSwitch
+                          checked={!!mo.useWeightedSelection}
+                          onChange={(e) =>
+                            setMenuOption(
+                              "useWeightedSelection",
+                              e.target.checked
+                            )
+                          }
+                        />
+                      </Box>
                     </Box>
                   </Stack>
                 </AccordionDetails>
@@ -437,11 +471,12 @@ export default function ConfigPage() {
                   <Typography
                     level="h4"
                     startDecorator={<MessageCircle size={18} />}
+                    sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" } }}
                   >
                     Telegram Settings
                   </Typography>
                 </AccordionSummary>
-                <AccordionDetails sx={{ p: 4 }}>
+                <AccordionDetails sx={{ p: { xs: 2, sm: 4 } }}>
                   <Stack spacing={4}>
                     <Box>
                       <FormField
@@ -455,7 +490,7 @@ export default function ConfigPage() {
                             setMenuOption("telegramChatId", e.target.value)
                           }
                           placeholder="es. 123456789"
-                          sx={{ maxWidth: 280 }}
+                          sx={{ maxWidth: { xs: "100%", sm: 280 } }}
                         />
                       </FormField>
                     </Box>
@@ -465,7 +500,10 @@ export default function ConfigPage() {
                         label="Additional Telegram Chat IDs"
                         tooltip="Other Telegram chat IDs to send the menu"
                       >
-                        <Stack spacing={2} sx={{ maxWidth: 400 }}>
+                        <Stack
+                          spacing={2}
+                          sx={{ maxWidth: { xs: "100%", sm: 400 } }}
+                        >
                           {(mo.telegramChatIds || []).length > 0 && (
                             <List
                               sx={{
@@ -486,6 +524,7 @@ export default function ConfigPage() {
                                       minWidth: 0,
                                       width: "100%",
                                       ml: 0,
+                                      gap: { xs: 1, sm: 2 },
                                     }}
                                   >
                                     <Input
@@ -501,6 +540,7 @@ export default function ConfigPage() {
                                       }}
                                       sx={{
                                         bgcolor: "background.level2",
+                                        flex: 1,
                                       }}
                                     />
                                     <IconButton
@@ -536,6 +576,7 @@ export default function ConfigPage() {
                               id="new-telegram-chat-id"
                               sx={{
                                 bgcolor: "background.level2",
+                                flex: 1,
                               }}
                               onKeyDown={(e) => {
                                 if (e.key === "Enter") {
@@ -583,12 +624,16 @@ export default function ConfigPage() {
 
           {/* Seasonal Tab */}
           <TabPanel value={1} sx={{ px: 0 }}>
-            <Card variant="outlined" sx={{ p: 4, borderRadius: 3 }}>
+            <Card
+              variant="outlined"
+              sx={{ p: { xs: 2, sm: 4 }, borderRadius: 3 }}
+            >
               <Stack spacing={4}>
                 <Box sx={{ textAlign: "left", mb: 2 }}>
                   <Typography
                     level="h2"
                     startDecorator={seasonIcons[mo.currentSeason || "spring"]}
+                    sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
                   >
                     Seasonal Settings
                   </Typography>
@@ -603,8 +648,10 @@ export default function ConfigPage() {
                 <Box
                   sx={{
                     display: "flex",
-                    alignItems: "center",
+                    flexDirection: { xs: "column", sm: "row" },
+                    alignItems: { xs: "flex-start", sm: "center" },
                     justifyContent: "space-between",
+                    gap: { xs: 2, sm: 0 },
                     p: 3,
                     borderRadius: 3,
                     bgcolor: "background.level1",
@@ -626,15 +673,17 @@ export default function ConfigPage() {
                       Only show recipes for the current season
                     </Typography>
                   </Box>
-                  <CustomSwitch
-                    checked={!!mo.enableSeasonalFiltering}
-                    onChange={(e) =>
-                      handleSeasonalFilteringToggle(e.target.checked)
-                    }
-                  />
+                  <Box sx={{ alignSelf: { xs: "flex-end", sm: "center" } }}>
+                    <CustomSwitch
+                      checked={!!mo.enableSeasonalFiltering}
+                      onChange={(e) =>
+                        handleSeasonalFilteringToggle(e.target.checked)
+                      }
+                    />
+                  </Box>
                 </Box>
 
-                <Box sx={{ maxWidth: 300 }}>
+                <Box sx={{ maxWidth: { xs: "100%", sm: 300 } }}>
                   <FormField
                     label="Current season"
                     tooltip="Select the current season for recipe filtering"
@@ -693,10 +742,17 @@ export default function ConfigPage() {
 
           {/* Ingredients Tab */}
           <TabPanel value={2} sx={{ px: 0 }}>
-            <Card variant="outlined" sx={{ p: 4, borderRadius: 3 }}>
+            <Card
+              variant="outlined"
+              sx={{ p: { xs: 2, sm: 4 }, borderRadius: 3 }}
+            >
               <Stack spacing={4}>
                 <Box sx={{ textAlign: "left", mb: 2 }}>
-                  <Typography level="h2" startDecorator={<Leaf size={22} />}>
+                  <Typography
+                    level="h2"
+                    startDecorator={<Leaf size={22} />}
+                    sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
+                  >
                     Ingredient Planning
                   </Typography>
                   <Typography
@@ -710,8 +766,10 @@ export default function ConfigPage() {
                 <Box
                   sx={{
                     display: "flex",
-                    alignItems: "center",
+                    flexDirection: { xs: "column", sm: "row" },
+                    alignItems: { xs: "flex-start", sm: "center" },
                     justifyContent: "space-between",
+                    gap: { xs: 2, sm: 0 },
                     p: 3,
                     borderRadius: 3,
                     bgcolor: "background.level1",
@@ -733,15 +791,17 @@ export default function ConfigPage() {
                       Prefer recipes using your available ingredients
                     </Typography>
                   </Box>
-                  <CustomSwitch
-                    checked={!!mo.enableIngredientPlanning}
-                    onChange={(e) =>
-                      setMenuOption(
-                        "enableIngredientPlanning",
-                        e.target.checked
-                      )
-                    }
-                  />
+                  <Box sx={{ alignSelf: { xs: "flex-end", sm: "center" } }}>
+                    <CustomSwitch
+                      checked={!!mo.enableIngredientPlanning}
+                      onChange={(e) =>
+                        setMenuOption(
+                          "enableIngredientPlanning",
+                          e.target.checked
+                        )
+                      }
+                    />
+                  </Box>
                 </Box>
 
                 <Box sx={{ opacity: mo.enableIngredientPlanning ? 1 : 0.5 }}>
@@ -762,12 +822,16 @@ export default function ConfigPage() {
 
           {/* Quotas Tab */}
           <TabPanel value={3} sx={{ px: 0 }}>
-            <Card variant="outlined" sx={{ p: 4, borderRadius: 3 }}>
+            <Card
+              variant="outlined"
+              sx={{ p: { xs: 2, sm: 4 }, borderRadius: 3 }}
+            >
               <Stack spacing={4}>
                 <Box sx={{ textAlign: "left", mb: 2 }}>
                   <Typography
                     level="h2"
                     startDecorator={<BarChart3 size={22} />}
+                    sx={{ fontSize: { xs: "1.25rem", sm: "1.5rem" } }}
                   >
                     Quotas & Preferences
                   </Typography>
@@ -782,8 +846,10 @@ export default function ConfigPage() {
                 <Box
                   sx={{
                     display: "flex",
-                    alignItems: "center",
+                    flexDirection: { xs: "column", sm: "row" },
+                    alignItems: { xs: "flex-start", sm: "center" },
                     justifyContent: "space-between",
+                    gap: { xs: 2, sm: 0 },
                     p: 3,
                     borderRadius: 3,
                     bgcolor: "background.level1",
@@ -805,12 +871,14 @@ export default function ConfigPage() {
                       Limit specific meal types per week
                     </Typography>
                   </Box>
-                  <CustomSwitch
-                    checked={!!mo.useQuotas}
-                    onChange={(e) =>
-                      setMenuOption("useQuotas", e.target.checked)
-                    }
-                  />
+                  <Box sx={{ alignSelf: { xs: "flex-end", sm: "center" } }}>
+                    <CustomSwitch
+                      checked={!!mo.useQuotas}
+                      onChange={(e) =>
+                        setMenuOption("useQuotas", e.target.checked)
+                      }
+                    />
+                  </Box>
                 </Box>
 
                 {mo.useQuotas && (
@@ -823,7 +891,7 @@ export default function ConfigPage() {
                     </Typography>
                     <Card variant="soft" sx={{ p: 3, borderRadius: 2 }}>
                       <List sx={{ "--List-gap": "12px" }}>
-                        {["pesce", "carne", "formaggio", "uova", "legumi"].map(
+                        {CategorySchema.options.map(
                           (category) => (
                             <ListItem
                               key={category}

@@ -107,9 +107,6 @@ export default function Header() {
                 Signed in as
               </Typography>
               <MenuItem disabled sx={{ mb: 1, bgcolor: 'background.level1', borderRadius: 2 }}>
-                <ListItemDecorator>
-                  <User size={18} />
-                </ListItemDecorator>
                 <Typography level="body-sm" sx={{ fontWeight: 700, color: 'primary.solidBg' }}>{user?.email || "No email"}</Typography>
               </MenuItem>
               <Typography level="body-xs" sx={{ px: 1, pt: 0.5, pb: 0.5, color: 'text.secondary', fontWeight: 700 }}>
