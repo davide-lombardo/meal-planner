@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Typography, useTheme } from "@mui/joy";
 import { ColorSchemeToggle } from "../../ThemeProvider";
 import { IconButton, Menu, MenuItem, ListItemDecorator } from "@mui/joy";
-import { User, LogIn, UserPlus, LogOut, Settings } from "lucide-react";
+import { User, LogIn, UserPlus, LogOut, Settings, ChefHat } from "lucide-react";
 import { useKindeAuth } from "@kinde-oss/kinde-auth-react";
 
 export default function Header() {
@@ -55,11 +55,7 @@ export default function Header() {
           }}
         >
           <Box sx={{ display: { xs: "none", sm: "inline-block" } }}>
-            <img
-              src="/meal-planner-logo.svg"
-              alt="Meal Planner Logo"
-              style={{ width: 80, height: 80 }}
-            />
+            <ChefHat size={32} />
           </Box>
           <span
             style={{

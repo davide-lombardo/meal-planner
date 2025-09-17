@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTheme } from "@mui/joy/styles";
 import { Input } from "@mui/joy";
 import JoyPagination from "../components/JoyPagination";
 import {
@@ -17,6 +18,7 @@ import Layout from "../components/common/Layout";
 import { CONFIG } from "../utils/constants";
 
 export default function HistoryPage() {
+  const theme = useTheme();
   const DEFAULT_PAGE_SIZE = 5;
 
   const [filterDate, setFilterDate] = useState<string>("");
@@ -373,9 +375,7 @@ export default function HistoryPage() {
                                   sx={{
                                     fontSize: { xs: "0.9rem", sm: "1rem" },
                                     fontFamily: "inherit",
-                                    color: parsedMenu?.pranzo?.[i]?.nome
-                                      ? "text.primary"
-                                      : "primary.700",
+                                    color: theme.palette.primary[900],
                                     fontStyle: parsedMenu?.pranzo?.[i]?.nome
                                       ? "normal"
                                       : "italic",
@@ -424,9 +424,7 @@ export default function HistoryPage() {
                                   sx={{
                                     fontSize: { xs: "0.9rem", sm: "1rem" },
                                     fontFamily: "inherit",
-                                    color: parsedMenu?.cena?.[i]?.nome
-                                      ? "text.primary"
-                                      : "primary.700",
+                                    color: theme.palette.primary[900],
                                     fontStyle: parsedMenu?.cena?.[i]?.nome
                                       ? "normal"
                                       : "italic",
