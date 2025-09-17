@@ -276,28 +276,9 @@ export default function HistoryPage() {
                           mb: 1,
                         }}
                       >
-                        MENU SETTIMANALE
-                      </Typography>
-                      <Box
-                        sx={{
-                          width: 100,
-                          height: 1,
-                          bgcolor: "primary.500",
-                          mx: "auto",
-                          mb: 2,
-                        }}
-                      />
-                      <Typography
-                        sx={{
-                          fontSize: { xs: "1rem", sm: "1.2rem" },
-                          fontFamily: "inherit",
-                          fontStyle: "italic",
-                          color: "primary.700",
-                          opacity: 0.8,
-                        }}
-                      >
                         {dateLabel || `Menu #${history.length - idx}`}
                       </Typography>
+                 
                     </Box>
                     {/* Days Grid */}
                     <Box>

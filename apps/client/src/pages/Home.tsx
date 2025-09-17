@@ -245,7 +245,7 @@ export default function Home() {
         sx={{
           width: "100%",
           minHeight: 260,
-          bgcolor: theme.palette.primary[200],
+          ...(theme.palette.mode !== "dark" && { bgcolor: theme.palette.primary[200] }),
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           alignItems: "center",
@@ -253,7 +253,7 @@ export default function Home() {
           px: { xs: 2, md: 8 },
           py: { xs: 4, md: 6 },
           borderRadius: 0,
-          boxShadow: "md",
+          boxShadow: "sm",
           mb: 4,
           position: "relative",
           overflow: "hidden",
@@ -294,10 +294,6 @@ export default function Home() {
               borderRadius: 8,
               mr: 2,
               mb: 2,
-              "&:hover": {
-                bgcolor: theme.palette.primary[700],
-                color: theme.palette.primary[200],
-              },
             }}
             onClick={() => {
               setEditRecipe(null);
