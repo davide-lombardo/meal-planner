@@ -65,7 +65,7 @@ const JoyPagination: React.FC<PaginationProps> = ({
         <Button
           key={i}
           variant={i === page ? "solid" : "outlined"}
-          color={i === page ? "success" : "neutral"}
+          color={i !== page ? "neutral" : "primary"}
           sx={{
             borderRadius: 8,
             minWidth: { xs: 36, sm: 44 },
@@ -152,10 +152,6 @@ const JoyPagination: React.FC<PaginationProps> = ({
             fontWeight: 600,
             fontSize: { xs: "0.95rem", sm: "1rem" },
             height: { xs: 36, sm: 44 },
-            boxShadow:
-              i === page
-                ? `0 0 0 2px ${theme.palette.primary[500]}`
-                : undefined,
             touchAction: "manipulation",
           }}
           onClick={() => onPageChange(i)}
@@ -229,9 +225,7 @@ const JoyPagination: React.FC<PaginationProps> = ({
     </Button>
   );
 
-
-    // Responsive container for pagination
-    return <Box sx={containerSx}>{pageButtons}</Box>;
+  return <Box sx={containerSx}>{pageButtons}</Box>;
 };
 
 export default JoyPagination;

@@ -29,7 +29,7 @@ const AppMetaInfo: React.FC = () => {
         position: "fixed",
         left: 0,
         bottom: 0,
-        zIndex: 2000,
+        zIndex: 1300,
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
@@ -53,7 +53,7 @@ const AppMetaInfo: React.FC = () => {
       >
         <Info size={16} />
         <Typography level="body-xs" sx={{ fontWeight: 500 }}>
-          Version: {APP_VERSION}
+          v{APP_VERSION}
         </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -65,7 +65,7 @@ const AppMetaInfo: React.FC = () => {
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <Monitor size={16} />
         <Typography level="body-xs" sx={{ fontWeight: 500 }}>
-          Screen: {screenSize}
+          {screenSize}
         </Typography>
       </Box>
     </Box>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "@mui/joy/styles";
-import { Input } from "@mui/joy";
+import { Input, CircularProgress } from "@mui/joy";
 import JoyPagination from "../components/JoyPagination";
 import {
   Box,
@@ -154,9 +154,7 @@ export default function HistoryPage() {
             minHeight: 200,
           }}
         >
-          <Typography level="h4" sx={{ color: "text.secondary" }}>
-            Loading history...
-          </Typography>
+          <CircularProgress size="lg" color="primary" />
         </Box>
       ) : history.length === 0 ? (
         <Card variant="soft" color="neutral" sx={{ mb: 2 }}>

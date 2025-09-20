@@ -263,7 +263,7 @@ export default function Home() {
           <Typography
             level="h1"
             sx={{
-              fontWeight: 900,
+              fontWeight: 800,
               fontSize: { xs: 32, md: 48 },
               mb: 2,
               color: theme.palette.text.primary,

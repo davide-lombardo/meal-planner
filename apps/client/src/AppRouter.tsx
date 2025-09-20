@@ -11,6 +11,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const HistoryPage = lazy(() => import("./pages/HistoryPage"));
 const DiscoveryPage = lazy(() => import("./pages/DiscoveryPage"));
 const MealDetailPage = lazy(() => import("./pages/MealDetailPage"));
+const CalendarPage = lazy(() => import("./pages/CalendarPage"));
 
 export default function AppRouter() {
   return (
@@ -39,6 +40,7 @@ export default function AppRouter() {
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/discovery" element={<DiscoveryPage />} />
         <Route path="/meal/:id" element={<MealDetailPage />} />
+        <Route path="/calendar" element={<CalendarPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

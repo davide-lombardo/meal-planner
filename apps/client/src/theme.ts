@@ -1,3 +1,28 @@
+declare module '@mui/joy/styles' {
+  interface PalettePrimary {
+    contrastText: string;
+    softBg: string;
+    softColor: string;
+    softHoverBg: string;
+    solidHoverBg: string;
+  }
+  
+  interface Palette {
+    category: {
+      pesce: string;
+      carne: string;
+      formaggio: string;
+      uova: string;
+      legumi: string;
+    };
+    shadow: {
+      sm: string;
+      md: string;
+      lg: string;
+    };
+  }
+}
+
 export const lightTheme = {
   background: {
     body: "#f7f7f7",

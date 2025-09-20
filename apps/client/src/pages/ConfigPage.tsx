@@ -348,7 +348,7 @@ export default function ConfigPage() {
               },
               '&[aria-selected="true"]': {
                 bgcolor: "background.level2",
-                color: themeObj.primary[500],
+                color: 'primary.500',
                 borderBottom: "none",
                 boxShadow: "none",
                 "&:hover": {

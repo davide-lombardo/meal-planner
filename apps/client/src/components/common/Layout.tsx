@@ -21,7 +21,6 @@ export default function Layout({
   subtitle,
   showBackButton = true,
   backButtonPath = "/",
-  maxWidth = 1200,
 }: LayoutProps) {
   const navigate = useNavigate();
 
@@ -35,7 +34,7 @@ export default function Layout({
       }}
     >
       {/* Header */}
-      <Box sx={{ maxWidth, mx: "auto", mb: 4 }}>
+      <Box sx={{  mb: 4 }}>
         {showBackButton && (
           <Stack
             direction="row"
@@ -66,7 +65,7 @@ export default function Layout({
           <Typography
             level="h1"
             sx={{
-              fontWeight: 800,
+              fontWeight: 700,
               fontSize: { xs: 28, md: 36 },
               color: "text.primary",
               mb: 1,
@@ -86,7 +85,7 @@ export default function Layout({
       </Box>
 
       {/* Main Content */}
-      <Box sx={{ maxWidth, mx: "auto", pb: 5 }}>{children}</Box>
+      <Box sx={{ mx: "auto", pb: 5 }}>{children}</Box>
       {/* Footer */}
       <Footer />
       <AppMetaInfo />

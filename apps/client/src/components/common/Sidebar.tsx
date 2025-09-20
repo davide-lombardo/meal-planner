@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Box, IconButton, List, ListItem, ListItemButton, ListItemDecorator, Typography, Drawer, useTheme } from '@mui/joy';
-import { Home, Settings, Info, Menu as MenuIcon, ChevronLeft, Refrigerator, History, X as CloseIcon, CookingPot } from 'lucide-react';
+import { Home, Settings, Info, Menu as MenuIcon, ChevronLeft, Refrigerator, History, X as CloseIcon, CookingPot, Calendar as CalendarIcon } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const navItems = [
   { label: 'Home', icon: <Home size={20} />, path: '/' },
   { label: 'Discover', icon: <CookingPot size={20} />, path: '/discovery' },
   { label: 'History', icon: <History size={20} />, path: '/history' },
+  { label: 'Calendar', icon: <CalendarIcon size={20} />, path: '/calendar' },
 ];
 
 export default function Sidebar() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -164,7 +165,7 @@ export default function Sidebar() {
   if (isMobile) {
     return (
       <>
-        <Box sx={{ position: 'fixed', top: 4, left: 16, zIndex: 2100, display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ position: 'fixed', top: 4, left: 16, zIndex: 1000, display: 'flex', alignItems: 'center' }}>
           <IconButton
             onClick={() => setMobileOpen(true)}
             variant="plain"
@@ -188,7 +189,7 @@ export default function Sidebar() {
           onClose={() => setMobileOpen(false)}
           anchor="left"
           size="md"
-          sx={{ zIndex: 2100 }}
+          sx={{ zIndex: 1000 }}
           slotProps={{ content: { sx: { p: 0, width: '100vw', maxWidth: '100vw', position: 'relative' } } }}
           hideBackdrop={false}
         >
