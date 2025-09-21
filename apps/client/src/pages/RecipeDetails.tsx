@@ -181,7 +181,7 @@ export default function RecipeDetails() {
             sx={{
               bgcolor: theme.palette.background.level1,
               "&:hover": { bgcolor: theme.palette.background.level2 },
-              color: theme.palette.text.primary,
+              color: 'theme.palette.text.primary',
             }}
             aria-label="Back to recipes"
           >
@@ -199,7 +199,7 @@ export default function RecipeDetails() {
             mb: 2,
           }}
         >
-          <Soup size={56} style={{ opacity: 0.9, flexShrink: 0 }} />
+          <Soup size={56} style={{ color: 'black', opacity: 0.9, flexShrink: 0 }} />
           <Box>
             <Typography
               level="h1"
@@ -207,7 +207,7 @@ export default function RecipeDetails() {
                 fontWeight: 900,
                 fontSize: { xs: 32, md: 48 },
                 mb: 1,
-                color: theme.palette.text.primary,
+                color: 'common.black',
                 letterSpacing: 1,
               }}
             >
@@ -243,7 +243,7 @@ export default function RecipeDetails() {
                     bgcolor: recipe.categoria
                       ? theme.palette.category[recipe.categoria]
                       : theme.palette.background.level2,
-                    color: theme.palette.text.primary,
+                    color: 'common.black',
                     fontSize: 14,
                     px: 1.5,
                     py: 0.5,
@@ -265,7 +265,6 @@ export default function RecipeDetails() {
                     px: 1.5,
                     py: 0.5,
                     borderRadius: 8,
-                    alignItems: "center",
                   }}
                   size="md"
                 >

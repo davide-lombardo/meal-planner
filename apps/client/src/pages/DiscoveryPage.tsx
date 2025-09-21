@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
-  Typography,
-  Grid,
-  CircularProgress,
-  Stack,
+  Typography, Stack,
   Card,
   CardContent,
   Select,
-  Option,
+  Option
 } from "@mui/joy";
 import Skeleton from "@mui/joy/Skeleton";
 import Layout from "../components/common/Layout";
@@ -36,12 +33,29 @@ export default function DiscoveryPage() {
   const [categories, setCategories] = useState<string[]>([]);
   const [area, setArea] = useState("");
   const [areas, setAreas] = useState<string[]>([]);
+
+  // Pagination logic
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const paginatedMeals = meals.slice((page - 1) * pageSize, page * pageSize);
+  const pageCount = Math.ceil(meals.length / pageSize);
 
   useEffect(() => {
     fetchCategories();
     fetchAreas();
   }, []);
+
+  // Randomly set area filter when areas are loaded and area is not set
+  useEffect(() => {
+    if (areas.length > 0) {
+      console.log('Areas:', areas);
+    }
+    if (areas.length > 0 && !area) {
+      const randomArea = areas[Math.floor(Math.random() * areas.length)];
+      setArea(randomArea);
+      setPage(1);
+    }
+  }, [areas]);
 
   useEffect(() => {
     fetchMeals();
@@ -90,11 +104,6 @@ export default function DiscoveryPage() {
     }
     setLoading(false);
   };
-
-  // Pagination logic
-  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
-  const paginatedMeals = meals.slice((page - 1) * pageSize, page * pageSize);
-  const pageCount = Math.ceil(meals.length / pageSize);
 
   return (
     <Layout

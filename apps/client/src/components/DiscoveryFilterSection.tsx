@@ -88,7 +88,7 @@ const DiscoveryFilterSection: React.FC<DiscoveryFilterSectionProps> = ({
             ))}
           </Select>
         </Box>
-        <Box>
+       <Box>
           <Typography level="body-sm" sx={{ mb: 1, fontWeight: 500, color: 'text.secondary' }}>
             Area
           </Typography>
@@ -98,10 +98,10 @@ const DiscoveryFilterSection: React.FC<DiscoveryFilterSectionProps> = ({
             placeholder="All areas"
             sx={{ borderRadius: 12, '--Select-focusedThickness': '2px', '--Select-focusedHighlight': 'var(--joy-palette-primary-500)' }}
           >
-            <Option value="">All areas</Option>
-            {areas.map(a => (
-              <Option key={a} value={a}>{a}</Option>
-            ))}
+            <Option value="">🌍 All areas</Option>
+              {areas.map(a => (
+                <Option key={a} value={a}>{a}</Option>
+              ))}
           </Select>
         </Box>
       </Box>

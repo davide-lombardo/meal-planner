@@ -1,6 +1,3 @@
-/**
- * Simple cache implementation with expiration
- */
 export class DataCache<T> {
   private cache: Map<string, { data: T; timestamp: number }> = new Map();
   private readonly ttl: number; // Time to live in milliseconds

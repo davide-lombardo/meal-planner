@@ -1,9 +1,7 @@
 import { Menu } from "shared/schemas";
+import { daysOfWeek } from "./constants";
 
 export function formatMenu(menu: any): string {
-  const daysOfWeek = [
-    "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"
-  ];
   if (!menu || !Array.isArray(menu.pranzo) || !Array.isArray(menu.cena)) {
     return "Menù non disponibile";
   }

@@ -15,6 +15,8 @@ import {
 import { useTheme } from "@mui/joy/styles";
 import { PlusCircle, Mail, Loader2, Send } from "lucide-react";
 import RecipeCard from "../components/RecipeCard";
+import DiscoveryRecipeCard from "../components/DiscoveryRecipeCard";
+import { useNavigate } from "react-router-dom";
 import RecipeDialog from "../components/dialog/RecipeDialog";
 import ConfirmDialog from "../components/dialog/ConfirmDialog";
 import { useLocation } from "react-router-dom";
@@ -40,6 +42,32 @@ function useDebouncedValue<T>(value: T, delay: number): T {
 }
 
 export default function Home() {
+  // For Discovery random recipes
+  const [discoveryMeals, setDiscoveryMeals] = React.useState<any[]>([]);
+  const [discoveryLoading, setDiscoveryLoading] = React.useState(false);
+  const navigate = useNavigate();
+  // Fetch random 3 recipes from Discovery API
+  React.useEffect(() => {
+    async function fetchDiscoveryMeals() {
+      setDiscoveryLoading(true);
+      try {
+        // Use the same API as DiscoveryPage, but fetch a larger set to randomize
+        const res = await fetch("https://www.themealdb.com/api/json/v1/1/search.php?s=");
+        const data = await res.json();
+        if (data.meals && data.meals.length > 0) {
+          // Shuffle and pick 3
+          const shuffled = data.meals.sort(() => 0.5 - Math.random());
+          setDiscoveryMeals(shuffled.slice(0, 3));
+        } else {
+          setDiscoveryMeals([]);
+        }
+      } catch {
+        setDiscoveryMeals([]);
+      }
+      setDiscoveryLoading(false);
+    }
+    fetchDiscoveryMeals();
+  }, []);
   const { isAuthenticated } = useKindeAuth();
   const theme = useTheme();
   const location = useLocation();
@@ -139,7 +167,7 @@ export default function Home() {
         chatId = String(config.menuOptions.telegramChatId);
       }
       if (!chatId || chatId.trim() === "") {
-        setTelegramError("Telegram chatId non configurato o non valido.");
+        setTelegramError("Telegram chatId is not configured or invalid.");
         setTelegramSending(false);
         return;
       }
@@ -156,9 +184,9 @@ export default function Home() {
         body: JSON.stringify(body),
       });
       if (!response.ok) throw new Error("Failed to send Telegram message");
-      setTelegramSuccess("Messaggio Telegram inviato!");
+      setTelegramSuccess("Telegram message sent!");
     } catch (e) {
-      setTelegramError("Errore invio messaggio Telegram.");
+      setTelegramError("Failed to send Telegram message.");
     } finally {
       setTelegramSending(false);
     }
@@ -245,7 +273,9 @@ export default function Home() {
         sx={{
           width: "100%",
           minHeight: 260,
-          ...(theme.palette.mode !== "dark" && { bgcolor: theme.palette.primary[200] }),
+          ...(theme.palette.mode !== "dark" && {
+            bgcolor: theme.palette.primary[200],
+          }),
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           alignItems: "center",
@@ -517,6 +547,81 @@ export default function Home() {
             </Box>
           </>
         )}
+      </Box>
+
+
+      {/* You may also like section */}
+  <Box sx={{ maxWidth: 1100, mx: "auto", px: 2, mt: 6, mb: 6 }}>
+        <Box
+          sx={{
+            width: { xs: '100%', sm: 1052 },
+            mx: 'auto',
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            mb: 4, // Increased margin bottom for more space
+            alignItems: 'center',
+            justifyContent: { xs: 'center', sm: 'space-between' },
+            gap: 2,
+          }}
+        >
+          {discoveryLoading ? (
+            <Skeleton variant="text" width={340} height={40} sx={{ borderRadius: 4 }} />
+          ) : (
+            <Typography
+              level="h2"
+              sx={{ fontWeight: 700, width: 340, textAlign: { xs: 'center', sm: 'left' } }}
+            >
+              You may also like
+            </Typography>
+          )}
+          <Box sx={{ flex: 1 }} />
+          {discoveryLoading ? (
+            <Skeleton variant="rectangular" width={340} height={40} sx={{ borderRadius: 8 }} />
+          ) : (
+            <Button
+              variant="solid"
+              color="primary"
+              size="lg"
+              sx={{
+                width: 340,
+                fontWeight: 700,
+                borderRadius: 8,
+                mb: { xs: 2, sm: 0 },
+                px: 1.5, // Decreased horizontal padding
+              }}
+              onClick={() => navigate("/discovery")}
+            >
+              Explore more recipes
+            </Button>
+          )}
+        </Box>
+        <Box
+          sx={{
+            width: { xs: '100%', sm: 1052 },
+            mx: 'auto',
+          }}
+        >
+          {discoveryLoading ? (
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} variant="rectangular" width={340} height={320} />
+              ))}
+            </Stack>
+          ) : (
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+              {discoveryMeals.map((meal) => (
+                <DiscoveryRecipeCard
+                  key={meal.idMeal}
+                  id={meal.idMeal}
+                  title={meal.strMeal}
+                  image={meal.strMealThumb}
+                  category={meal.strCategory}
+                  area={meal.strArea}
+                />
+              ))}
+            </Stack>
+          )}
+        </Box>
       </Box>
 
       {/* Dialogs */}

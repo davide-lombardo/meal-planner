@@ -10,6 +10,7 @@ export default function Header() {
   const { login, logout, register, user, isAuthenticated } = useKindeAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement> | null) => {
     if (event) {
       setAnchorEl(event.currentTarget);

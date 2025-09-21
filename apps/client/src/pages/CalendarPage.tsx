@@ -6,36 +6,27 @@ import {
   Box,
   Card,
   Typography,
-  Chip,
-  Sheet,
   CircularProgress,
   Modal,
   ModalDialog,
   ModalClose,
 } from "@mui/joy";
 import { useTheme } from "@mui/joy/styles";
-import { CONFIG } from "../utils/constants";
+import { CONFIG, daysOfWeek } from "../utils/constants";
 import { Recipe } from "shared/schemas";
 import Layout from "../components/common/Layout";
 import { Moon, Sun } from "lucide-react";
-
-const DAYS_OF_WEEK = [
-  "Lunedì",
-  "Martedì",
-  "Mercoledì",
-  "Giovedì",
-  "Venerdì",
-  "Sabato",
-  "Domenica",
-];
 
 const CALENDAR_TITLE = "Meal Calendar";
 const CALENDAR_SUBTITLE = "Easily browse your planned meals.";
 
 // Types
+
 interface MenuData {
   pranzo: Recipe[];
   cena: Recipe[];
+  createdAt?: string; // ISO string, for sorting
+  weekStart: string; // YYYY-MM-DD of week start
 }
 
 interface SelectedMeal {
@@ -56,64 +47,62 @@ function getStartOfWeek(date: Date): Date {
 export default function CalendarPage() {
   const theme = useTheme();
 
-  const [menu, setMenu] = React.useState<MenuData | null>(null);
+  // Store all menus, grouped by weekStart (YYYY-MM-DD)
+  const [menusByWeek, setMenusByWeek] = React.useState<Record<string, MenuData>>({});
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
   const [selectedMeal, setSelectedMeal] = React.useState<SelectedMeal | null>(
     null
   );
 
+  // Generate calendar events for all weeks, using the latest menu per week
   const getCalendarEvents = React.useCallback(() => {
-    if (!menu) return [];
+    const events: any[] = [];
+    Object.entries(menusByWeek).forEach(([weekStart, menu]) => {
+      for (let i = 0; i < 7; i++) {
+        const currentDate = new Date(weekStart);
+        currentDate.setDate(new Date(weekStart).getDate() + i);
+        const dateStr = currentDate.toISOString().split("T")[0];
 
-    const events = [];
-    const startOfWeek = getStartOfWeek(new Date());
+        const pranzoMeal = menu.pranzo[i];
+        const cenaMeal = menu.cena[i];
 
-    for (let i = 0; i < 7; i++) {
-      const currentDate = new Date(startOfWeek);
-      currentDate.setDate(startOfWeek.getDate() + i);
-      const dateStr = currentDate.toISOString().split("T")[0];
-
-      const pranzoMeal = menu.pranzo[i];
-      const cenaMeal = menu.cena[i];
-
-      if (pranzoMeal) {
-        events.push({
-          id: `pranzo-${i}`,
-          title: `${pranzoMeal.nome}`,
-          start: dateStr,
-          allDay: true,
-          backgroundColor: theme.palette.primary[200],
-          textColor: theme.palette.primary[900],
-          extendedProps: {
-            meal: pranzoMeal,
-            type: "Pranzo",
-            dayIndex: i,
-            icon: "lunch",
-          },
-        });
+        if (pranzoMeal) {
+          events.push({
+            id: `pranzo-${weekStart}-${i}`,
+            title: `${pranzoMeal.nome}`,
+            start: dateStr,
+            allDay: true,
+            backgroundColor: theme.palette.primary[200],
+            textColor: theme.palette.primary[900],
+            extendedProps: {
+              meal: pranzoMeal,
+              type: "Pranzo",
+              dayIndex: i,
+              icon: "lunch",
+            },
+          });
+        }
+        if (cenaMeal) {
+          events.push({
+            id: `cena-${weekStart}-${i}`,
+            title: `${cenaMeal.nome}`,
+            start: dateStr,
+            allDay: true,
+            backgroundColor: theme.palette.primary[200],
+            textColor: theme.palette.primary[900],
+            extendedProps: {
+              meal: cenaMeal,
+              type: "Cena",
+              dayIndex: i,
+              icon: "dinner",
+            },
+          });
+        }
       }
-
-      if (cenaMeal) {
-        events.push({
-          id: `cena-${i}`,
-          title: `${cenaMeal.nome}`,
-          start: dateStr,
-          allDay: true,
-          backgroundColor: theme.palette.primary[200],
-          textColor: theme.palette.primary[900],
-          extendedProps: {
-            meal: cenaMeal,
-            type: "Cena",
-            dayIndex: i,
-            icon: "dinner",
-          },
-        });
-      }
-    }
-
+    });
     return events;
-  }, [menu, theme.palette]);
+  }, [menusByWeek, theme.palette]);
 
   const renderEventContent = (eventInfo: any) => {
     const { meal, type } = eventInfo.event.extendedProps;
@@ -150,32 +139,43 @@ export default function CalendarPage() {
 
   // Fetch menu data
   React.useEffect(() => {
-    const fetchMenu = async () => {
+    const fetchMenus = async () => {
       setLoading(true);
       setError("");
-
       try {
         const token = sessionStorage.getItem("kinde_access_token");
         const response = await fetch(
-          `${CONFIG.API_BASE_URL}/menu/history?limit=1`,
+          `${CONFIG.API_BASE_URL}/menu/history`,
           {
             headers: token ? { Authorization: `Bearer ${token}` } : {},
           }
         );
-
         if (!response.ok) {
           throw new Error("Failed to fetch menu history");
         }
-
         const data = await response.json();
-
         if (!data.history || data.history.length === 0) {
-          setMenu(null);
+          setMenusByWeek({});
         } else {
-          setMenu({
-            pranzo: data.history[0].pranzo || [],
-            cena: data.history[0].cena || [],
+          // Group menus by weekStart, keep only the latest per week
+          const weekMenus: Record<string, MenuData> = {};
+          data.history.forEach((menu: any) => {
+            // Determine week start (Monday) for this menu
+            const createdAt = menu.createdAt || menu.created_at || menu.date || new Date().toISOString();
+            const menuDate = new Date(createdAt);
+            const weekStartDate = getStartOfWeek(menuDate);
+            const weekStartStr = weekStartDate.toISOString().split("T")[0];
+            // If multiple menus for the same week, keep the latest
+            if (!weekMenus[weekStartStr] || new Date(createdAt) > new Date(weekMenus[weekStartStr].createdAt || 0)) {
+              weekMenus[weekStartStr] = {
+                pranzo: menu.pranzo || [],
+                cena: menu.cena || [],
+                createdAt,
+                weekStart: weekStartStr,
+              };
+            }
           });
+          setMenusByWeek(weekMenus);
         }
       } catch (error) {
         setError("Failed to load weekly menu");
@@ -184,11 +184,10 @@ export default function CalendarPage() {
         setLoading(false);
       }
     };
-
-    fetchMenu();
+    fetchMenus();
   }, []);
 
-  // Handle meal chip click
+
   const handleMealClick = React.useCallback(
     (meal: Recipe, type: string, dayIndex: number, dateStr: string) => {
       // dateStr is in format YYYY-MM-DD
@@ -196,14 +195,14 @@ export default function CalendarPage() {
       setSelectedMeal({
         meal,
         type,
-        day: DAYS_OF_WEEK[date.getDay() === 0 ? 6 : date.getDay() - 1],
+        day: daysOfWeek[date.getDay() === 0 ? 6 : date.getDay() - 1],
         dayNumber: date.getDate(),
       });
     },
     []
   );
 
-  // Close modal
+
   const handleCloseModal = React.useCallback(() => {
     setSelectedMeal(null);
   }, []);
@@ -267,7 +266,7 @@ export default function CalendarPage() {
   }
 
   // No menu state
-  if (!menu) {
+  if (!menusByWeek || Object.keys(menusByWeek).length === 0) {
     return (
       <Layout
         title={CALENDAR_TITLE}
@@ -290,8 +289,7 @@ export default function CalendarPage() {
               color: theme.palette.text.secondary,
             }}
           >
-            Nessun menu settimanale trovato. Genera un menu dalla pagina
-            principale!
+            No weekly menu found. Generate a menu from the main page!
           </Typography>
         </Card>
       </Layout>

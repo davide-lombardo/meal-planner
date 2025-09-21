@@ -1,5 +1,6 @@
 import { Recipe, Menu, Config, Season } from 'shared/schemas';
 import { getSeasonalRecipes, getCurrentSeason } from './seasonalManager';
+import { daysOfWeek } from 'utils/constants';
 
 /**
  * HOW MEAL SELECTION WORKS
@@ -208,7 +209,6 @@ export function generateMenu(recipes: Recipe[], history: Menu[] = [], config: Co
 }
 
 export function formatMenu(menu: Menu): string {
-  const daysOfWeek = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
   let formattedMenu = 'Menù settimanale:\n\n';
   
   for (let i = 0; i < 7; i++) {

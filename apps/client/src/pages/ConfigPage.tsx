@@ -13,18 +13,12 @@ import {
   ListItem,
   ListItemDecorator,
   IconButton,
-  Stack,
-  Grid,
-  Select,
+  Stack, Select,
   Option,
   Tabs,
   TabList,
   Tab,
-  TabPanel,
-  AccordionGroup,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
+  TabPanel
 } from "@mui/joy";
 import {
   Plus,
@@ -1022,7 +1016,7 @@ export default function ConfigPage() {
         open={!!success}
         autoHideDuration={3000}
         onClose={() => setSuccess("")}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert variant="solid" color="success">
           {success}
@@ -1033,7 +1027,7 @@ export default function ConfigPage() {
         open={!!error}
         autoHideDuration={5000}
         onClose={() => setError("")}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert variant="solid" color="danger">
           {error}

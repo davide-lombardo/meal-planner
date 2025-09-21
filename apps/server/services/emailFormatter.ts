@@ -1,13 +1,12 @@
 import { Menu, Recipe } from 'shared/schemas';
 import { generateShoppingList } from './shoppingListGenerator';
 import { formatIngredient, PANTRY_STAPLES } from './ingredientParser';
+import { daysOfWeek } from 'utils/constants';
 
 /**
  * Generate improved HTML email with organized shopping list
  */
 export function generateHtmlEmail(menu: Menu, recipes: Recipe[]): string {
-  const daysOfWeek = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'];
-
   const menuHtml = daysOfWeek
     .map(
       (day, i) => `
