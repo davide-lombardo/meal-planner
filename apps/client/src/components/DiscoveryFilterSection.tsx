@@ -1,6 +1,8 @@
 import React from 'react';
 import { Box, Typography, Input, Select, Option, IconButton, Badge, Button } from '@mui/joy';
+import ReactCountryFlag from "react-country-flag";
 import { Search, X, SlidersHorizontal, RotateCcw } from 'lucide-react';
+import { AREA_TO_COUNTRY } from '../utils/constants';
 
 interface DiscoveryFilterSectionProps {
   search: string;
@@ -97,11 +99,36 @@ const DiscoveryFilterSection: React.FC<DiscoveryFilterSectionProps> = ({
             onChange={(_, value) => onAreaChange(value || '')}
             placeholder="All areas"
             sx={{ borderRadius: 12, '--Select-focusedThickness': '2px', '--Select-focusedHighlight': 'var(--joy-palette-primary-500)' }}
+            renderValue={(selectedOption) => {
+              const value = typeof selectedOption === 'string' ? selectedOption : selectedOption?.value;
+              if (value && AREA_TO_COUNTRY[value]) {
+                return <>
+                  <ReactCountryFlag
+                    countryCode={AREA_TO_COUNTRY[value]}
+                    svg
+                    style={{ width: "1.2em", height: "1.2em", marginRight: 6, verticalAlign: "middle" }}
+                    title={value}
+                  />
+                  {value}
+                </>;
+              }
+              return value || '🌍 All areas';
+            }}
           >
             <Option value="">🌍 All areas</Option>
-              {areas.map(a => (
-                <Option key={a} value={a}>{a}</Option>
-              ))}
+            {areas.map(a => (
+              <Option key={a} value={a}>
+                {AREA_TO_COUNTRY[a] && (
+                  <ReactCountryFlag
+                    countryCode={AREA_TO_COUNTRY[a]}
+                    svg
+                    style={{ width: "1.2em", height: "1.2em", marginRight: 6, verticalAlign: "middle" }}
+                    title={a}
+                  />
+                )}
+                {a}
+              </Option>
+            ))}
           </Select>
         </Box>
       </Box>

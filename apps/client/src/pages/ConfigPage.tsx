@@ -314,6 +314,7 @@ export default function ConfigPage() {
           value={activeTab}
           onChange={(_, value) => setActiveTab(value as number)}
           sx={{
+            borderRadius: 'inherit',
             "& .MuiTabList-root": {
               bgcolor: "background.level1",
               borderRadius: "12px",
@@ -322,7 +323,6 @@ export default function ConfigPage() {
               p: 0.5,
               mb: 3,
               gap: { xs: 0, sm: 1 },
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
               flexDirection: { xs: "column", sm: "row" },
               "& .MuiTabList-scroller": {
                 overflow: { xs: "visible", sm: "auto" },

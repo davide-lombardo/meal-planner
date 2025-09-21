@@ -39,4 +39,8 @@ export const AREA_TO_COUNTRY: Record<string, string> = {
   Tunisian: "TN",
   Turkish: "TR",
   Vietnamese: "VN",
+  Filipino: "PH",
+  Ukrainian: "UA",
+  Uruguayan: "UY",
 };
+

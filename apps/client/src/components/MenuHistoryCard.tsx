@@ -12,152 +12,131 @@ interface MenuHistoryCardProps {
 export default function MenuHistoryCard({ menu, idx, total }: MenuHistoryCardProps) {
   const theme = useTheme();
   const parsedMenu = menu;
+  
   let dateLabel = "";
   if (menu.created_at) {
     dateLabel = dayjs(Number(menu.created_at)).format("D MMMM YYYY - HH:mm");
   }
+
   return (
     <Box
       sx={{
         mb: 4,
         mx: "auto",
-        maxWidth: { xs: "100%", sm: 800 },
-        backgroundColor: "background.level1",
-        border: "3px solid",
-        borderColor: "primary.700",
-        borderRadius: 0,
-        boxShadow: "shadow.lg",
-        position: "relative",
+        maxWidth: { xs: "100%", sm: 900 },
+        backgroundColor: "background.surface",
+        border: "1px solid",
+        borderColor: "divider",
+        borderRadius: 3,
         overflow: "hidden",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          pointerEvents: "none",
-          opacity: 0.3,
-        },
+        transition: "all 0.3s ease",
+        // Subtle gradient overlay
+        background: `linear-gradient(135deg, 
+          ${theme.palette.background.surface} 0%, 
+          ${theme.palette.background.level1} 100%)`,
       }}
     >
-      {/* Decorative corner flourishes */}
+      {/* Header with gradient */}
       <Box
         sx={{
-          position: "absolute",
-          top: 15,
-          left: 15,
-          width: 30,
-          height: 30,
-          border: "2px solid",
-          borderColor: "primary.700",
-          borderRight: "none",
-          borderBottom: "none",
+          background: `linear-gradient(135deg, 
+            ${theme.palette.primary[500]} 0%, 
+            ${theme.palette.primary[600]} 100%)`,
+          p: 3,
+          textAlign: "center",
+          position: "relative",
+          overflow: "hidden",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+          },
         }}
       >
-        <Box
+        <Typography
           sx={{
-            position: "absolute",
-            top: -2,
-            left: -2,
-            width: 10,
-            height: 10,
-            border: "2px solid",
-            borderColor: "primary.700",
-            borderRight: "none",
-            borderBottom: "none",
-          }}
-        />
-      </Box>
-      <Box
-        sx={{
-          position: "absolute",
-          top: 15,
-          right: 15,
-          width: 30,
-          height: 30,
-          border: "2px solid",
-          borderColor: "primary.700",
-          borderLeft: "none",
-          borderBottom: "none",
-        }}
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: -2,
-            right: -2,
-            width: 10,
-            height: 10,
-            border: "2px solid",
-            borderColor: "primary.700",
-            borderLeft: "none",
-            borderBottom: "none",
-          }}
-        />
-      </Box>
-      <Box sx={{ p: 4, pt: 5, position: "relative", zIndex: 1 }}>
-        {/* Menu Header */}
-        <Box
-          sx={{
-            textAlign: "center",
-            mb: 4,
-            borderBottom: "2px solid",
-            borderColor: "primary.700",
-            pb: 3,
+            fontSize: { xs: "1.4rem", sm: "1.8rem" },
+            fontWeight: 700,
+            color: "primary.solidColor",
+            position: "relative",
+            zIndex: 1,
+            textShadow: "0 1px 2px rgba(0,0,0,0.1)",
           }}
         >
-          <Typography
-            sx={{
-              fontSize: { xs: "1.5rem", sm: "2.5rem" },
-              fontFamily: "inherit",
-              fontWeight: "bold",
-              color: "primary.700",
-              letterSpacing: "0.1em",
-              mb: 1,
-            }}
-          >
-            {dateLabel || `Menu #${total - idx}`}
-          </Typography>
-        </Box>
-        {/* Days Grid */}
-        <Box>
+          {dateLabel || `Menu #${total - idx}`}
+        </Typography>
+        
+        {/* Decorative elements */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: 20,
+            transform: "translateY(-50%)",
+            width: 4,
+            height: 30,
+            backgroundColor: "rgba(255,255,255,0.3)",
+            borderRadius: 2,
+          }}
+        />
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            right: 20,
+            transform: "translateY(-50%)",
+            width: 4,
+            height: 30,
+            backgroundColor: "rgba(255,255,255,0.3)",
+            borderRadius: 2,
+          }}
+        />
+      </Box>
+
+      {/* Menu content */}
+      <Box sx={{ p: { xs: 3, sm: 4 } }}>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
           {daysOfWeek.map((day, i) => (
             <Box
               key={day}
               sx={{
-                mb: 3,
-                borderBottom: i < 6 ? "1px dotted" : "none",
-                borderColor: "primary.500",
-                pb: i < 6 ? 3 : 0,
+                backgroundColor: "background.level1",
+                borderRadius: 2,
+                p: 3,
+                border: "1px solid",
+                borderColor: "divider",
+                transition: "all 0.2s ease",
               }}
             >
-              {/* Day Header */}
+              {/* Day header */}
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  mb: 2,
-                  justifyContent: "center",
+                  mb: 2.5,
+                  gap: 2,
                 }}
               >
                 <Box
                   sx={{
-                    flex: 1,
-                    height: 1,
-                    bgcolor: "primary.500",
-                    opacity: 0.4,
+                    width: 8,
+                    height: 8,
+                    backgroundColor: "primary.500",
+                    borderRadius: "50%",
+                    flexShrink: 0,
                   }}
                 />
                 <Typography
                   sx={{
-                    mx: 3,
-                    fontSize: { xs: "1.1rem", sm: "1.4rem" },
-                    fontFamily: "inherit",
-                    fontWeight: "bold",
-                    color: "primary.700",
+                    fontSize: { xs: "1rem", sm: "1.2rem" },
+                    fontWeight: 600,
+                    color: "text.primary",
                     textTransform: "uppercase",
-                    letterSpacing: "0.1em",
+                    letterSpacing: "0.05em",
                   }}
                 >
                   {day}
@@ -166,136 +145,143 @@ export default function MenuHistoryCard({ menu, idx, total }: MenuHistoryCardPro
                   sx={{
                     flex: 1,
                     height: 1,
-                    bgcolor: "primary.500",
-                    opacity: 0.4,
+                    backgroundColor: "divider",
                   }}
                 />
               </Box>
-              {/* Meal Items */}
+
+              {/* Meals grid */}
               <Box
                 sx={{
                   display: "grid",
                   gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-                  gap: { xs: 2, sm: 4 },
-                  px: { xs: 0, sm: 2 },
+                  gap: 3,
                 }}
               >
                 {/* Pranzo */}
-                <Box>
-                  <Typography
-                    sx={{
-                      fontSize: { xs: "0.95rem", sm: "1.1rem" },
-                      fontFamily: "inherit",
-                      fontWeight: "bold",
-                      color: "primary.700",
-                      mb: 1,
-                      textAlign: "center",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Pranzo
-                  </Typography>
+                <Box
+                  sx={{
+                    backgroundColor: "background.surface",
+                    borderRadius: 1.5,
+                    p: 2.5,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    minHeight: 80,
+                    display: "flex",
+                    flexDirection: "column",
+                    transition: "all 0.2s ease",
+                  }}
+                >
                   <Box
                     sx={{
-                      minHeight: 50,
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: "primary.100",
-                      border: "1px dashed",
-                      borderColor: "primary.500",
-                      borderRadius: 1,
-                      p: 2,
+                      gap: 1,
+                      mb: 1.5,
                     }}
                   >
+                    {/* Removed colored dot before Pranzo */}
                     <Typography
                       sx={{
-                        fontSize: { xs: "0.9rem", sm: "1rem" },
-                        fontFamily: "inherit",
-                        color: theme.palette.primary[900],
-                        fontStyle: parsedMenu?.pranzo?.[i]?.nome
-                          ? "normal"
-                          : "italic",
-                        textAlign: "center",
-                        lineHeight: 1.4,
-                        opacity: parsedMenu?.pranzo?.[i]?.nome ? 1 : 0.7,
+                        fontSize: "0.9rem",
+                        fontWeight: 600,
+                        color: "text.secondary",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.03em",
                       }}
                     >
-                      {parsedMenu?.pranzo?.[i]?.nome || "— Non disponibile —"}
+                      Pranzo
                     </Typography>
                   </Box>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "0.95rem", sm: "1rem" },
+                      color: "text.primary",
+                      fontStyle: parsedMenu?.pranzo?.[i]?.nome ? "normal" : "italic",
+                      opacity: parsedMenu?.pranzo?.[i]?.nome ? 1 : 0.6,
+                      lineHeight: 1.4,
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {parsedMenu?.pranzo?.[i]?.nome || "Non disponibile"}
+                  </Typography>
                 </Box>
+
                 {/* Cena */}
-                <Box>
-                  <Typography
-                    sx={{
-                      fontSize: "1.1rem",
-                      fontFamily: "inherit",
-                      fontWeight: "bold",
-                      color: "primary.700",
-                      mb: 1,
-                      textAlign: "center",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                    }}
-                  >
-                    Cena
-                  </Typography>
+                <Box
+                  sx={{
+                    backgroundColor: "background.surface",
+                    borderRadius: 1.5,
+                    p: 2.5,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    minHeight: 80,
+                    display: "flex",
+                    flexDirection: "column",
+                    transition: "all 0.2s ease",
+                  }}
+                >
                   <Box
                     sx={{
-                      minHeight: 50,
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: "primary.100",
-                      border: "1px dashed",
-                      borderColor: "primary.500",
-                      borderRadius: 1,
-                      p: 2,
+                      gap: 1,
+                      mb: 1.5,
                     }}
                   >
+                    {/* Removed colored dot before Cena */}
                     <Typography
                       sx={{
-                        fontSize: { xs: "0.9rem", sm: "1rem" },
-                        fontFamily: "inherit",
-                        color: theme.palette.primary[900],
-                        fontStyle: parsedMenu?.cena?.[i]?.nome
-                          ? "normal"
-                          : "italic",
-                        textAlign: "center",
-                        lineHeight: 1.4,
-                        opacity: parsedMenu?.cena?.[i]?.nome ? 1 : 0.7,
+                        fontSize: "0.9rem",
+                        fontWeight: 600,
+                        color: "text.secondary",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.03em",
                       }}
                     >
-                      {parsedMenu?.cena?.[i]?.nome || "— Non disponibile —"}
+                      Cena
                     </Typography>
                   </Box>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "0.95rem", sm: "1rem" },
+                      color: "text.primary",
+                      fontStyle: parsedMenu?.cena?.[i]?.nome ? "normal" : "italic",
+                      opacity: parsedMenu?.cena?.[i]?.nome ? 1 : 0.6,
+                      lineHeight: 1.4,
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {parsedMenu?.cena?.[i]?.nome || "Non disponibile"}
+                  </Typography>
                 </Box>
               </Box>
             </Box>
           ))}
         </Box>
-        {/* Footer decoration */}
+
+        {/* Footer */}
         <Box
           sx={{
             textAlign: "center",
             mt: 4,
             pt: 3,
-            borderTop: "2px solid",
-            borderColor: "primary.700",
+            borderTop: "1px solid",
+            borderColor: "divider",
           }}
         >
           <Typography
             sx={{
-              fontSize: { xs: "0.8rem", sm: "0.9rem" },
-              fontFamily: "inherit",
+              fontSize: "0.9rem",
+              color: "text.tertiary",
               fontStyle: "italic",
-              color: "primary.700",
-              opacity: 0.7,
             }}
           >
-            ✦ Buon Appetito ✦
+            ✨ Buon Appetito ✨
           </Typography>
         </Box>
       </Box>

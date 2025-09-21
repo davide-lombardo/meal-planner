@@ -604,7 +604,50 @@ export default function Home() {
           {discoveryLoading ? (
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} variant="rectangular" width={340} height={320} />
+                <Card
+                  key={i}
+                  variant="soft"
+                  sx={{
+                    bgcolor: 'neutral.solidBg',
+                    width: 340,
+                    height: 320,
+                    borderRadius: 12,
+                    boxShadow: 'md',
+                    p: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'flex-start',
+                  }}
+                >
+                  <CardContent sx={{ p: 3, pt: 2.5, pb: 1.5 }}>
+                    <Skeleton
+                      variant="rectangular"
+                      width={300}
+                      height={180}
+                      sx={{ mb: 2, borderRadius: 8 }}
+                    />
+                    <Skeleton
+                      variant="text"
+                      width={180}
+                      height={32}
+                      sx={{ mb: 1.5, borderRadius: 2 }}
+                    />
+                    <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+                      <Skeleton
+                        variant="rectangular"
+                        width={60}
+                        height={20}
+                        sx={{ borderRadius: 10 }}
+                      />
+                      <Skeleton
+                        variant="rectangular"
+                        width={40}
+                        height={20}
+                        sx={{ borderRadius: 10 }}
+                      />
+                    </Box>
+                  </CardContent>
+                </Card>
               ))}
             </Stack>
           ) : (

@@ -442,7 +442,7 @@ export default function CalendarPage() {
             month: "long",
             year: "numeric",
           }}
-          initialView="dayGridWeek"
+          initialView="dayGridMonth"
           firstDay={1}
           plugins={[dayGridPlugin, interactionPlugin]}
           dayHeaderFormat={{
