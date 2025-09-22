@@ -89,41 +89,44 @@ export default function HistoryPage() {
           mb: 5,
           display: "flex",
           flexDirection: { xs: "column", sm: "row" },
-          justifyContent: "space-between",
-          alignItems: { xs: "stretch", sm: "center" },
-          gap: { xs: 2, sm: 0 },
+          alignItems: { xs: "stretch", sm: "flex-end" },
+          gap: { xs: 2, sm: 2 },
+          justifyContent: { xs: "flex-start", sm: "flex-end" },
         }}
       >
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column",
-            mr: { xs: 0, sm: 2 },
-            mb: { xs: 2, sm: 0 },
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: { xs: "stretch", sm: "flex-end" },
+            gap: { xs: 0.5, sm: 2 },
+            flex: 1,
           }}
         >
-          <Typography level="body-sm" sx={{ mb: 0.5, fontWeight: 500 }}>
-            Filter by date
-          </Typography>
-          <Input
-            type="date"
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-            sx={{ maxWidth: { xs: "100%", sm: 220 } }}
-            slotProps={{
-              input: { min: "2000-01-01", max: dayjs().format("YYYY-MM-DD") },
-            }}
-          />
+          <Box sx={{ minWidth: { xs: "100%", sm: 220 } }}>
+            <Typography level="body-sm" sx={{ mb: 0.5, fontWeight: 500 }}>
+              Filter by date
+            </Typography>
+            <Input
+              type="date"
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+              sx={{ maxWidth: { xs: "100%", sm: 220 } }}
+              slotProps={{
+                input: { min: "2000-01-01", max: dayjs().format("YYYY-MM-DD") },
+              }}
+            />
+          </Box>
+          <Button
+            color="danger"
+            variant="soft"
+            onClick={() => setConfirmOpen(true)}
+            disabled={loading}
+            sx={{ width: { xs: "100%", sm: "auto" }, ml: { xs: 0, sm: 2 }, mt: { xs: 1, sm: 0 } }}
+          >
+            Clear History
+          </Button>
         </Box>
-        <Button
-          color="danger"
-          variant="soft"
-          onClick={() => setConfirmOpen(true)}
-          disabled={loading}
-          sx={{ width: { xs: "100%", sm: "auto" } }}
-        >
-          Clear History
-        </Button>
       </Box>
       <ConfirmDialog
         open={confirmOpen}

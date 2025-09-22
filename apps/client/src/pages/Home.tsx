@@ -13,7 +13,7 @@ import {
   Option,
 } from "@mui/joy";
 import { useTheme } from "@mui/joy/styles";
-import { PlusCircle, Mail, Loader2, Send } from "lucide-react";
+import { PlusCircle, Mail, Loader2, Send, ArrowRight } from "lucide-react";
 import RecipeCard from "../components/RecipeCard";
 import DiscoveryRecipeCard from "../components/DiscoveryRecipeCard";
 import { useNavigate } from "react-router-dom";
@@ -582,12 +582,13 @@ export default function Home() {
               variant="solid"
               color="primary"
               size="lg"
+              endDecorator={<ArrowRight />}
               sx={{
                 width: 340,
                 fontWeight: 700,
                 borderRadius: 8,
                 mb: { xs: 2, sm: 0 },
-                px: 1.5, // Decreased horizontal padding
+                px: 1.5,
               }}
               onClick={() => navigate("/discovery")}
             >

@@ -36,25 +36,14 @@ export default function MenuHistoryCard({ menu, idx, total }: MenuHistoryCardPro
           ${theme.palette.background.level1} 100%)`,
       }}
     >
-      {/* Header with gradient */}
+      {/* Header with solid primary color */}
       <Box
         sx={{
-          background: `linear-gradient(135deg, 
-            ${theme.palette.primary[500]} 0%, 
-            ${theme.palette.primary[600]} 100%)`,
+          backgroundColor: theme.palette.primary.plainColor,
           p: 3,
           textAlign: "center",
           position: "relative",
           overflow: "hidden",
-          "&::before": {
-            content: '""',
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.1) 0%, transparent 50%)",
-          },
         }}
       >
         <Typography
@@ -231,7 +220,6 @@ export default function MenuHistoryCard({ menu, idx, total }: MenuHistoryCardPro
                       mb: 1.5,
                     }}
                   >
-                    {/* Removed colored dot before Cena */}
                     <Typography
                       sx={{
                         fontSize: "0.9rem",
