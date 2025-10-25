@@ -12,6 +12,7 @@ const HistoryPage = lazy(() => import("./pages/HistoryPage"));
 const DiscoveryPage = lazy(() => import("./pages/DiscoveryPage"));
 const MealDetailPage = lazy(() => import("./pages/MealDetailPage"));
 const CalendarPage = lazy(() => import("./pages/CalendarPage"));
+const ManualMenuPage = lazy(() => import("./pages/ManualMenuPage"));
 
 export default function AppRouter() {
   return (
@@ -41,6 +42,7 @@ export default function AppRouter() {
         <Route path="/discovery" element={<DiscoveryPage />} />
         <Route path="/meal/:id" element={<MealDetailPage />} />
         <Route path="/calendar" element={<CalendarPage />} />
+        <Route path="/manual-menu" element={<ManualMenuPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

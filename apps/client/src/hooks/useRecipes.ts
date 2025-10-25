@@ -118,6 +118,29 @@ export function useRecipes(isAuthenticated?: boolean) {
     setPage(1);
   }, []);
 
+  // Fetch all recipes without pagination
+  const getAllRecipes = useCallback(async () => {
+    if (!isAuthenticated) return [];
+    setLoading(true);
+    setError(null);
+    try {
+      const token = sessionStorage.getItem('kinde_access_token');
+      const response = await fetch(`${CONFIG.API_BASE_URL}/recipes?page=1&pageSize=1000`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      if (!response.ok) throw new Error(`Failed to fetch recipes: ${response.status}`);
+      const data = await response.json();
+      return data.recipes || [];
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
+
   return {
     recipes,
     total,
@@ -126,10 +149,11 @@ export function useRecipes(isAuthenticated?: boolean) {
     loading,
     error,
     fetchRecipes,
-  setFilters,
-  search,
-  type,
-  category,
+    getAllRecipes,
+    setFilters,
+    search,
+    type,
+    category,
     addRecipe,
     updateRecipe,
     deleteRecipe,

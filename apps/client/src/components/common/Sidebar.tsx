@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, IconButton, List, ListItem, ListItemButton, ListItemDecorator, Typography, Drawer, useTheme } from '@mui/joy';
-import { Home, Settings, Info, Menu as MenuIcon, ChevronLeft, Refrigerator, History, X as CloseIcon, CookingPot, Calendar as CalendarIcon } from 'lucide-react';
+import { Home, Settings, Info, Menu as MenuIcon, ChevronLeft, Refrigerator, History, X as CloseIcon, CookingPot, Calendar as CalendarIcon, Clipboard } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const navItems = [
@@ -8,6 +8,7 @@ const navItems = [
   { label: 'Discover', icon: <CookingPot size={20} />, path: '/discovery' },
   { label: 'History', icon: <History size={20} />, path: '/history' },
   { label: 'Calendar', icon: <CalendarIcon size={20} />, path: '/calendar' },
+  { label: 'Manual Menu', icon: <Clipboard size={20} />, path: '/manual-menu' },
 ];
 
 export default function Sidebar() {

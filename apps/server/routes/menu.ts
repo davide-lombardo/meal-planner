@@ -109,6 +109,71 @@ router.post("/email", async (req, res) => {
       .json({ message: "Failed to send meal plan email", error: errMsg });
   }
 });
+ 
+router.post("/manual-menu/send", async (req, res) => {
+  logger.info("POST /api/menu/manual-menu/send", { body: req.body });
+  try {
+    const { menu, method } = req.body;
+    const { db, dbPath } = await getDb();
+    const userId = getUserIdFromRequest(req);
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    // Resolve recipe IDs to full objects
+    const allRecipes = parseRecipes(db.exec("SELECT * FROM recipes"));
+    function resolveMenu(menu: { pranzo: (string|null)[], cena: (string|null)[] }): { pranzo: any[], cena: any[] } {
+      return {
+        pranzo: menu.pranzo.map((id: string | null) =>
+          allRecipes.find((r: any) => r.id === id) ||
+          (id === 'libero' ? { id: 'libero', nome: 'Libero', tipo: 'pranzo', ingredienti: [] } :
+           id === 'pizza' ? { id: 'pizza', nome: 'Pizza', tipo: 'cena', ingredienti: [] } : null)
+        ),
+        cena: menu.cena.map((id: string | null) =>
+          allRecipes.find((r: any) => r.id === id) ||
+          (id === 'libero' ? { id: 'libero', nome: 'Libero', tipo: 'cena', ingredienti: [] } :
+           id === 'pizza' ? { id: 'pizza', nome: 'Pizza', tipo: 'cena', ingredienti: [] } : null)
+        ),
+      };
+    }
+    const resolvedMenu = resolveMenu(menu);
+
+    // Save menu to history
+    await db.exec(
+      "INSERT INTO history (user_id, menu, created_at) VALUES (?, ?, ?)",
+      [userId, JSON.stringify(resolvedMenu), Date.now()]
+    );
+    const fs = await import("fs");
+    fs.writeFileSync(dbPath, Buffer.from(db.export()));
+
+    if (method === "email") {
+      // Generate HTML and send email
+      const html = generateHtmlEmail(resolvedMenu, allRecipes);
+      const subject = "Il tuo Menu Settimanale (Manuale)";
+      const text = "In allegato trovi il menu settimanale e la lista della spesa.";
+      await sendEmail(subject, text, html);
+      logger.info("Manual menu email sent and saved to history");
+      return res.status(200).json({ message: "Manual menu email sent successfully" });
+    } else if (method === "telegram") {
+      // Send to Telegram
+      const config = parseConfig(db.exec("SELECT menuOptions FROM config WHERE user_id = ?", [userId]));
+      const chatIds = collectTelegramChatIds(undefined, config);
+      const menuText = formatMenu(resolvedMenu);
+      const categorizedList = generateShoppingList(resolvedMenu, allRecipes);
+      const groceryText = formatShoppingListForTelegram(categorizedList);
+      const fullMessage = `Ciao! Il tuo menu settimanale (manuale) è pronto su Meal Planner.\n\n${menuText}\n${groceryText}`;
+      for (const id of chatIds) {
+        await sendTelegramMessage(fullMessage, id);
+      }
+      logger.info("Manual menu sent to Telegram and saved to history");
+      return res.status(200).json({ message: "Manual menu sent to Telegram successfully" });
+    } else {
+      return res.status(400).json({ error: "Invalid method. Use 'email' or 'telegram'." });
+    }
+  } catch (error) {
+    const errMsg = error instanceof Error ? error.message : String(error);
+    logger.error("Failed to send manual menu: %s", errMsg);
+    res.status(500).json({ message: "Failed to send manual menu", error: errMsg });
+  }
+});
 
 router.post("/telegram", async (req, res) => {
   logger.info("POST /api/menu/telegram", { body: req.body });
