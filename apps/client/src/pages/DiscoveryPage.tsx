@@ -47,9 +47,6 @@ export default function DiscoveryPage() {
 
   // Randomly set area filter when areas are loaded and area is not set
   useEffect(() => {
-    if (areas.length > 0) {
-      console.log('Areas:', areas);
-    }
     if (areas.length > 0 && !area) {
       const randomArea = areas[Math.floor(Math.random() * areas.length)];
       setArea(randomArea);
