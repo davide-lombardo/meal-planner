@@ -43,7 +43,13 @@ export default function HistoryPage() {
       if (date) {
         url += `&date=${date}`;
       }
-      const res = await fetch(url);
+      const token = sessionStorage.getItem("kinde_access_token");
+      const res = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
       const data = await res.json();
       setHistory(data.history || []);
       setTotal(data.total || 0);
@@ -63,8 +69,13 @@ export default function HistoryPage() {
     setLoading(true);
     setError("");
     try {
+      const token = sessionStorage.getItem("kinde_access_token");
       await fetch(`${CONFIG.API_BASE_URL}/menu/history/clear`, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
       fetchHistory(page);
     } catch (err) {

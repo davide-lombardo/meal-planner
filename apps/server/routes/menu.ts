@@ -27,26 +27,27 @@ router.get("/history", async (req, res) => {
   logger.info("GET /api/menu/history");
   try {
     const { db } = await getDb();
+    const userId = getUserIdFromRequest(req);
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const offset = (page - 1) * limit;
     const date = req.query.date as string | undefined;
-    let whereClause = '';
-    let params: any[] = [];
+    let whereClause = `WHERE user_id = '${userId}' OR user_id IS NULL`;
+    let dateClause = '';
     if (date) {
       // Expect date in YYYY-MM-DD format, filter by day
       const start = new Date(date);
       start.setHours(0,0,0,0);
       const end = new Date(date);
       end.setHours(23,59,59,999);
-      whereClause = 'WHERE created_at >= ? AND created_at <= ?';
-      params = [start.getTime(), end.getTime()];
+      dateClause = ` AND created_at >= ${start.getTime()} AND created_at <= ${end.getTime()}`;
     }
-    const rawHistory = db.exec(`SELECT * FROM history ${whereClause} ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,...params);
-    const history = parseHistory(rawHistory);
-    // Get total count for pagination
-    const countResult = db.exec(`SELECT COUNT(*) as count FROM history ${whereClause}`,...params);
-    const total = countResult[0]?.values?.[0]?.[0] || 0;
+  const rawHistory = db.exec(`SELECT * FROM history ${whereClause}${dateClause} ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`);
+  const history = parseHistory(rawHistory);
+  // Get total count for pagination
+  const countResult = db.exec(`SELECT COUNT(*) as count FROM history ${whereClause}${dateClause}`);
+  const total = countResult[0]?.values?.[0]?.[0] || 0;
     res.status(200).json({ history, total });
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
@@ -60,7 +61,9 @@ router.post("/history/clear", async (req, res) => {
   logger.info("POST /api/menu/history/clear");
   try {
     const { db, dbPath } = await getDb();
-    await db.exec("DELETE FROM history");
+    const userId = getUserIdFromRequest(req);
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+    await db.exec(`DELETE FROM history WHERE user_id = '${userId}'`);
     fs.writeFileSync(dbPath, Buffer.from(db.export()));
     res.status(200).json({ message: "History cleared" });
   } catch (error) {
@@ -90,8 +93,9 @@ router.post("/email", async (req, res) => {
     const subject = "Il tuo Menu Settimanale";
     const text =
       "In allegato trovi il menu settimanale e la lista della spesa.";
-    await sendEmail(subject, text, html);
+    await sendEmail(subject, text, html, config.menuOptions?.emailConfig);
     // Save menu to history
+    logger.info("Saving menu to history", { userId, menu });
     await db.exec(
       "INSERT INTO history (user_id, menu, created_at) VALUES (?, ?, ?)",
       [userId, JSON.stringify(menu), Date.now()]
@@ -99,7 +103,7 @@ router.post("/email", async (req, res) => {
 
     const fs = await import("fs");
     fs.writeFileSync(dbPath, Buffer.from(db.export()));
-    logger.info("Meal plan email sent and saved to history");
+    logger.info("Meal plan email sent and saved to history", { userId });
     res.status(200).json({ message: "Meal plan email sent successfully" });
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
@@ -149,7 +153,8 @@ router.post("/manual-menu/send", async (req, res) => {
       const html = generateHtmlEmail(resolvedMenu, allRecipes);
       const subject = "Il tuo Menu Settimanale (Manuale)";
       const text = "In allegato trovi il menu settimanale e la lista della spesa.";
-      await sendEmail(subject, text, html);
+      const config = parseConfig(db.exec("SELECT menuOptions FROM config WHERE user_id = ?", [userId]));
+      await sendEmail(subject, text, html, config.menuOptions?.emailConfig);
       logger.info("Manual menu email sent and saved to history");
       return res.status(200).json({ message: "Manual menu email sent successfully" });
     } else if (method === "telegram") {

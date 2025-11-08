@@ -28,6 +28,15 @@ export const MenuOptionsSchema = z.object({
   currentSeason: SeasonSchema.optional(),
   telegramChatId: z.string().optional(),
   telegramChatIds: z.array(z.string()).optional(),
+  emailConfig: z
+    .object({
+      smtpHost: z.string().min(1).optional(),
+      smtpPort: z.number().int().optional(),
+      smtpUser: z.string().min(1).optional(),
+      smtpPass: z.string().min(1).optional(),
+      fromAddress: z.string().min(1).optional(),
+    })
+    .optional(),
 });
 
 export const ConfigSchema = z.object({

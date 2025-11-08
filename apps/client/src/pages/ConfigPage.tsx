@@ -69,6 +69,8 @@ const seasonLabels = {
 };
 
 export default function ConfigPage() {
+  // Local state for SMTP password input
+  const [smtpPassInput, setSmtpPassInput] = React.useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [deleteLoading, setDeleteLoading] = React.useState(false);
   const [deleteError, setDeleteError] = React.useState("");
@@ -155,7 +157,18 @@ export default function ConfigPage() {
     setSuccess("");
     try {
       if (!config) throw new Error("No configuration data available");
-      ConfigSchema.parse(config);
+      // Update config with password from local state if set
+      const updatedConfig = {
+        ...config,
+        menuOptions: {
+          ...config.menuOptions,
+          emailConfig: {
+            ...config.menuOptions.emailConfig,
+            smtpPass: smtpPassInput || config.menuOptions.emailConfig?.smtpPass || ""
+          }
+        }
+      };
+      ConfigSchema.parse(updatedConfig);
       const accessToken = sessionStorage.getItem("kinde_access_token");
       const response = await fetch(`${CONFIG.API_BASE_URL}/config`, {
         method: "PUT",
@@ -163,7 +176,7 @@ export default function ConfigPage() {
           "Content-Type": "application/json",
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
-        body: JSON.stringify(config),
+        body: JSON.stringify(updatedConfig),
       });
       if (!response.ok) {
         const errorData = await response.text();
@@ -171,6 +184,7 @@ export default function ConfigPage() {
       }
       setSuccess("Configuration saved successfully!");
       setHasUnsavedChanges(false);
+      setSmtpPassInput(""); // Clear input after save
     } catch (e) {
       console.error("Save error:", e);
       setError(e instanceof Error ? e.message : "Save operation failed");
@@ -444,6 +458,46 @@ export default function ConfigPage() {
                     />
                   </Box>
                 </Box>
+              </Stack>
+            </Box>
+
+            {/* Email Configuration Section - own card */}
+            <Box sx={{ mb: 4, p: { xs: 2, sm: 4 }, borderRadius: 3, bgcolor: "background.level1", border: "1px solid", borderColor: "divider" }}>
+              <Typography
+                level="h4"
+                startDecorator={<MessageCircle size={18} />}
+                sx={{ fontSize: { xs: "1.1rem", sm: "1.25rem" }, mb: 2 }}
+              >
+                Email Configuration
+              </Typography>
+              <Stack spacing={2}>
+                <FormField label="SMTP Host">
+                  <Input
+                    type="text"
+                    value={mo.emailConfig?.smtpHost ?? ""}
+                    onChange={e => setMenuOption("emailConfig", { ...mo.emailConfig, smtpHost: e.target.value })}
+                    placeholder="smtp.example.com"
+                    sx={{ maxWidth: 320 }}
+                  />
+                </FormField>
+                <FormField label="SMTP User">
+                  <Input
+                    type="text"
+                    value={mo.emailConfig?.smtpUser ?? ""}
+                    onChange={e => setMenuOption("emailConfig", { ...mo.emailConfig, smtpUser: e.target.value })}
+                    placeholder="user@example.com"
+                    sx={{ maxWidth: 320 }}
+                  />
+                </FormField>
+                <FormField label="SMTP Password">
+                  <Input
+                    type="password"
+                    value={smtpPassInput}
+                    onChange={e => setSmtpPassInput(e.target.value)}
+                    placeholder="password"
+                    sx={{ maxWidth: 320 }}
+                  />
+                </FormField>
               </Stack>
             </Box>
 
